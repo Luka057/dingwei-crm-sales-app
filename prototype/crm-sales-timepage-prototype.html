@@ -1,0 +1,3174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>业务人员端 CRM · 日历驱动原型</title>
+<style>
+  :root{
+    --paper:#f7f4ed;
+    --ink:#171717;
+    --muted:#777169;
+    --line:#e0d8ca;
+    --coral:#ff5a49;
+    --sun:#f8b933;
+    --mint:#39b99a;
+    --blue:#3178f6;
+    --violet:#8167ff;
+    --soft:#fffaf1;
+    --danger:#d9362b;
+    --body-bg:#24221f;
+    --top:#fff7e9;
+    --panel:#fffaf2;
+    --panel-strong:#fff;
+    --subtle:#efe9dd;
+    --dark:#171717;
+    --dark-contrast:#fff;
+    --nav-bg:rgba(247,244,237,.92);
+    --active-bg:#fff3cf;
+    --calendar-cell:#fffaf2;
+    --calendar-cell-soft:#fff3cf;
+    --calendar-week-bg:rgba(255,250,242,.62);
+    --neutral:#6f665c;
+    --shadow:0 22px 60px rgba(26,21,14,.16);
+  }
+  html[data-tone="ocean"]{
+    --paper:#eef6fb;
+    --ink:#12202e;
+    --muted:#607080;
+    --line:#d3e0ea;
+    --coral:#e55b4d;
+    --sun:#f0b44c;
+    --mint:#23a28d;
+    --blue:#246fe8;
+    --violet:#6c66d8;
+    --soft:#f8fcff;
+    --danger:#d7463c;
+    --body-bg:#1d2833;
+    --top:#f8fbff;
+    --panel:#f8fcff;
+    --panel-strong:#fff;
+    --subtle:#e4edf4;
+    --dark:#102033;
+    --nav-bg:rgba(238,246,251,.92);
+    --active-bg:#dcecff;
+    --calendar-cell:#f8fcff;
+    --calendar-cell-soft:#dcecff;
+    --calendar-week-bg:rgba(248,252,255,.68);
+    --neutral:#657485;
+    --shadow:0 22px 60px rgba(21,39,55,.18);
+  }
+  html[data-tone="forest"]{
+    --paper:#f1f7f0;
+    --ink:#152216;
+    --muted:#657661;
+    --line:#d8e4d4;
+    --coral:#e6634f;
+    --sun:#e7b547;
+    --mint:#2f9f76;
+    --blue:#2d77d8;
+    --violet:#7567d7;
+    --soft:#fbfff8;
+    --danger:#cf4438;
+    --body-bg:#202a22;
+    --top:#fbfff7;
+    --panel:#fbfff8;
+    --panel-strong:#fff;
+    --subtle:#e5eee0;
+    --dark:#152216;
+    --nav-bg:rgba(241,247,240,.92);
+    --active-bg:#e4f2dc;
+    --calendar-cell:#fbfff8;
+    --calendar-cell-soft:#e4f2dc;
+    --calendar-week-bg:rgba(251,255,248,.68);
+    --neutral:#65745e;
+    --shadow:0 22px 60px rgba(24,45,25,.18);
+  }
+  html[data-tone="grape"]{
+    --paper:#f7f2fb;
+    --ink:#231a2d;
+    --muted:#74667e;
+    --line:#e4d9ec;
+    --coral:#ef5b74;
+    --sun:#e9b84f;
+    --mint:#2dab91;
+    --blue:#5d6fe8;
+    --violet:#825ee8;
+    --soft:#fff9ff;
+    --danger:#d73c53;
+    --body-bg:#2a2231;
+    --top:#fff8ff;
+    --panel:#fff9ff;
+    --panel-strong:#fff;
+    --subtle:#ebe0f0;
+    --dark:#231a2d;
+    --nav-bg:rgba(247,242,251,.92);
+    --active-bg:#efe3fb;
+    --calendar-cell:#fff9ff;
+    --calendar-cell-soft:#efe3fb;
+    --calendar-week-bg:rgba(255,249,255,.68);
+    --neutral:#75677d;
+    --shadow:0 22px 60px rgba(44,30,55,.18);
+  }
+  html[data-tone="graphite"]{
+    --paper:#f2f3f2;
+    --ink:#151716;
+    --muted:#6b6f6c;
+    --line:#d8dbd8;
+    --coral:#e35d4f;
+    --sun:#d9a83f;
+    --mint:#2e9f83;
+    --blue:#386fd9;
+    --violet:#6f66cc;
+    --soft:#fbfbf8;
+    --danger:#c83e35;
+    --body-bg:#202220;
+    --top:#fbfbf8;
+    --panel:#fbfbf8;
+    --panel-strong:#fff;
+    --subtle:#e5e6e2;
+    --dark:#151716;
+    --nav-bg:rgba(242,243,242,.92);
+    --active-bg:#e8ebe7;
+    --calendar-cell:#fbfbf8;
+    --calendar-cell-soft:#e8ebe7;
+    --calendar-week-bg:rgba(251,251,248,.68);
+    --neutral:#686d69;
+    --shadow:0 22px 60px rgba(18,22,18,.18);
+  }
+  html[data-appearance="dark"]{
+    color-scheme:dark;
+    --paper:#080706;
+    --ink:#f5f5f7;
+    --muted:#9a9389;
+    --line:#38332c;
+    --soft:#151310;
+    --danger:#ff6961;
+    --body-bg:#030302;
+    --top:#100e0b;
+    --panel:#1c1915;
+    --panel-strong:#2b2721;
+    --subtle:#28231d;
+    --dark:#f5f5f7;
+    --dark-contrast:#111113;
+    --nav-bg:rgba(28,25,21,.88);
+    --active-bg:color-mix(in srgb,var(--coral) 18%,#1c1915);
+    --calendar-cell:#1c1915;
+    --calendar-cell-soft:color-mix(in srgb,var(--coral) 18%,#2b2721);
+    --calendar-week-bg:rgba(43,39,33,.66);
+    --neutral:#a49c91;
+    --shadow:0 24px 64px rgba(0,0,0,.58);
+  }
+  html[data-appearance="dark"][data-tone="ocean"]{
+    --paper:#050c13;
+    --body-bg:#02070c;
+    --top:#07131d;
+    --panel:#0f1b24;
+    --panel-strong:#172631;
+    --subtle:#20313d;
+    --line:#263a49;
+    --muted:#92a2af;
+    --nav-bg:rgba(15,27,36,.88);
+    --active-bg:color-mix(in srgb,var(--blue) 20%,#0f1b24);
+    --calendar-cell:#0f1b24;
+    --calendar-cell-soft:color-mix(in srgb,var(--blue) 20%,#172631);
+    --calendar-week-bg:rgba(23,38,49,.68);
+    --neutral:#9caab6;
+  }
+  html[data-appearance="dark"][data-tone="forest"]{
+    --paper:#06100a;
+    --body-bg:#020803;
+    --top:#08160c;
+    --panel:#101d14;
+    --panel-strong:#1a2a1e;
+    --subtle:#223326;
+    --line:#2b432f;
+    --muted:#94a792;
+    --nav-bg:rgba(16,29,20,.88);
+    --active-bg:color-mix(in srgb,var(--mint) 20%,#101d14);
+    --calendar-cell:#101d14;
+    --calendar-cell-soft:color-mix(in srgb,var(--mint) 20%,#1a2a1e);
+    --calendar-week-bg:rgba(26,42,30,.68);
+    --neutral:#9cad99;
+  }
+  html[data-appearance="dark"][data-tone="grape"]{
+    --paper:#0d0713;
+    --body-bg:#050208;
+    --top:#130a1c;
+    --panel:#1d1326;
+    --panel-strong:#2a1d35;
+    --subtle:#342541;
+    --line:#443050;
+    --muted:#a79aaf;
+    --nav-bg:rgba(29,19,38,.88);
+    --active-bg:color-mix(in srgb,var(--violet) 20%,#1d1326);
+    --calendar-cell:#1d1326;
+    --calendar-cell-soft:color-mix(in srgb,var(--violet) 20%,#2a1d35);
+    --calendar-week-bg:rgba(42,29,53,.68);
+    --neutral:#afa0b8;
+  }
+  html[data-appearance="dark"][data-tone="graphite"]{
+    --paper:#070808;
+    --body-bg:#020202;
+    --top:#0d0e0d;
+    --panel:#181a19;
+    --panel-strong:#252725;
+    --subtle:#2d302e;
+    --line:#3a3d3a;
+    --muted:#9b9f9c;
+    --nav-bg:rgba(24,26,25,.88);
+    --active-bg:#2f3431;
+    --calendar-cell:#181a19;
+    --calendar-cell-soft:#2f3431;
+    --calendar-week-bg:rgba(37,39,37,.68);
+    --neutral:#a4a8a5;
+  }
+  :root{
+    --glass-active:rgba(255,255,255,.52);
+    --glass-active-border:rgba(23,23,23,.22);
+    --glass-active-shadow:inset 0 0 0 1px rgba(255,255,255,.42),0 10px 26px rgba(45,39,31,.08);
+  }
+  html[data-appearance="dark"]{
+    --glass-active:rgba(255,255,255,.13);
+    --glass-active-border:rgba(255,255,255,.26);
+    --glass-active-shadow:inset 0 0 0 1px rgba(255,255,255,.11),0 12px 28px rgba(0,0,0,.24);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;width:100%;min-height:100%;background:var(--body-bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif}
+  body{display:flex;justify-content:center;align-items:flex-start;padding:28px 12px}
+  button,input,textarea{font:inherit}
+  .phone{
+    width:min(480px,100%);
+    height:min(920px,calc(100vh - 56px));
+    min-height:760px;
+    background:var(--paper);
+    border:1px solid rgba(255,255,255,.2);
+    border-radius:34px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    position:relative;
+  }
+  .top{
+    padding:22px 20px 14px;
+    background:linear-gradient(180deg,var(--top) 0%,var(--paper) 100%);
+  }
+  .phone.calendar-mode.agenda-theme .top{
+    position:sticky;
+    top:0;
+    z-index:18;
+  }
+  .phone.compact .month-row,
+  .phone.compact .week,
+  .phone.compact .calendar,
+  .phone.compact .today-line,
+  .phone.compact .calendar-panel{display:none}
+  .phone.compact .top{padding-bottom:18px}
+  .phone.compact .hero{margin-top:18px}
+  .phone.compact h1{font-size:32px}
+  .status{height:18px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;color:#222}
+  .status .dots{display:flex;gap:4px}
+  .status .dots span{width:6px;height:6px;border-radius:50%;background:#222;display:block}
+  .hero{display:flex;justify-content:space-between;align-items:flex-end;margin-top:22px;gap:16px}
+  .calendar-menu-btn{
+    width:42px;
+    height:42px;
+    border:0;
+    border-radius:50%;
+    background:var(--panel);
+    color:var(--dark);
+    display:none;
+    place-items:center;
+    flex:0 0 auto;
+    box-shadow:0 10px 24px rgba(45,39,31,.08);
+    cursor:pointer;
+  }
+  .calendar-menu-btn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .phone.calendar-mode.agenda-theme .calendar-menu-btn{display:grid}
+  .phone.agenda-theme .top{padding-bottom:8px}
+  .phone.agenda-theme .hero{align-items:center;margin-top:16px}
+  .phone.agenda-theme .hero>div:first-of-type{min-width:0;flex:1}
+  .phone.agenda-theme h1{font-size:29px}
+  .kicker{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+  h1{margin:6px 0 0;font-size:34px;letter-spacing:0;line-height:1.06;font-weight:800}
+  .weather{
+    flex:0 0 auto;
+    width:72px;
+    height:72px;
+    border-radius:22px;
+    background:var(--subtle);
+    color:var(--ink);
+    display:grid;
+    place-items:center;
+    text-align:center;
+  }
+  .weather strong{display:block;font-size:24px;line-height:1}
+  .weather span{display:block;font-size:11px;color:#d8d1c6;margin-top:5px}
+  .month-row{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;margin-top:22px}
+  .icon-btn{
+    width:40px;
+    height:40px;
+    border:0;
+    border-radius:50%;
+    background:transparent;
+    display:grid;
+    place-items:center;
+    color:#1f1f1f;
+    cursor:pointer;
+  }
+  .icon-btn:hover{background:rgba(23,23,23,.08)}
+  .month-title{text-align:center;font-size:15px;font-weight:800;letter-spacing:.02em}
+  .week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:14px;color:var(--muted);font-size:11px;font-weight:700;text-align:center}
+  .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:8px}
+  .day{
+    aspect-ratio:1;
+    border:0;
+    border-radius:50%;
+    background:color-mix(in srgb,var(--panel-strong) 72%,transparent);
+    color:var(--ink);
+    display:grid;
+    place-items:center;
+    position:relative;
+    cursor:pointer;
+    font-weight:800;
+    min-width:0;
+  }
+  .day small{position:relative;z-index:2;font-size:14px}
+  .day .count{
+    position:absolute;
+    right:2px;
+    top:1px;
+    min-width:15px;
+    height:15px;
+    border-radius:999px;
+    background:var(--dark);
+    color:var(--dark-contrast);
+    font-size:9px;
+    line-height:15px;
+    z-index:3;
+  }
+  .day .marks{position:absolute;bottom:5px;display:flex;gap:3px;z-index:3}
+  .day .mark{width:4px;height:4px;border-radius:50%;background:var(--muted)}
+  .day .mark.visit{background:var(--blue)}
+  .day .mark.sample{background:var(--sun)}
+  .day .mark.done{background:var(--mint)}
+  .day .mark.warn{background:var(--coral)}
+  .day.low{background:var(--active-bg)}
+  .day.mid{background:color-mix(in srgb,var(--sun) 34%,var(--calendar-cell))}
+  .day.hot{background:var(--coral);color:var(--dark-contrast)}
+  .day.done{box-shadow:inset 0 0 0 2px rgba(57,185,154,.35)}
+  .day.today{box-shadow:inset 0 0 0 3px var(--dark)}
+  .day.active{outline:3px solid var(--dark);outline-offset:2px;transform:scale(1.02)}
+  .day.muted{opacity:.38}
+  .today-line{display:flex;align-items:center;gap:10px;margin-top:18px;color:var(--muted);font-size:13px}
+  .today-line span{height:1px;flex:1;background:var(--line)}
+  .calendar-panel{
+    position:absolute;
+    inset:0;
+    z-index:27;
+    background:rgba(18,15,11,.32);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .24s ease;
+  }
+  .calendar-panel.open{opacity:1;pointer-events:auto}
+  .calendar-panel-card{
+    position:absolute;
+    left:0;
+    top:0;
+    bottom:0;
+    width:min(calc(100% - 24px),456px);
+    background:var(--paper);
+    padding:22px 16px 120px;
+    border-radius:0 34px 34px 0;
+    box-shadow:24px 0 60px rgba(20,16,11,.22);
+    transform:translateX(-104%);
+    transition:transform .28s ease;
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .calendar-panel.open .calendar-panel-card{transform:translateX(0)}
+  .calendar-panel-card::-webkit-scrollbar{width:0;height:0}
+  .calendar-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px}
+  .calendar-panel-head strong{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .phone.calendar-mode:not(.agenda-theme) .calendar-panel{
+    position:static;
+    opacity:1;
+    pointer-events:auto;
+    background:transparent;
+  }
+  .phone.calendar-mode:not(.agenda-theme) .calendar-panel-card{
+    position:static;
+    width:100%;
+    padding:0;
+    border-radius:0;
+    box-shadow:none;
+    transform:none;
+    overflow:visible;
+  }
+  .phone.calendar-mode:not(.agenda-theme) .calendar-panel-head{display:none}
+  .phone.agenda-theme .calendar-panel .month-row,
+  .phone.agenda-theme .calendar-panel .week,
+  .phone.agenda-theme .calendar-panel .calendar,
+  .phone.agenda-theme .calendar-panel .today-line{display:grid}
+  .phone.agenda-theme .calendar-panel .today-line{display:flex}
+  .calendar-mode{background:var(--paper)}
+  .calendar-mode .top{
+    background:linear-gradient(180deg,var(--top) 0%,var(--paper) 100%);
+    color:var(--ink);
+    padding:20px 16px 12px;
+  }
+  .calendar-mode .status{color:var(--ink)}
+  .calendar-mode .status .dots span{background:var(--ink)}
+  .calendar-mode .hero{margin-top:16px;align-items:center}
+  .calendar-mode .kicker{display:none}
+  .calendar-mode h1{
+    font-size:31px;
+    line-height:1;
+    color:var(--ink);
+    letter-spacing:0;
+    text-transform:uppercase;
+  }
+  .calendar-mode h1 .year{font-weight:800;color:var(--ink)}
+  .calendar-mode h1 .month{font-weight:800}
+  .calendar-mode h1::first-line{font-weight:300;color:var(--ink)}
+  .calendar-mode .weather{display:none}
+  .calendar-mode .month-row{margin-top:12px;grid-template-columns:38px 1fr 38px}
+  .calendar-mode .month-title{
+    visibility:visible;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    color:var(--neutral);
+  }
+  .calendar-mode .month-title::before{
+    content:"月";
+    display:grid;
+    place-items:center;
+    width:40px;
+    height:26px;
+    border-radius:999px;
+    background:var(--dark);
+    color:var(--dark-contrast);
+    font-size:13px;
+    font-weight:900;
+  }
+  .calendar-mode .icon-btn{color:var(--ink);background:color-mix(in srgb,var(--calendar-cell) 72%,transparent)}
+  .calendar-mode .week{
+    color:var(--muted);
+    gap:0;
+    margin-top:12px;
+    font-size:12px;
+    border-top:1px solid var(--line);
+    border-left:1px solid var(--line);
+    background:var(--calendar-week-bg);
+  }
+  .calendar-mode .week span{
+    padding:7px 2px;
+    border-right:1px solid var(--line);
+    font-weight:900;
+  }
+  .calendar-mode .calendar{
+    display:grid;
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:0;
+    margin-top:0;
+    border-left:1px solid var(--line);
+    border-top:1px solid var(--line);
+    background:var(--panel);
+  }
+  .calendar-mode .day{
+    aspect-ratio:auto;
+    min-height:64px;
+    align-items:start;
+    justify-items:stretch;
+    place-items:initial;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+    background:var(--calendar-cell);
+    color:var(--ink);
+    border-radius:0;
+    border:0;
+    border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    padding:5px 4px 4px;
+    font-size:13px;
+    font-weight:900;
+    overflow:hidden;
+  }
+  .calendar-mode .day.low,
+  .calendar-mode .day.mid,
+  .calendar-mode .day.hot{background:var(--calendar-cell);color:var(--ink)}
+  .calendar-mode .day.done{box-shadow:none}
+  .calendar-mode .day.today{box-shadow:none}
+  .calendar-mode .day.active{
+    outline:0;
+    color:var(--ink);
+    background:var(--calendar-cell-soft);
+    transform:none;
+  }
+  .calendar-mode .day.muted{color:color-mix(in srgb,var(--ink) 32%,transparent);background:var(--subtle)}
+  .calendar-mode .day-top{display:flex;align-items:center;justify-content:space-between;gap:2px;min-width:0}
+  .calendar-mode .day small{
+    position:static;
+    z-index:1;
+    font-size:13px;
+    line-height:1;
+    color:inherit;
+  }
+  .calendar-mode .day .lunar{
+    color:var(--muted);
+    font-size:10px;
+    font-weight:800;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .calendar-mode .day.today small{
+    display:grid;
+    place-items:center;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:var(--coral);
+    color:var(--dark-contrast);
+    margin:-5px 0 -3px -2px;
+  }
+  .calendar-mode .day.active:not(.today) small{
+    color:var(--coral);
+  }
+  .calendar-mode .day .count{
+    display:none;
+  }
+  .calendar-mode .day .marks{display:none}
+  .calendar-mode .day-events{display:grid;gap:3px;margin-top:1px;min-width:0}
+  .calendar-mode .day-event{
+    width:100%;
+    border:0;
+    border-radius:999px;
+    padding:2px 5px;
+    min-height:14px;
+    color:#fff;
+    background:var(--blue);
+    font-size:9px;
+    font-weight:900;
+    line-height:1.15;
+    text-align:left;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    cursor:pointer;
+  }
+  .calendar-mode .day-event.warn{background:var(--coral)}
+  .calendar-mode .day-event.sample{background:var(--sun);color:#3a2a00}
+  .calendar-mode .day-event.done{background:var(--mint)}
+  .calendar-mode .day-event.custom{background:var(--neutral)}
+  .calendar-mode .day-event.phone{background:var(--violet)}
+  .calendar-mode .day-event.wechat{background:var(--mint)}
+  .calendar-mode .day-event.more{background:var(--subtle);color:var(--neutral)}
+  .calendar-mode .today-line{
+    color:var(--ink);
+    font-size:18px;
+    font-weight:900;
+    justify-content:space-between;
+    text-transform:uppercase;
+    margin-top:14px;
+  }
+  .calendar-mode .today-line span{display:none}
+  .calendar-mode main{
+    background:var(--paper);
+    border-radius:34px 34px 0 0;
+    padding:16px 20px 0;
+    margin-top:0;
+    position:relative;
+  }
+  .calendar-mode .summary,
+  .calendar-mode .quick-grid,
+  .calendar-mode .focus{display:none}
+  .calendar-mode .section-head{margin:4px 0 14px}
+  .calendar-mode .section-head h2{font-size:22px}
+  .calendar-mode .timeline{
+    gap:0;
+    background:var(--panel);
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 10px 28px rgba(51,39,19,.06);
+  }
+  .calendar-mode .timeline::before{
+    left:0;
+    top:0;
+    bottom:0;
+    background:var(--subtle);
+    width:76px;
+  }
+  .calendar-mode .agenda-day{
+    position:relative;
+  }
+  .calendar-mode .agenda-day-label{
+    min-height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:16px 18px 8px 96px;
+    border-bottom:1px solid var(--line);
+    background:color-mix(in srgb,var(--panel) 86%,var(--paper));
+  }
+  .calendar-mode .agenda-day-title{
+    min-width:0;
+  }
+  .calendar-mode .agenda-day-label strong{
+    display:block;
+    font-size:15px;
+    line-height:1;
+    color:var(--ink);
+  }
+  .calendar-mode .agenda-day-label span{
+    display:block;
+    margin-top:6px;
+    color:var(--muted);
+    font-size:12px;
+    font-weight:900;
+    white-space:nowrap;
+  }
+  .calendar-mode .agenda-day-actions{
+    display:flex;
+    gap:7px;
+    flex:0 0 auto;
+  }
+  .calendar-mode .agenda-day-actions button{
+    border:1px solid var(--line);
+    background:var(--panel-strong);
+    color:var(--ink);
+    border-radius:999px;
+    padding:7px 9px;
+    font-size:12px;
+    font-weight:900;
+    line-height:1;
+    cursor:pointer;
+  }
+  .calendar-mode .agenda-day-actions button:first-child{
+    background:var(--dark);
+    border-color:var(--dark);
+    color:var(--dark-contrast);
+  }
+  .calendar-mode .agenda-day.today .agenda-day-label strong{color:var(--coral)}
+  .calendar-mode .agenda-day.empty .event-card{opacity:.72}
+  .calendar-mode .event{
+    grid-template-columns:76px 1fr;
+    gap:18px;
+    min-height:126px;
+    padding:20px 0;
+    border-bottom:1px solid #f0eee8;
+  }
+  .calendar-mode .time{
+    color:var(--ink);
+    text-align:center;
+    padding-top:0;
+    z-index:2;
+    font-size:12px;
+    line-height:1.1;
+  }
+  .calendar-mode .time .dow{display:block;letter-spacing:.08em;font-size:12px;font-weight:700}
+  .calendar-mode .time .date{display:block;font-size:27px;line-height:1.05;margin-top:5px}
+  .calendar-mode .event-card{
+    border:0;
+    box-shadow:none;
+    background:transparent;
+    border-radius:0;
+    padding:0 82px 0 26px;
+    min-height:auto;
+  }
+  .calendar-mode .event-card::before{
+    left:94px;
+    top:26px;
+    width:8px;
+    height:42px;
+    border:0;
+    border-radius:99px;
+    background:var(--blue);
+  }
+  .calendar-mode .event-card.warn::before{background:var(--coral)}
+  .calendar-mode .event-card.sample::before{background:var(--sun)}
+  .calendar-mode .event-card.done::before{background:var(--mint)}
+  .calendar-mode .event-card.custom::before{background:var(--neutral)}
+  .calendar-mode .event-card.phone::before{background:var(--violet)}
+  .calendar-mode .event-card.wechat::before{background:var(--mint)}
+  .calendar-mode .event-title strong{font-size:20px}
+  .calendar-mode .event-card p{font-size:13px;color:#27221d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .calendar-mode .event-time{font-weight:900;margin-right:8px;color:var(--ink)}
+  .calendar-mode .event-card .actions{margin-top:10px}
+  .calendar-mode .fab{background:var(--coral);color:#fff;box-shadow:0 16px 34px rgba(255,90,73,.35)}
+  .app-scroll{height:100%;overflow:auto;-webkit-overflow-scrolling:touch;padding-bottom:104px}
+  .app-scroll::-webkit-scrollbar{width:0;height:0}
+  main{padding:0 20px}
+  main::-webkit-scrollbar{width:0;height:0}
+  .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+  .metric{
+    background:var(--soft);
+    border:1px solid rgba(39,34,28,.08);
+    border-radius:8px;
+    padding:12px 10px;
+  }
+  .metric strong{font-size:24px;line-height:1;display:block}
+  .metric span{display:block;color:var(--muted);font-size:12px;margin-top:6px}
+  .section-head{display:flex;justify-content:space-between;align-items:center;margin:24px 0 12px}
+  .section-head h2{margin:0;font-size:17px;line-height:1}
+  .section-head button{border:0;background:transparent;color:var(--coral);font-weight:800;cursor:pointer}
+  .timeline{position:relative;display:flex;flex-direction:column;gap:12px}
+  .timeline::before{content:"";position:absolute;left:52px;top:8px;bottom:8px;width:2px;background:#ddd2c2}
+  .event{
+    display:grid;
+    grid-template-columns:42px 1fr;
+    gap:20px;
+    align-items:start;
+    position:relative;
+  }
+  .time{font-size:13px;color:#70685f;font-weight:800;padding-top:16px;text-align:right}
+  .event-card{
+    background:var(--panel);
+    border-radius:8px;
+    border-left:5px solid var(--blue);
+    padding:14px;
+    min-height:92px;
+    box-shadow:0 8px 22px rgba(51,39,19,.06);
+  }
+  .event-card::before{
+    content:"";
+    position:absolute;
+    left:48px;
+    top:21px;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:var(--dark);
+    border:3px solid var(--paper);
+  }
+  .event-card.visit{border-left-color:var(--blue)}
+  .event-card.warn{border-left-color:var(--coral)}
+  .event-card.sample{border-left-color:var(--sun)}
+  .event-card.done{border-left-color:var(--mint)}
+  .event-title{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+  .event-title strong{font-size:16px;line-height:1.28}
+  .badge{border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900;line-height:1;white-space:nowrap}
+  .badge.a{background:#ffe1dd;color:#b52d22}
+  .badge.b{background:#e4edff;color:#1d5dc5}
+  .badge.c{background:#e0f4ec;color:#1c765f}
+  .event-card p{margin:8px 0 0;color:#625b52;font-size:13px;line-height:1.5}
+  .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .chip{
+    border:1px solid rgba(30,27,22,.12);
+    background:var(--panel-strong);
+    border-radius:999px;
+    padding:8px 10px;
+    color:#2d2a26;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .chip.primary{background:var(--dark);color:var(--dark-contrast);border-color:var(--dark)}
+  .filter-row .chip.primary{
+    background:var(--glass-active);
+    color:var(--ink);
+    border-color:var(--glass-active-border);
+    box-shadow:var(--glass-active-shadow);
+    backdrop-filter:blur(18px) saturate(170%);
+    -webkit-backdrop-filter:blur(18px) saturate(170%);
+  }
+  .chip.danger-chip{background:#fff1ef;color:var(--danger);border-color:#ffd1cb}
+  .segmented{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+  .segmented.four{grid-template-columns:repeat(2,1fr)}
+  .seg{
+    border:1px solid #ded5c8;
+    background:var(--panel-strong);
+    border-radius:8px;
+    padding:10px 8px;
+    font-size:12px;
+    font-weight:900;
+    color:#3a352f;
+    cursor:pointer;
+  }
+  .seg.active{
+    background:var(--glass-active);
+    color:var(--ink);
+    border-color:var(--glass-active-border);
+    box-shadow:var(--glass-active-shadow);
+    backdrop-filter:blur(18px) saturate(170%);
+    -webkit-backdrop-filter:blur(18px) saturate(170%);
+  }
+  .segmented.two{grid-template-columns:repeat(2,1fr)}
+  .focus{
+    margin-top:22px;
+    padding:18px;
+    background:var(--dark);
+    color:var(--dark-contrast);
+    border-radius:8px;
+  }
+  .focus .label{color:#bcb5aa;font-size:12px;font-weight:800;letter-spacing:.06em}
+  .focus h2{font-size:22px;margin:8px 0 8px;line-height:1.2}
+  .focus p{margin:0;color:#ded7cb;font-size:14px;line-height:1.65}
+  .quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:22px}
+  .quick{
+    border:0;
+    background:var(--panel);
+    border-radius:8px;
+    padding:12px 6px 10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:7px;
+    color:#312d28;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .quick svg,.icon-btn svg,.nav button svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .nav{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:82px;
+    background:var(--nav-bg);
+    backdrop-filter:blur(18px);
+    border-top:1px solid rgba(45,39,31,.12);
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    padding:8px 12px 16px;
+    z-index:12;
+  }
+  .nav button{
+    border:0;
+    background:transparent;
+    color:#8a8177;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    font-size:11px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .nav button.active{color:var(--dark)}
+  .fab{
+    position:absolute;
+    right:20px;
+    bottom:98px;
+    width:58px;
+    height:58px;
+    border:0;
+    border-radius:50%;
+    background:var(--coral);
+    color:var(--dark-contrast);
+    display:grid;
+    place-items:center;
+    box-shadow:0 16px 34px rgba(255,90,73,.35);
+    z-index:13;
+    cursor:pointer;
+  }
+  .fab svg{width:25px;height:25px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  .page{display:none}
+  .page.active{display:block}
+  .page-title{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:18px 0 14px}
+  .page-title h2{margin:0;font-size:28px;line-height:1.06}
+  .page-title p{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.45}
+  .filter-row{display:flex;gap:8px;overflow:auto;padding:2px 0 12px}
+  .filter-row::-webkit-scrollbar{display:none}
+  .customer-list,.report-list,.ai-list{display:grid;gap:12px}
+  .customer-card,.report-card,.ai-card{
+    background:var(--panel);
+    border:1px solid rgba(39,34,28,.08);
+    border-radius:8px;
+    padding:14px;
+    box-shadow:0 8px 22px rgba(51,39,19,.05);
+  }
+  .customer-card{border-left:5px solid var(--blue);cursor:pointer}
+  .customer-card.hot{border-left-color:var(--coral)}
+  .customer-card.sample{border-left-color:var(--sun)}
+  .card-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+  .card-head strong{font-size:18px;line-height:1.25}
+  .customer-card p,.report-card p,.ai-card p{margin:8px 0 0;color:#625b52;font-size:13px;line-height:1.55}
+  .subline{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;color:#82786e;font-size:12px;font-weight:800}
+  .report-card{border-left:5px solid var(--mint)}
+  .report-card[data-report]{cursor:pointer}
+  .report-card.pending{border-left-color:var(--sun)}
+  .report-date{color:#82786e;font-size:12px;font-weight:900}
+  .ai-page-box{
+    background:var(--dark);
+    color:var(--dark-contrast);
+    border-radius:8px;
+    padding:16px;
+    margin-bottom:14px;
+  }
+  .ai-page-box p{margin:8px 0 0;color:#ded7cb;line-height:1.6;font-size:14px}
+  .ai-chat{
+    min-height:640px;
+    padding:8px 0 120px;
+    position:relative;
+  }
+  .ai-topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin:8px 0 28px;
+  }
+  .ai-round{
+    width:56px;
+    height:56px;
+    border:0;
+    border-radius:50%;
+    background:var(--panel);
+    color:var(--dark);
+    display:grid;
+    place-items:center;
+    box-shadow:0 12px 28px rgba(45,39,31,.09);
+    cursor:pointer;
+  }
+  .ai-round svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .ai-model{
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:25px;
+    font-weight:700;
+    color:#2b2926;
+  }
+  .ai-empty-space{min-height:420px;display:flex;align-items:flex-start;padding-top:86px}
+  .ai-board-card{
+    width:100%;
+    border:1px solid rgba(39,34,28,.08);
+    background:var(--panel);
+    border-radius:22px;
+    padding:18px;
+    box-shadow:0 16px 38px rgba(45,39,31,.09);
+    text-align:left;
+    cursor:pointer;
+  }
+  .ai-board-card-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .ai-board-icon{
+    width:46px;
+    height:46px;
+    border-radius:15px;
+    background:var(--dark);
+    color:var(--dark-contrast);
+    display:grid;
+    place-items:center;
+  }
+  .ai-board-icon svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .ai-board-card h3{margin:14px 0 7px;font-size:24px;line-height:1}
+  .ai-board-card p{margin:0;color:#756d63;font-size:13px;line-height:1.55}
+  .ai-board-arrow{color:#81786e;font-size:22px}
+  .board-result{
+    margin-top:12px;
+    padding:12px;
+    border-radius:12px;
+    background:var(--panel-strong);
+    border:1px solid #e6ddd0;
+  }
+  .board-result strong{display:flex;justify-content:space-between;gap:10px;font-size:15px}
+  .board-result p{margin:7px 0 0;color:#625b52;font-size:13px;line-height:1.5}
+  .board-upload{
+    margin-top:14px;
+    border:1.5px dashed #d8cec0;
+    background:var(--panel-strong);
+    border-radius:16px;
+    padding:18px;
+    text-align:center;
+    color:var(--neutral);
+    cursor:pointer;
+  }
+  .board-upload strong{display:block;color:var(--dark);margin-bottom:5px}
+  .board-upload span{font-size:12px}
+  .board-upload.has-image{border-style:solid;background:var(--subtle);text-align:left}
+  .board-param-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .board-param-grid .field{margin-top:10px}
+  select{
+    width:100%;
+    border:1px solid #ded5c8;
+    background:var(--panel-strong);
+    border-radius:8px;
+    padding:12px;
+    outline:none;
+    font:inherit;
+  }
+  .chat-thread{display:grid;gap:14px;margin-top:10px}
+  .message{
+    max-width:86%;
+    border-radius:18px;
+    padding:12px 14px;
+    font-size:14px;
+    line-height:1.55;
+  }
+  .message.user{justify-self:end;background:var(--dark);color:var(--dark-contrast);border-bottom-right-radius:6px}
+  .message.ai{justify-self:start;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-bottom-left-radius:6px}
+  .ai-composer{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    background:var(--panel);
+    border:1px solid rgba(39,34,28,.08);
+    border-radius:26px;
+    padding:16px;
+    box-shadow:0 20px 45px rgba(45,39,31,.14);
+  }
+  .ai-composer input{
+    border:0;
+    background:transparent;
+    padding:0 0 18px;
+    font-size:18px;
+  }
+  .ai-composer input:focus{outline:none}
+  .ai-composer-actions{display:flex;align-items:center;justify-content:space-between}
+  .ai-composer-left,.ai-composer-right{display:flex;align-items:center;gap:10px}
+  .ai-icon-action{
+    width:42px;
+    height:42px;
+    border:0;
+    border-radius:50%;
+    background:transparent;
+    display:grid;
+    place-items:center;
+    color:var(--dark);
+    cursor:pointer;
+  }
+  .ai-icon-action.send{background:var(--dark);color:var(--dark-contrast)}
+  .ai-icon-action svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .ai-drawer{
+    position:absolute;
+    inset:0 auto 0 0;
+    width:82%;
+    max-width:360px;
+    background:var(--paper);
+    z-index:35;
+    transform:translateX(-106%);
+    transition:transform .28s ease;
+    box-shadow:20px 0 55px rgba(34,29,22,.18);
+    padding:42px 18px 28px;
+  }
+  .ai-drawer.open{transform:translateX(0)}
+  .ai-brand{
+    margin:0 0 28px;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:38px;
+    line-height:1;
+  }
+  .ai-drawer-item{
+    width:100%;
+    border:0;
+    border-radius:18px;
+    background:transparent;
+    padding:13px 14px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-align:left;
+    font-size:20px;
+    color:var(--dark);
+    cursor:pointer;
+  }
+  .ai-drawer-item.active{
+    background:var(--glass-active);
+    border:1px solid var(--glass-active-border);
+    box-shadow:var(--glass-active-shadow);
+    backdrop-filter:blur(18px) saturate(170%);
+    -webkit-backdrop-filter:blur(18px) saturate(170%);
+  }
+  .ai-drawer h3{
+    margin:28px 10px 12px;
+    color:#7e776d;
+    font-size:15px;
+  }
+  .ai-history{
+    border:0;
+    background:transparent;
+    width:100%;
+    padding:12px 10px;
+    text-align:left;
+    color:var(--dark);
+    font-size:17px;
+    line-height:1.35;
+    cursor:pointer;
+  }
+  .ai-profile{
+    position:absolute;
+    left:18px;
+    right:18px;
+    bottom:28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .ai-profile-pill{
+    border:0;
+    background:var(--panel);
+    border-radius:999px;
+    padding:10px 14px 10px 10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:800;
+    box-shadow:0 12px 28px rgba(45,39,31,.1);
+  }
+  .ai-avatar{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    background:#e6e2d8;
+    display:grid;
+    place-items:center;
+    font-size:13px;
+  }
+  .report-block{background:var(--panel-strong);border:1px solid var(--line);border-radius:8px;padding:13px;margin-top:12px}
+  .report-block span{display:block;color:#81786e;font-size:12px;font-weight:900;margin-bottom:7px}
+  .report-block p{margin:0;color:var(--dark);font-size:14px;line-height:1.65}
+  .attachment-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .attachment{background:#f1eee7;border:1px solid #ded5c8;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:900;color:#403a33}
+  .sheet{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:30;
+    background:var(--panel);
+    border-radius:28px 28px 0 0;
+    padding:10px 20px 96px;
+    box-shadow:0 -28px 60px rgba(20,16,11,.25);
+    transform:translateY(108%);
+    transition:transform .32s ease;
+    max-height:82%;
+    overflow:auto;
+    -webkit-overflow-scrolling:touch;
+    visibility:hidden;
+  }
+  .sheet::-webkit-scrollbar{width:0;height:0}
+  .sheet.open{transform:translateY(0);visibility:visible}
+  .grab{width:42px;height:5px;border-radius:99px;background:#d9d0c2;margin:0 auto 18px}
+  .sheet-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .sheet h2{margin:0;font-size:22px}
+  .sheet p{color:#5f574e;line-height:1.6;font-size:14px}
+  .field{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+  .field label{font-size:12px;color:#81786e;font-weight:900}
+  textarea,input{
+    width:100%;
+    border:1px solid #ded5c8;
+    background:var(--panel-strong);
+    border-radius:8px;
+    padding:12px;
+    resize:none;
+    outline:none;
+  }
+  textarea{height:118px;line-height:1.5}
+  .ai-result{
+    background:var(--dark);
+    color:var(--dark-contrast);
+    padding:14px;
+    border-radius:8px;
+    margin-top:14px;
+    display:none;
+  }
+  .ai-result.show{display:block}
+  .ai-result strong{display:block;margin-bottom:8px}
+  .ai-result ul{margin:0;padding-left:18px;color:#e8e0d3;font-size:13px;line-height:1.65}
+  .customer-hero{
+    margin-top:14px;
+    background:var(--dark);
+    color:var(--dark-contrast);
+    border-radius:8px;
+    padding:16px;
+  }
+  .customer-hero .meta-line{display:flex;justify-content:space-between;align-items:center;gap:12px;color:#c9c0b4;font-size:12px;font-weight:800}
+  .customer-hero h3{margin:10px 0 8px;font-size:25px;line-height:1.15}
+  .customer-hero p{margin:0;color:#e4dbce}
+  .info-list{display:grid;gap:10px;margin-top:14px}
+  .info-row{
+    display:grid;
+    grid-template-columns:72px 1fr;
+    gap:12px;
+    padding:12px;
+    background:var(--panel-strong);
+    border:1px solid #e6ddd0;
+    border-radius:8px;
+    font-size:14px;
+  }
+  .info-row span{color:#81776c;font-weight:900}
+  .mini-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+  .mini-kpi{background:var(--panel-strong);border:1px solid var(--line);border-radius:8px;padding:10px 8px}
+  .mini-kpi strong{display:block;font-size:20px}
+  .mini-kpi span{display:block;font-size:11px;color:#81776c;margin-top:3px;font-weight:800}
+  .record{
+    margin-top:10px;
+    padding:12px;
+    border-radius:8px;
+    background:var(--panel-strong);
+    border-left:4px solid var(--blue);
+  }
+  .record strong{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+  .record p{margin:8px 0 0;color:#5f574e;font-size:13px}
+  .customer-detail-card{
+    margin-top:14px;
+    background:var(--panel);
+    border:1px solid rgba(39,34,28,.08);
+    border-radius:8px;
+    padding:16px;
+    box-shadow:0 10px 28px rgba(51,39,19,.08);
+  }
+  .detail-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .detail-title h3{margin:0;font-size:24px;line-height:1.15}
+  .level-pill{background:#eee8df;border:1px solid #dcd4c8;color:#736b61;border-radius:8px;padding:6px 10px;font-size:13px;font-weight:900}
+  .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
+  .detail-field.full{grid-column:1/-1}
+  .detail-field span{display:block;color:#7c7166;font-size:12px;font-weight:900;margin-bottom:6px}
+  .detail-field b{display:block;font-size:17px;line-height:1.35}
+  .last-visit-bar{
+    margin-top:16px;
+    background:#f0ede7;
+    border-radius:8px;
+    padding:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+  }
+  .last-visit-bar span{display:block;color:#7c7166;font-size:12px;font-weight:900}
+  .last-visit-bar b{font-size:18px}
+  .last-visit-bar strong{font-size:34px;line-height:1;color:#5d6c84}
+  .last-visit-bar em{display:block;font-style:normal;color:#6f7b8e;font-size:12px;text-align:center}
+  .detail-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+  .detail-kpi{background:var(--panel-strong);border:1px solid var(--line);border-radius:8px;padding:12px 6px;text-align:center}
+  .detail-kpi strong{display:block;font-size:25px;color:#2764e8}
+  .detail-kpi span{display:block;font-size:11px;color:#6d7480;margin-top:5px;font-weight:900}
+  .visit-feed{position:relative;margin-top:12px;padding-left:18px;display:grid;gap:16px}
+  .visit-feed::before{content:"";position:absolute;left:5px;top:8px;bottom:12px;width:2px;background:#d9e0ea}
+  .visit-item{position:relative}
+  .visit-item::before{content:"";position:absolute;left:-18px;top:6px;width:10px;height:10px;border-radius:50%;background:#2764e8}
+  .visit-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#647086;font-size:13px}
+  .method-pill{background:#eaf2ff;color:#2273e8;border:1px solid #cfe1ff;border-radius:6px;padding:3px 8px;font-weight:900}
+  .visit-item p{margin:8px 0 0;color:var(--dark);font-size:14px;line-height:1.55}
+  .visit-link{border:0;background:transparent;color:#1767ff;padding:8px 0 0;font-size:13px;font-weight:900}
+  .visit-detail-inline{
+    display:none;
+    margin-top:10px;
+    background:#f1f4f8;
+    border-radius:10px;
+    padding:12px;
+  }
+  .visit-item.expanded .visit-detail-inline{display:block}
+  .visit-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 18px}
+  .visit-detail-cell.full{grid-column:1/-1}
+  .visit-detail-cell span{display:block;color:#6f7b8e;font-size:12px;margin-bottom:5px}
+  .visit-detail-cell b{display:block;color:#172033;font-size:14px;line-height:1.45}
+  .progress-pill{display:inline-block;background:#fff1dc;color:#c87517;border-radius:6px;padding:4px 8px;font-size:12px;font-weight:900;margin-right:10px}
+  .follow-date{color:#647086;font-size:13px;font-weight:800}
+  .overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(18,15,11,.36);
+    z-index:20;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .24s ease;
+  }
+  .overlay.open{opacity:1;pointer-events:auto}
+  .toast{
+    position:absolute;
+    left:20px;
+    right:20px;
+    bottom:190px;
+    background:var(--dark);
+    color:var(--dark-contrast);
+    border-radius:8px;
+    padding:14px 16px;
+    font-size:14px;
+    line-height:1.4;
+    z-index:40;
+    opacity:0;
+    transform:translateY(12px);
+    transition:.25s ease;
+    pointer-events:none;
+  }
+  .toast.show{opacity:1;transform:translateY(0)}
+  .tone-trigger{
+    width:40px;
+    height:40px;
+    border:0;
+    border-radius:50%;
+    background:var(--panel);
+    color:var(--dark);
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    box-shadow:0 10px 24px rgba(45,39,31,.08);
+  }
+  .tone-trigger svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .theme-choice{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+  .theme-option{
+    border:1px solid var(--line);
+    background:var(--panel-strong);
+    border-radius:14px;
+    padding:13px 12px;
+    text-align:left;
+    cursor:pointer;
+  }
+  .theme-option strong{display:block;font-size:15px;color:var(--dark);line-height:1.2}
+  .theme-option.active{
+    background:var(--glass-active);
+    border-color:var(--glass-active-border);
+    box-shadow:var(--glass-active-shadow);
+    backdrop-filter:blur(18px) saturate(170%);
+    -webkit-backdrop-filter:blur(18px) saturate(170%);
+  }
+  .sheet-label{display:block;margin-top:18px;color:var(--muted);font-size:12px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+  .tone-list{display:grid;gap:10px;margin-top:16px}
+  .tone-option{
+    width:100%;
+    border:1px solid var(--line);
+    background:var(--panel-strong);
+    border-radius:14px;
+    padding:12px;
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:12px;
+    align-items:center;
+    text-align:left;
+    cursor:pointer;
+  }
+  .tone-option.active{
+    background:var(--glass-active);
+    border-color:var(--glass-active-border);
+    box-shadow:var(--glass-active-shadow);
+    backdrop-filter:blur(18px) saturate(170%);
+    -webkit-backdrop-filter:blur(18px) saturate(170%);
+  }
+  .tone-dot{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--tone-paper) 0 50%,var(--tone-accent) 50% 100%);
+    border:1px solid rgba(30,27,22,.12);
+  }
+  .tone-name{display:block;font-size:15px;font-weight:900;color:var(--dark)}
+  .tone-check{font-size:13px;font-weight:900;color:var(--coral);opacity:0}
+  .tone-option.active .tone-check{opacity:1}
+  html[data-appearance="dark"] .phone{border-color:#2c2c2e}
+  html[data-appearance="dark"] .status{color:var(--ink)}
+  html[data-appearance="dark"] .status .dots span{background:var(--ink)}
+  html[data-appearance="dark"] .calendar-menu-btn,
+  html[data-appearance="dark"] .tone-trigger,
+  html[data-appearance="dark"] .ai-round{box-shadow:0 12px 28px rgba(0,0,0,.34)}
+  html[data-appearance="dark"] .calendar-panel{background:rgba(0,0,0,.54)}
+  html[data-appearance="dark"] .calendar-panel-card{box-shadow:24px 0 60px rgba(0,0,0,.52)}
+  html[data-appearance="dark"] .icon-btn{color:var(--ink)}
+  html[data-appearance="dark"] .icon-btn:hover{background:rgba(255,255,255,.08)}
+  html[data-appearance="dark"] .calendar-mode .event{border-bottom-color:var(--line)}
+  html[data-appearance="dark"] .calendar-mode .timeline,
+  html[data-appearance="dark"] .event-card,
+  html[data-appearance="dark"] .customer-card,
+  html[data-appearance="dark"] .report-card,
+  html[data-appearance="dark"] .ai-card,
+  html[data-appearance="dark"] .customer-detail-card,
+  html[data-appearance="dark"] .ai-board-card,
+  html[data-appearance="dark"] .ai-composer{box-shadow:none;border-color:var(--line)}
+  html[data-appearance="dark"] .timeline::before,
+  html[data-appearance="dark"] .visit-feed::before{background:var(--line)}
+  html[data-appearance="dark"] .event-card::before{border-color:var(--paper)}
+  html[data-appearance="dark"] .time,
+  html[data-appearance="dark"] .calendar-mode .event-card p,
+  html[data-appearance="dark"] .event-card p,
+  html[data-appearance="dark"] .customer-card p,
+  html[data-appearance="dark"] .report-card p,
+  html[data-appearance="dark"] .ai-card p,
+  html[data-appearance="dark"] .ai-board-card p,
+  html[data-appearance="dark"] .board-result p,
+  html[data-appearance="dark"] .sheet p,
+  html[data-appearance="dark"] .record p{color:var(--muted)}
+  html[data-appearance="dark"] .chip,
+  html[data-appearance="dark"] .seg,
+  html[data-appearance="dark"] select,
+  html[data-appearance="dark"] textarea,
+  html[data-appearance="dark"] input,
+  html[data-appearance="dark"] .info-row,
+  html[data-appearance="dark"] .record,
+  html[data-appearance="dark"] .report-block,
+  html[data-appearance="dark"] .attachment,
+  html[data-appearance="dark"] .board-result,
+  html[data-appearance="dark"] .board-upload,
+  html[data-appearance="dark"] .theme-option,
+  html[data-appearance="dark"] .tone-option{
+    border-color:var(--line);
+    color:var(--ink);
+  }
+  html[data-appearance="dark"] .chip.primary{
+    background:var(--dark);
+    color:var(--dark-contrast);
+    border-color:var(--dark);
+  }
+  html[data-appearance="dark"] .filter-row .chip.primary{
+    background:var(--glass-active);
+    color:var(--ink);
+    border-color:var(--glass-active-border);
+    box-shadow:var(--glass-active-shadow);
+  }
+  html[data-appearance="dark"] textarea,
+  html[data-appearance="dark"] input,
+  html[data-appearance="dark"] select{background:var(--panel-strong);caret-color:var(--coral)}
+  html[data-appearance="dark"] input::placeholder,
+  html[data-appearance="dark"] textarea::placeholder{color:#6f6f73}
+  html[data-appearance="dark"] .quick,
+  html[data-appearance="dark"] .ai-model,
+  html[data-appearance="dark"] .report-block p,
+  html[data-appearance="dark"] .visit-item p,
+  html[data-appearance="dark"] .board-upload strong,
+  html[data-appearance="dark"] .theme-option strong,
+  html[data-appearance="dark"] .tone-name{color:var(--ink)}
+  html[data-appearance="dark"] .subline,
+  html[data-appearance="dark"] .report-date,
+  html[data-appearance="dark"] .field label,
+  html[data-appearance="dark"] .report-block span,
+  html[data-appearance="dark"] .detail-field span,
+  html[data-appearance="dark"] .info-row span,
+  html[data-appearance="dark"] .mini-kpi span,
+  html[data-appearance="dark"] .visit-meta,
+  html[data-appearance="dark"] .visit-detail-cell span,
+  html[data-appearance="dark"] .follow-date,
+  html[data-appearance="dark"] .ai-drawer h3{color:var(--muted)}
+  html[data-appearance="dark"] .last-visit-bar,
+  html[data-appearance="dark"] .visit-detail-inline,
+  html[data-appearance="dark"] .level-pill,
+  html[data-appearance="dark"] .attachment,
+  html[data-appearance="dark"] .ai-avatar{background:var(--subtle);border-color:var(--line);color:var(--ink)}
+  html[data-appearance="dark"] .visit-detail-cell b{color:var(--ink)}
+  html[data-appearance="dark"] .detail-kpi strong{color:var(--blue)}
+  html[data-appearance="dark"] .badge.a{background:color-mix(in srgb,var(--coral) 22%,#2c2c2e);color:#ffb4ad}
+  html[data-appearance="dark"] .badge.b{background:color-mix(in srgb,var(--blue) 22%,#2c2c2e);color:#b7ceff}
+  html[data-appearance="dark"] .badge.c{background:color-mix(in srgb,var(--mint) 22%,#2c2c2e);color:#a9ead9}
+  html[data-appearance="dark"] .method-pill{background:color-mix(in srgb,var(--blue) 18%,#2c2c2e);border-color:color-mix(in srgb,var(--blue) 34%,#2c2c2e);color:#b7ceff}
+  html[data-appearance="dark"] .progress-pill{background:color-mix(in srgb,var(--sun) 22%,#2c2c2e);color:#ffd58a}
+  html[data-appearance="dark"] .nav{border-top-color:var(--line)}
+  html[data-appearance="dark"] .nav button{color:#7a7a80}
+  html[data-appearance="dark"] .nav button.active{color:var(--ink)}
+  html[data-appearance="dark"] .sheet{box-shadow:0 -28px 60px rgba(0,0,0,.55)}
+  html[data-appearance="dark"] .grab{background:#4a4a4f}
+  html[data-appearance="dark"] .overlay{background:rgba(0,0,0,.58)}
+  html[data-appearance="dark"] .toast{
+    background:rgba(44,44,46,.86);
+    color:var(--ink);
+    border:1px solid var(--line);
+    backdrop-filter:blur(18px) saturate(170%);
+    -webkit-backdrop-filter:blur(18px) saturate(170%);
+  }
+  html[data-appearance="dark"] .calendar-mode .day-event.sample{color:#231800}
+  html[data-appearance="dark"] .tone-dot{border-color:rgba(255,255,255,.18)}
+  html[data-appearance="dark"] .tone-option[data-tone="warm"] .tone-dot{background:linear-gradient(135deg,#1c1915 0 50%,#ff5a49 50% 100%)}
+  html[data-appearance="dark"] .tone-option[data-tone="ocean"] .tone-dot{background:linear-gradient(135deg,#0f1b24 0 50%,#246fe8 50% 100%)}
+  html[data-appearance="dark"] .tone-option[data-tone="forest"] .tone-dot{background:linear-gradient(135deg,#101d14 0 50%,#2f9f76 50% 100%)}
+  html[data-appearance="dark"] .tone-option[data-tone="grape"] .tone-dot{background:linear-gradient(135deg,#1d1326 0 50%,#825ee8 50% 100%)}
+  html[data-appearance="dark"] .tone-option[data-tone="graphite"] .tone-dot{background:linear-gradient(135deg,#181a19 0 50%,#8c918d 50% 100%)}
+  @media (min-width:769px){
+    body{padding:36px 0}
+    .phone{border-radius:38px}
+  }
+  @media (max-width:768px), (hover:none) and (pointer:coarse){
+    html,body{width:100%;height:100%;overflow:hidden;background:var(--paper)}
+    body{display:block;padding:0;background:var(--paper)}
+    .phone{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      max-width:none;
+      height:100vh;
+      height:100dvh;
+      min-height:100vh;
+      min-height:100dvh;
+      border:0;
+      border-radius:0;
+      box-shadow:none;
+    }
+    .app-scroll{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
+    .nav{height:calc(82px + env(safe-area-inset-bottom));padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+    .fab{bottom:calc(98px + env(safe-area-inset-bottom))}
+    h1{font-size:30px}
+    .top{padding-left:16px;padding-right:16px}
+    main{padding-left:16px;padding-right:16px}
+    .quick-grid{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+</head>
+<body>
+<div class="phone calendar-mode agenda-theme">
+  <div class="app-scroll">
+    <div class="top">
+    <div class="status">
+      <span>09:41</span>
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+    <div class="hero">
+      <button class="calendar-menu-btn" id="calendarMenuBtn" aria-label="打开月历">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h12"/></svg>
+      </button>
+      <div>
+        <div class="kicker">Dingwei CRM</div>
+        <h1 id="screenTitle"><span class="year">2026 年</span> <span class="month">5 月</span></h1>
+      </div>
+      <div class="weather">
+        <div><strong>31</strong><span>晴 · 适合外访</span></div>
+      </div>
+      <button class="tone-trigger" id="toneBtn" aria-label="调整配色">
+        <svg viewBox="0 0 24 24"><path d="M12 22a8 8 0 0 1 0-16h1.5a2.5 2.5 0 0 0 0-5H12a11 11 0 0 0 0 22Z"/><circle cx="7.5" cy="12" r=".8"/><circle cx="10.5" cy="8.5" r=".8"/><circle cx="10.5" cy="15.5" r=".8"/></svg>
+      </button>
+    </div>
+    </div>
+    <section class="calendar-panel" id="calendarPanel" aria-hidden="true">
+      <div class="calendar-panel-card">
+        <div class="calendar-panel-head">
+          <strong>完整月历</strong>
+          <button class="icon-btn" id="calendarCloseBtn" aria-label="返回日程列表">
+            <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="month-row">
+          <button class="icon-btn" id="prevMonthBtn" aria-label="上个月">
+            <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <div class="month-title">2026 年 5 月</div>
+          <button class="icon-btn" id="nextMonthBtn" aria-label="下个月">
+            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+        <div class="week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+        <div class="calendar" id="calendar"></div>
+        <div class="today-line"><span></span><b id="dateLabel">5 月 14 日 · 周四</b><span></span></div>
+      </div>
+    </section>
+
+    <main>
+    <div class="page active" id="calendarPage">
+      <div class="summary">
+        <div class="metric"><strong id="planCount">4</strong><span>今日动作</span></div>
+        <div class="metric"><strong id="riskCount">2</strong><span>建议跟进</span></div>
+        <div class="metric"><strong id="doneCount">1</strong><span>已完成</span></div>
+      </div>
+
+      <div class="quick-grid">
+        <button class="quick" data-open="plan">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>计划</span>
+        </button>
+        <button class="quick" data-open="search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>找客户</span>
+        </button>
+        <button class="quick" data-page="ai">
+          <svg viewBox="0 0 24 24"><path d="M12 3l1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3Z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"/></svg><span>AI</span>
+        </button>
+        <button class="quick" data-page="reports">
+          <svg viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg><span>周报</span>
+        </button>
+      </div>
+
+      <section class="focus">
+        <div class="label">AI 今日建议</div>
+        <h2 id="focusTitle">先跟进宏远服饰，再去锦华辅料</h2>
+        <p id="focusText">宏远 A 类客户已 28 天未拜访，且上次提到“宽度调整样板”。建议上午电话确认样板反馈，下午顺路拜访锦华。</p>
+      </section>
+
+      <div class="section-head">
+        <h2>时间线</h2>
+        <button data-open="plan">安排</button>
+      </div>
+      <section class="timeline" id="timeline"></section>
+    </div>
+
+    <div class="page" id="customersPage">
+      <div class="page-title">
+        <div>
+          <h2>我的客户</h2>
+          <p>只看自己负责的客户，按跟进压力和样板状态排序。</p>
+        </div>
+        <button class="chip primary" data-open="search">搜索</button>
+      </div>
+      <div class="summary">
+        <div class="metric"><strong>18</strong><span>负责客户</span></div>
+        <div class="metric"><strong>5</strong><span>A 类客户</span></div>
+        <div class="metric"><strong>3</strong><span>需跟进</span></div>
+      </div>
+      <div class="filter-row">
+        <button class="chip primary" data-customer-filter="all">全部</button>
+        <button class="chip" data-customer-filter="overdue">超期</button>
+        <button class="chip" data-customer-filter="a">A 类</button>
+        <button class="chip" data-customer-filter="sample">样板中</button>
+        <button class="chip" data-customer-filter="week">本周拜访</button>
+      </div>
+      <div class="customer-list" id="customerList"></div>
+    </div>
+
+    <div class="page" id="reportsPage">
+      <div class="page-title">
+        <div>
+          <h2>周报</h2>
+          <p>历史周报会同步到老板端，新周报按固定格式录入。</p>
+        </div>
+        <button class="chip primary" data-open="reportForm">录入</button>
+      </div>
+      <div class="report-list">
+        <article class="report-card pending" data-open="reportForm">
+          <div class="card-head"><strong>本周周报</strong><span class="report-date">待提交</span></div>
+          <p>AI 已根据 12 次拜访、2 个样板机会生成草稿，可继续补充备注和附件。</p>
+          <div class="actions"><button class="chip primary" data-open="reportForm">继续填写</button><button class="chip" id="weeklyAiDraftBtn">AI 草稿</button></div>
+        </article>
+        <article class="report-card" data-report="w19">
+          <div class="card-head"><strong>2026 第 19 周</strong><span class="report-date">已提交</span></div>
+          <p>完成拜访 14 次，推进宏远、东晨两个重点客户；盛南样板进入中板。</p>
+          <div class="subline"><span>总结 3 项</span><span>计划 4 项</span><span>附件 2</span></div>
+        </article>
+        <article class="report-card" data-report="w18">
+          <div class="card-head"><strong>2026 第 18 周</strong><span class="report-date">已提交</span></div>
+          <p>新增客户 2 家，完成线下拜访 6 次，锦华报价复核待下周继续跟进。</p>
+          <div class="subline"><span>总结 4 项</span><span>计划 3 项</span><span>附件 1</span></div>
+        </article>
+      </div>
+    </div>
+
+    <div class="page" id="aiPage">
+      <div class="ai-chat">
+        <div class="ai-topbar">
+          <button class="ai-round" id="aiMenuBtn" aria-label="打开会话菜单"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h12"/></svg></button>
+          <div class="ai-model">鼎伟 AI</div>
+          <button class="ai-round" id="aiNewChatBtn" aria-label="AI找板"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+        </div>
+        <div class="ai-empty-space" id="aiWelcome"></div>
+        <div class="chat-thread" id="aiThread"></div>
+        <div class="ai-composer">
+          <input id="aiChatInput" placeholder="问客户、拜访、样板、周报..." value="">
+          <div class="ai-composer-actions">
+            <div class="ai-composer-left">
+              <button class="ai-icon-action" id="aiAttachBtn" aria-label="添加附件"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+            </div>
+            <div class="ai-composer-right">
+              <button class="ai-icon-action" id="aiVoiceBtn" aria-label="语音输入"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg></button>
+              <button class="ai-icon-action send" id="aiSendBtn" aria-label="发送"><svg viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4 20-7Z"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </main>
+  </div>
+
+  <button class="fab" data-open="plan" aria-label="新增拜访计划">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+
+  <nav class="nav">
+    <button class="active" data-page="calendar"><svg viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span>日历</span></button>
+    <button data-page="customers"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>客户</span></button>
+    <button data-page="reports"><svg viewBox="0 0 24 24"><path d="M4 19.5V5a2 2 0 0 1 2-2h11a3 3 0 0 1 3 3v15H6a2 2 0 0 1-2-2Z"/><path d="M8 7h6M8 11h8"/></svg><span>周报</span></button>
+    <button data-page="ai"><svg viewBox="0 0 24 24"><path d="M12 3l1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3Z"/></svg><span>AI</span></button>
+  </nav>
+
+  <div class="overlay" id="overlay"></div>
+  <aside class="ai-drawer" id="aiDrawer">
+    <h2 class="ai-brand">鼎伟 AI</h2>
+    <button class="ai-drawer-item active" data-ai-history="customer"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Chats</span></button>
+    <button class="ai-drawer-item" data-ai-history="weekly"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>Artifacts</span></button>
+    <h3>Starred</h3>
+    <button class="ai-history" data-ai-history="customer">本周未拜访客户</button>
+    <h3>Recents</h3>
+    <button class="ai-history" data-ai-history="sample">样板待确认客户</button>
+    <button class="ai-history" data-ai-history="weekly">生成本周周报</button>
+    <button class="ai-history" data-ai-history="order">宏远订单和拜访记录</button>
+    <div class="ai-profile">
+      <button class="ai-profile-pill"><span class="ai-avatar">ZW</span><span>张伟</span></button>
+      <button class="ai-round" id="aiDrawerNewBtn" aria-label="新对话"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    </div>
+  </aside>
+  <div class="toast" id="toast"></div>
+
+  <section class="sheet" id="visitSheet">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2>填写拜访内容</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="field">
+      <label>客户</label>
+      <input value="宏远服饰 · 李总">
+    </div>
+    <div class="field">
+      <label>拜访方式</label>
+      <div class="segmented">
+        <button class="seg active">电话</button>
+        <button class="seg">微信</button>
+        <button class="seg">线下</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>客户意向</label>
+      <div class="segmented four">
+        <button class="seg">进展良好</button>
+        <button class="seg active">下单有望</button>
+        <button class="seg">持平等待</button>
+        <button class="seg">没有意向</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>拜访内容</label>
+      <textarea id="visitText">客户认可上次织带手感，但担心颜色批次稳定性。李总说如果这周能重新确认宽度，月底有一批运动服订单可以考虑给我们试做。</textarea>
+    </div>
+    <div class="field">
+      <label>下次跟进</label>
+      <input value="2026-05-20 10:00 · 确认宽度调整样板">
+    </div>
+    <div class="actions">
+      <button class="chip primary" id="summarizeBtn">AI 摘要</button>
+      <button class="chip" data-toast="已保存草稿，稍后可继续补充。">存草稿</button>
+      <button class="chip" data-toast="已创建下周三 10:00 跟进计划。">下次跟进</button>
+      <button class="chip" data-toast="已生成样板记录：宏远服饰 · 宽度调整。">产生样板</button>
+    </div>
+    <div class="ai-result" id="aiResult">
+      <strong>AI 已整理</strong>
+      <ul>
+        <li>客户认可手感，主要顾虑是颜色批次稳定性。</li>
+        <li>本周需重新确认宽度，存在月底试单机会。</li>
+        <li>建议下周三前跟进样板调整，并记录客户最终反馈。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sheet" id="toneSheet">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2>调整配色</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <span class="sheet-label">显示模式</span>
+    <div class="theme-choice">
+      <button class="theme-option" data-appearance-choice="light">
+        <strong>浅色模式</strong>
+      </button>
+      <button class="theme-option" data-appearance-choice="dark">
+        <strong>深色模式</strong>
+      </button>
+    </div>
+    <span class="sheet-label">日程主题</span>
+    <div class="theme-choice">
+      <button class="theme-option" data-view-theme="agenda">
+        <strong>日程优先</strong>
+      </button>
+      <button class="theme-option" data-view-theme="calendar">
+        <strong>月历优先</strong>
+      </button>
+    </div>
+    <span class="sheet-label">整体配色</span>
+    <div class="tone-list">
+      <button class="tone-option" data-tone="warm" style="--tone-paper:#f7f4ed;--tone-accent:#ff5a49">
+        <span class="tone-dot"></span><span><b class="tone-name">暖纸原色</b></span><span class="tone-check">已选</span>
+      </button>
+      <button class="tone-option" data-tone="ocean" style="--tone-paper:#eef6fb;--tone-accent:#246fe8">
+        <span class="tone-dot"></span><span><b class="tone-name">清爽蓝调</b></span><span class="tone-check">已选</span>
+      </button>
+      <button class="tone-option" data-tone="forest" style="--tone-paper:#f1f7f0;--tone-accent:#2f9f76">
+        <span class="tone-dot"></span><span><b class="tone-name">松绿色调</b></span><span class="tone-check">已选</span>
+      </button>
+      <button class="tone-option" data-tone="grape" style="--tone-paper:#f7f2fb;--tone-accent:#825ee8">
+        <span class="tone-dot"></span><span><b class="tone-name">淡紫色调</b></span><span class="tone-check">已选</span>
+      </button>
+      <button class="tone-option" data-tone="graphite" style="--tone-paper:#f2f3f2;--tone-accent:#151716">
+        <span class="tone-dot"></span><span><b class="tone-name">石墨灰调</b></span><span class="tone-check">已选</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="sheet" id="planDetailSheet">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2>拜访计划详情</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="customer-detail-card">
+      <div class="detail-title">
+        <h3 id="planCustomer">宏远服饰</h3>
+        <span class="level-pill" id="planStatus">待拜访</span>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-field"><span>计划时间</span><b id="planTime">09:30</b></div>
+        <div class="detail-field"><span>拜访方式</span><b id="planMethod">电话</b></div>
+        <div class="detail-field full"><span>计划目的</span><b id="planPurpose">确认宽度调整样板反馈</b></div>
+        <div class="detail-field full"><span>客户上下文</span><b id="planContext">A 类客户 28 天未拜访，月底可能试单。</b></div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="chip primary" data-open="visit">填写拜访内容</button>
+      <button class="chip" data-customer="宏远服饰" id="planCustomerBtn">客户详情</button>
+      <button class="chip" data-page="ai">问 AI</button>
+    </div>
+  </section>
+
+  <section class="sheet" id="eventEditSheet">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2 id="editSheetTitle">编辑日程</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="field"><label>标题 / 客户</label><input id="editEventTitle" value=""></div>
+    <div class="field"><label>时间</label><input id="editEventTime" value=""></div>
+    <div class="field"><label>内容</label><textarea id="editEventDesc"></textarea></div>
+    <div class="actions">
+      <button class="chip primary" id="updateEventBtn">保存修改</button>
+      <button class="chip" id="completeEventBtn">标记完成</button>
+      <button class="chip danger-chip" id="deleteEventBtn">删除</button>
+    </div>
+  </section>
+
+  <section class="sheet" id="aiSheet">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2>问客户数据</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <p>“宏远上次说了什么？” “本周还没拜访的 A 类客户有哪些？” “哪些样板还没确认？”</p>
+    <div class="field">
+      <label>输入问题</label>
+      <input id="aiAsk" value="本周还没拜访的 A 类客户有哪些？">
+    </div>
+    <div class="actions">
+      <button class="chip primary" id="askBtn">查询</button>
+      <button class="chip" data-toast="已切换语音输入。">语音</button>
+    </div>
+    <div class="ai-result show">
+      <strong>3 个客户建议本周跟进</strong>
+      <ul>
+        <li>宏远服饰：28 天未拜访，样板待确认。</li>
+        <li>锦华辅料：31 天未拜访，上次提到价格复核。</li>
+        <li>东晨制衣：25 天未拜访，联系人更换待确认。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sheet" id="weekSheet">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2>本周总结</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <p>本周已完成 12 次拜访，新增 2 个样板机会，宏远服饰和锦华辅料有明确推进。未完成计划 1 项，原因是客户临时改期。</p>
+    <div class="actions">
+      <button class="chip primary" data-toast="AI 已生成周报草稿，可同步到老板端。">生成草稿</button>
+      <button class="chip" data-toast="已同步给主管和老板端。">提交</button>
+    </div>
+  </section>
+
+  <section class="sheet" id="boardSearchSheet">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2>AI找板</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="field"><label>客户 / 场景</label><input id="boardCustomer" value="宏远服饰 运动服织带"></div>
+    <button class="board-upload" id="boardUploadBtn">
+      <strong>上传图片</strong>
+      <span id="boardUploadText">客户样板图、旧板照片、织带纹路图</span>
+    </button>
+    <div class="board-param-grid">
+      <div class="field"><label>宽度</label><input id="boardWidth" value="20mm"></div>
+      <div class="field"><label>开力度</label><input id="boardTension" value="中高"></div>
+    </div>
+    <div class="field">
+      <label>织带类型</label>
+      <select id="boardType">
+        <option>平纹织带</option>
+        <option selected>提花织带</option>
+        <option>松紧带</option>
+        <option>包边带</option>
+        <option>尼龙织带</option>
+      </select>
+    </div>
+    <div class="field"><label>颜色 / 要求</label><textarea id="boardQuery">黑色，手感偏软，颜色批次要稳定，可参考上次宽度调整样板。</textarea></div>
+    <div class="actions">
+      <button class="chip primary" id="boardSearchBtn">开始找板</button>
+      <button class="chip" id="boardResetBtn">重填</button>
+    </div>
+    <div id="boardResults"></div>
+  </section>
+
+  <section class="sheet" id="reportFormSheet">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2>录入周报</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="field">
+      <label>本周工作总结</label>
+      <textarea id="weeklySummary">本周完成 12 次客户拜访，重点推进宏远服饰宽度调整样板、锦华辅料价格复核。新增 2 个样板机会，东晨制衣联系人已开始交接。</textarea>
+    </div>
+    <div class="field">
+      <label>下周工作计划</label>
+      <textarea id="weeklyPlan">1. 周三前确认宏远服饰样板反馈；2. 线下拜访锦华辅料并提交新报价；3. 补齐东晨制衣新采购联系方式；4. 跟进盛南服饰中板调整。</textarea>
+    </div>
+    <div class="field">
+      <label>备注事项</label>
+      <textarea id="weeklyNote">锦华辅料对价格敏感，需要主管确认最低报价空间。宏远服饰月底可能有试单机会。</textarea>
+    </div>
+    <div class="field">
+      <label>附件</label>
+      <input id="weeklyFiles" value="报价单.xlsx、样板照片 3 张">
+    </div>
+    <div class="actions">
+      <button class="chip primary" data-toast="周报已提交，并同步到老板端。">提交周报</button>
+      <button class="chip" id="weeklyAiGenerateBtn">AI 生成</button>
+      <button class="chip" data-toast="已保存为草稿。">存草稿</button>
+    </div>
+  </section>
+
+  <section class="sheet" id="reportDetailSheet">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2 id="reportDetailTitle">2026 第 19 周</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="report-block">
+      <span>本周工作总结</span>
+      <p id="reportSummary">完成拜访 14 次，推进宏远、东晨两个重点客户；盛南样板进入中板。</p>
+    </div>
+    <div class="report-block">
+      <span>下周工作计划</span>
+      <p id="reportPlan">继续确认宏远样板反馈，跟进东晨新联系人，推动盛南中板确认。</p>
+    </div>
+    <div class="report-block">
+      <span>备注事项</span>
+      <p id="reportNote">宏远月底可能有试单机会，需要优先协调样板交期。</p>
+    </div>
+    <div class="report-block">
+      <span>附件</span>
+      <div class="attachment-list" id="reportFiles"><span class="attachment">拜访照片 2 张</span><span class="attachment">报价单.xlsx</span></div>
+    </div>
+    <div class="actions">
+      <button class="chip primary" data-open="reportForm">复制为本周模板</button>
+      <button class="chip" data-toast="已同步到老板端历史周报。">同步状态</button>
+    </div>
+  </section>
+
+  <section class="sheet" id="planSheet">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2>新增日程</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="field">
+      <label>日程类型</label>
+      <div class="segmented two" id="eventTypeGroup">
+        <button class="seg active" data-event-type="visit">拜访</button>
+        <button class="seg" data-event-type="custom">自定义</button>
+      </div>
+    </div>
+    <div class="field"><label>标题 / 客户</label><input id="newPlanCustomer" value="锦华辅料 · 陈经理"></div>
+    <div class="field"><label>时间</label><input id="newPlanTime" value="2026-05-14 15:30"></div>
+    <div class="field"><label>内容</label><textarea id="newPlanPurpose">带新报价线下拜访，确认客户对价格复核的意见，并询问下月订单计划。</textarea></div>
+    <div class="actions">
+      <button class="chip primary" id="savePlanBtn">保存到日历</button>
+      <button class="chip" data-toast="AI 建议：下午拜访锦华后，顺路电话跟进东晨制衣。">AI 排程</button>
+    </div>
+  </section>
+
+  <section class="sheet" id="customerSheet">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2>客户 360</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="customer-detail-card">
+      <div class="detail-title">
+        <h3 id="customerName">宏远服饰</h3>
+        <span class="level-pill" id="customerLevel">A 类客户</span>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-field"><span>简称</span><b id="customerShort">宏远</b></div>
+        <div class="detail-field"><span>负责销售</span><b id="customerOwner">张伟</b></div>
+        <div class="detail-field"><span>联系人</span><b id="customerContact">李总 · 总经理</b></div>
+        <div class="detail-field"><span>电话</span><b id="customerPhone">138****6271</b></div>
+        <div class="detail-field full"><span>地址</span><b id="customerAddress">佛山南海区里水镇宏远工业园</b></div>
+      </div>
+      <div class="last-visit-bar">
+        <div><span>最近拜访</span><b id="customerLastDate">2026-04-16</b></div>
+        <div><strong id="customerDays">28</strong><em>天前</em></div>
+      </div>
+    </div>
+    <div class="detail-kpis">
+      <div class="detail-kpi" data-toast="已筛选该客户全部拜访记录。"><strong id="kpiVisits">9</strong><span>拜访次数</span></div>
+      <div class="detail-kpi" data-toast="已打开样板记录，当前为原型演示。"><strong id="kpiSamples">3</strong><span>起板数</span></div>
+      <div class="detail-kpi" data-toast="已打开订单记录，当前为原型演示。"><strong id="kpiOrders">1</strong><span>转单数</span></div>
+      <div class="detail-kpi" data-toast="转化率 = 转单数 / 起板数。"><strong id="kpiRate">33%</strong><span>转化率</span></div>
+    </div>
+    <div class="section-head" style="margin-top:18px;margin-bottom:8px">
+      <h2>拜访时间线</h2>
+      <button data-open="visit">新增</button>
+    </div>
+    <div class="visit-feed" id="customerVisitFeed">
+      <article class="visit-item">
+        <div class="visit-meta"><span>2026-05-14 09:30</span><span class="method-pill">电话</span><span>张伟</span></div>
+        <p>客户认可手感，担心颜色批次稳定性。需本周重新确认宽度，月底可能有运动服试单。</p>
+        <button class="visit-link">点击查看详情 -></button>
+      </article>
+    </div>
+    <div class="actions">
+      <button class="chip primary" data-open="visit">记录拜访</button>
+      <button class="chip" data-open="plan">安排跟进</button>
+      <button class="chip" data-page="ai">问 AI</button>
+    </div>
+  </section>
+
+  <section class="sheet" id="searchSheet">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2>找客户</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="field">
+      <label>客户名 / 联系人 / 地址</label>
+      <input id="customerSearchInput" value="李总">
+    </div>
+    <div id="customerSearchResults"></div>
+  </section>
+
+  <section class="sheet" id="visitDetailSheet">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2>拜访详情</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="customer-detail-card">
+      <div class="detail-title">
+        <h3 id="visitDetailCustomer">宏远服饰</h3>
+        <span class="level-pill" id="visitDetailMethod">电话</span>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-field"><span>拜访时间</span><b id="visitDetailTime">2026-05-14 09:30</b></div>
+        <div class="detail-field"><span>记录人</span><b id="visitDetailOwner">张伟</b></div>
+        <div class="detail-field full"><span>拜访内容</span><b id="visitDetailText">客户认可手感，担心颜色批次稳定性。</b></div>
+        <div class="detail-field full"><span>AI 摘要</span><b id="visitDetailAi">客户认可产品手感，当前主要顾虑是颜色批次稳定性，建议下次带宽度调整样板继续确认。</b></div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="chip primary" data-open="visit">补充记录</button>
+      <button class="chip" data-page="ai">问 AI</button>
+    </div>
+  </section>
+</div>
+
+<script>
+  const $ = (q) => document.querySelector(q);
+  const calendar = $("#calendar");
+  const timeline = $("#timeline");
+  const appScroll = $(".app-scroll");
+  const dateLabel = $("#dateLabel");
+  const planCount = $("#planCount");
+  const riskCount = $("#riskCount");
+  const doneCount = $("#doneCount");
+  const focusTitle = $("#focusTitle");
+  const focusText = $("#focusText");
+  const overlay = $("#overlay");
+  const calendarPanel = $("#calendarPanel");
+  const toast = $("#toast");
+  const toneNames = {
+    warm:"暖纸原色",
+    ocean:"清爽蓝调",
+    forest:"松绿色调",
+    grape:"淡紫色调",
+    graphite:"石墨灰调"
+  };
+  const viewThemeNames = {
+    agenda:"日程优先",
+    calendar:"月历优先"
+  };
+  const appearanceNames = {
+    light:"浅色模式",
+    dark:"深色模式"
+  };
+  let selectedDay = 14;
+  let currentYear = 2026;
+  let currentMonth = 5;
+  let editingEvent = null;
+  let activeCustomerFilter = "all";
+  let calendarTouchStart = null;
+  let agendaStartDate = null;
+  let agendaEndDate = null;
+  let agendaScrollTick = false;
+  let syncingAgendaScroll = false;
+
+  const data = {
+    12: {
+      label:"5 月 12 日 · 周二",
+      counts:[3,1,3],
+      focus:["本日记录完整", "3 次拜访都已生成摘要，东晨制衣需要下周继续确认新联系人。"],
+      events:[
+        ["09:00","done","东晨制衣","B","电话确认新联系人，客户表示下周一给出采购负责人微信。"],
+        ["11:30","done","华美服饰","C","微信跟进报价，客户暂时观望。"],
+        ["16:00","done","宏达箱包","B","线下拜访，确认下月可能有补单。"]
+      ]
+    },
+    14: {
+      label:"5 月 14 日 · 周四",
+      counts:[4,2,1],
+      focus:["先跟进宏远服饰，再去锦华辅料","宏远 A 类客户已 28 天未拜访，且上次提到“宽度调整样板”。建议上午电话确认样板反馈，下午顺路拜访锦华。"],
+      events:[
+        ["09:30","warn","宏远服饰","A","A 类客户 28 天未拜访。上次内容：宽度调整样板，月底可能试单。"],
+        ["11:00","sample","恒嘉箱包","B","中板待确认，客户关注色牢度。建议先发照片再寄样。"],
+        ["14:30","visit","锦华辅料","A","计划线下拜访。上次提到价格复核，需要带新报价。"],
+        ["17:20","done","东晨制衣","B","已完成电话跟进，客户更换联系人，待补充微信。"]
+      ]
+    },
+    15: {
+      label:"5 月 15 日 · 周五",
+      counts:[5,3,0],
+      focus:["明天外访压力较高","5 个动作里有 3 个是超期客户，建议上午集中电话确认，下午只安排 2 家线下。"],
+      events:[
+        ["09:00","warn","锦华辅料","A","31 天未拜访，需确认价格复核意见。"],
+        ["10:30","warn","东晨制衣","A","联系人更换后未正式拜访。"],
+        ["13:40","visit","新联织造","B","计划微信跟进样板需求。"],
+        ["15:00","sample","盛南服饰","B","起样中，需确认宽度和颜色。"],
+        ["16:30","visit","荣兴箱包","C","普通维护。"]
+      ]
+    },
+    18: {
+      label:"5 月 18 日 · 周一",
+      counts:[2,1,0],
+      focus:["周一先处理样板","盛南服饰样板进入中板，建议上午确认调整意见，避免拖到月底。"],
+      events:[
+        ["10:00","sample","盛南服饰","B","中板调整确认。"],
+        ["15:30","visit","宏远服饰","A","计划复盘样板反馈和试单时间。"]
+      ]
+    }
+  };
+  const monthlyData = {
+    "2026-5": data
+  };
+
+  const dayMeta = {
+    3:{types:["sample","done"],count:1,state:"low done"},
+    5:{types:["warn"],count:2,state:"hot"},
+    6:{types:["visit","done"],count:2,state:"low done"},
+    8:{types:["sample"],count:1,state:"mid"},
+    11:{types:["visit","sample"],count:3,state:"mid"},
+    12:{types:["done","visit"],count:3,state:"low done"},
+    14:{types:["warn","sample","done"],count:4,state:"hot today done"},
+    15:{types:["warn","visit","sample"],count:5,state:"hot"},
+    17:{types:["done"],count:1,state:"low done"},
+    18:{types:["sample","visit"],count:2,state:"mid"},
+    21:{types:["warn","visit"],count:3,state:"hot"},
+    23:{types:["sample"],count:1,state:"mid"},
+    24:{types:["done","visit"],count:2,state:"low done"},
+    26:{types:["warn"],count:2,state:"hot"},
+    29:{types:["visit","sample"],count:3,state:"mid"},
+    30:{types:["done","visit"],count:2,state:"low done"}
+  };
+
+  const reports = {
+    w19:{
+      title:"2026 第 19 周",
+      summary:"本周完成拜访 14 次，重点推进宏远服饰样板确认、东晨制衣新联系人交接、盛南服饰中板调整。宏远服饰月底存在试单机会。",
+      plan:"下周重点完成宏远服饰宽度调整样板确认；拜访锦华辅料并提交新报价；补齐东晨制衣新采购联系方式；继续跟进盛南服饰中板。",
+      note:"宏远服饰可能需要加急排样；锦华辅料对价格敏感，需要主管确认最低报价空间。",
+      files:["拜访照片 2 张","报价单.xlsx"]
+    },
+    w18:{
+      title:"2026 第 18 周",
+      summary:"本周新增客户 2 家，完成线下拜访 6 次、电话拜访 5 次。锦华辅料报价复核待下周继续跟进。",
+      plan:"下周优先跟进锦华辅料报价反馈；继续维护宏远服饰样板；安排东晨制衣新联系人拜访。",
+      note:"锦华辅料有价格比较动作，需要提前准备不同规格报价。",
+      files:["样板照片 1 张"]
+    }
+  };
+
+  const customers = {
+    "宏远服饰": {
+      level:"A 类客户", risk:"28 天未拜访", short:"宏远", owner:"张伟", contact:"李总 · 总经理", phone:"138****6271", address:"佛山南海区里水镇宏远工业园",
+      lastDate:"2026-04-16", days:"28", visits:"9", samples:"3", orders:"1", rate:"33%",
+      records:[
+        ["2026-05-14 09:30","电话","张伟","客户认可手感，担心颜色批次稳定性。需本周重新确认宽度，月底可能有运动服试单。"],
+        ["2026-04-16 15:00","线下","张伟","确认宽度调整方向，客户要求先出一版中板再做最终确认。"],
+        ["2026-03-28 10:20","微信","张伟","客户反馈上次样板手感可以，但颜色稳定性需要继续观察。"]
+      ]
+    },
+    "锦华辅料": {
+      level:"A 类客户", risk:"31 天未拜访", short:"锦华", owner:"张伟", contact:"陈经理 · 采购", phone:"139****4118", address:"广州番禺区石基镇锦华工业区",
+      lastDate:"2026-04-13", days:"31", visits:"7", samples:"2", orders:"0", rate:"0%",
+      records:[
+        ["2026-04-13 14:20","微信","张伟","客户反馈报价偏高，希望复核 20mm 黑色织带单价，并询问最快交期。"],
+        ["2026-03-30 11:00","电话","张伟","客户对黑色织带有稳定需求，但希望价格保持季度内不波动。"],
+        ["2026-03-12 16:30","线下","张伟","带样品沟通，客户认可质量，需要内部核价后回复。"]
+      ]
+    },
+    "恒嘉箱包": {
+      level:"B 类客户", risk:"样板中板", short:"恒嘉", owner:"张伟", contact:"王小姐 · 跟单", phone:"136****9082", address:"东莞厚街镇恒嘉箱包园区",
+      lastDate:"2026-05-08", days:"6", visits:"5", samples:"2", orders:"1", rate:"50%",
+      records:[
+        ["2026-05-08 11:00","电话","张伟","客户要求提高色牢度测试标准，确认后可进入下一轮样板。"],
+        ["2026-04-25 13:40","微信","张伟","发送中板照片，客户回复需要实物确认。"]
+      ]
+    },
+    "东晨制衣": {
+      level:"B 类客户", risk:"联系人更换", short:"东晨", owner:"张伟", contact:"新采购待确认", phone:"待补充", address:"中山沙溪镇东晨制衣",
+      lastDate:"2026-05-14", days:"0", visits:"6", samples:"1", orders:"2", rate:"100%",
+      records:[
+        ["2026-05-14 17:20","电话","张伟","原联系人离职，新采购下周确认。已提醒客户补发微信和采购清单。"],
+        ["2026-05-12 09:00","电话","张伟","电话确认新联系人，客户表示下周一给出采购负责人微信。"]
+      ]
+    }
+  };
+  const customerCards = {
+    "宏远服饰": {level:"A", className:"hot", summary:"李总 · 佛山南海 · 28 天未拜访 · 宽度调整样板待确认", tags:["overdue","a","sample"]},
+    "锦华辅料": {level:"A", className:"hot", summary:"陈经理 · 广州番禺 · 31 天未拜访 · 价格复核后需线下拜访", tags:["overdue","a"]},
+    "恒嘉箱包": {level:"B", className:"sample", summary:"王小姐 · 东莞厚街 · 中板待确认，客户关注色牢度", tags:["sample","week"]},
+    "东晨制衣": {level:"B", className:"", summary:"新采购待确认 · 中山沙溪 · 联系人更换后需补微信", tags:["week"]}
+  };
+
+  function renderCustomers(filter = activeCustomerFilter){
+    activeCustomerFilter = filter;
+    const list = $("#customerList");
+    const entries = Object.entries(customerCards).filter(([name, meta]) => filter === "all" || meta.tags.includes(filter));
+    list.innerHTML = entries.length ? entries.map(([name, meta]) => {
+      const c = customers[name];
+      return `
+        <article class="customer-card ${meta.className}" data-customer="${name}">
+          <div class="card-head"><strong>${name}</strong><span class="badge ${meta.level.toLowerCase()}">${meta.level}</span></div>
+          <p>${meta.summary}</p>
+          <div class="subline"><span>拜访 ${c.visits}</span><span>样板 ${c.samples}</span><span>订单 ${c.orders}</span></div>
+        </article>
+      `;
+    }).join("") : `<article class="ai-card"><strong>没有符合条件的客户</strong><p>可以切回全部，或用搜索按客户名、联系人、地址查找。</p></article>`;
+    document.querySelectorAll("[data-customer-filter]").forEach(btn => {
+      btn.classList.toggle("primary", btn.dataset.customerFilter === filter);
+    });
+    bindDynamic();
+  }
+
+  function renderCustomerSearch(){
+    const q = ($("#customerSearchInput")?.value || "").trim();
+    const results = Object.entries(customers).filter(([name,c]) => {
+      const text = `${name} ${c.contact} ${c.address} ${c.risk}`;
+      return !q || text.includes(q);
+    });
+    $("#customerSearchResults").innerHTML = results.length ? results.map(([name,c]) => `
+      <div class="record" style="border-left-color:${c.level.startsWith("A") ? "var(--coral)" : "var(--blue)"}" data-customer="${name}">
+        <strong><span>${name}</span><em>${c.level.slice(0,1)} · ${c.days} 天</em></strong>
+        <p>${c.contact} · ${c.address} · ${c.risk}</p>
+      </div>
+    `).join("") : `<div class="record"><strong><span>没有找到客户</span><em>0</em></strong><p>换个客户名、联系人或地址试试。</p></div>`;
+    bindDynamic();
+  }
+
+  function isAgendaMode(){
+    const phone = document.querySelector(".phone");
+    return phone.classList.contains("calendar-mode") && phone.classList.contains("agenda-theme");
+  }
+
+  function makeLocalDate(year, month, day){
+    return new Date(year, month - 1, day);
+  }
+
+  function normalizeDate(date){
+    return makeLocalDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+  }
+
+  function addDays(date, amount){
+    const next = normalizeDate(date);
+    next.setDate(next.getDate() + amount);
+    return normalizeDate(next);
+  }
+
+  function dateParts(date){
+    return {
+      year:date.getFullYear(),
+      month:date.getMonth() + 1,
+      day:date.getDate()
+    };
+  }
+
+  function dateKey(date){
+    const {year, month, day} = dateParts(date);
+    return `${year}-${month}-${day}`;
+  }
+
+  function getDayItem(year, month, day, create = false){
+    const monthData = create ? ensureMonthData(year, month) : (monthlyData[`${year}-${month}`] || {});
+    return monthData[day] || {
+      label:formatDateLabel(year, month, day),
+      counts:[0,0,0],
+      focus:["这天还没有日程","可以点击右下角新增拜访或自定义事项。"],
+      events:[]
+    };
+  }
+
+  function dayRelation(date){
+    const demoToday = makeLocalDate(2026, 5, 14);
+    const diff = Math.round((normalizeDate(date) - demoToday) / 86400000);
+    if(diff === 0) return "今天";
+    if(diff === -1) return "昨天";
+    if(diff === -2) return "前天";
+    if(diff === 1) return "明天";
+    if(diff === 2) return "后天";
+    return `${date.getFullYear()} 年`;
+  }
+
+  function updateSelectedDayChrome(year, month, day){
+    selectedDay = day;
+    const item = getDayItem(year, month, day);
+    dateLabel.textContent = item.label;
+    if(isAgendaMode()) setAgendaTitle(item.label);
+    planCount.textContent = item.counts[0];
+    riskCount.textContent = item.counts[1];
+    doneCount.textContent = item.counts[2];
+    focusTitle.textContent = item.focus[0];
+    focusText.textContent = item.focus[1];
+  }
+
+  function heat(day){
+    if(currentYear !== 2026 || currentMonth !== 5) return "";
+    const meta = dayMeta[day];
+    return meta ? meta.state : "";
+  }
+
+  const lunarLabels = {
+    1:"十五",2:"十六",3:"十七",4:"十八",5:"十九",6:"二十",7:"廿一",8:"廿二",9:"廿三",10:"廿四",
+    11:"廿五",12:"廿六",13:"廿七",14:"廿八",15:"廿九",16:"三十",17:"四月",18:"初二",19:"初三",20:"初四",
+    21:"初五",22:"初六",23:"初七",24:"初八",25:"初九",26:"初十",27:"十一",28:"十二",29:"十三",30:"十四",31:"十五"
+  };
+  function getCalendarEvents(day){
+    return (monthlyData[`${currentYear}-${currentMonth}`]?.[day]?.events || []).map(([time,type,name]) => [type, `${time} ${name}`]);
+  }
+  function isCustomerEvent(type, name){
+    return ["visit","warn","sample","done","phone","wechat"].includes(type) && !!customers[name];
+  }
+
+  function daysInMonth(year, month){
+    return new Date(year, month, 0).getDate();
+  }
+
+  function ensureMonthData(year = currentYear, month = currentMonth){
+    const key = `${year}-${month}`;
+    if(!monthlyData[key]) monthlyData[key] = {};
+    return monthlyData[key];
+  }
+
+  function formatDateLabel(year, month, day){
+    const dow = "日一二三四五六"[new Date(year, month - 1, day).getDay()];
+    return `${month} 月 ${day} 日 · 周${dow}`;
+  }
+
+  function updateMonthChrome(){
+    $(".month-title").textContent = `${currentYear} 年 ${currentMonth} 月`;
+    $("#screenTitle").innerHTML = `<span class="year">${currentYear} 年</span> <span class="month">${currentMonth} 月</span>`;
+  }
+  function setAgendaTitle(label = formatDateLabel(currentYear, currentMonth, selectedDay)){
+    const [dateText, dowText = ""] = label.split("·").map(item => item.trim());
+    $("#screenTitle").innerHTML = `<span class="year">${dateText.replace(/\s/g,"")}</span> <span class="month">${dowText}</span>`;
+  }
+  function openCalendarPanel(){
+    calendarPanel.classList.add("open");
+    calendarPanel.setAttribute("aria-hidden","false");
+  }
+  function closeCalendarPanel(){
+    calendarPanel.classList.remove("open");
+    calendarPanel.setAttribute("aria-hidden","true");
+  }
+
+  function renderCalendar(selectDayValue = selectedDay, syncTimeline = true){
+    calendar.innerHTML = "";
+    updateMonthChrome();
+    const monthData = ensureMonthData();
+    const firstDow = new Date(currentYear, currentMonth - 1, 1).getDay();
+    const totalDays = daysInMonth(currentYear, currentMonth);
+    const prevTotal = daysInMonth(currentYear, currentMonth - 1 || 12);
+    for(let i=0;i<firstDow;i++){
+      const blank = document.createElement("button");
+      blank.className = "day muted";
+      const day = prevTotal - firstDow + 1 + i;
+      blank.innerHTML = `<div class="day-top"><small>${day}</small><span class="lunar"></span></div>`;
+      calendar.appendChild(blank);
+    }
+    for(let d=1;d<=totalDays;d++){
+      const btn = document.createElement("button");
+      const item = monthData[d];
+      const events = getCalendarEvents(d);
+      btn.className = "day " + heat(d) + (d === selectDayValue ? " active" : "");
+      btn.dataset.day = d;
+      btn.innerHTML = `
+        <div class="day-top"><small>${d}</small><span class="lunar">${lunarLabels[d] || ""}</span></div>
+        <span class="marks"></span>
+        <div class="day-events">
+          ${events.slice(0,3).map(([type,label]) => `<span class="day-event ${type}">${label}</span>`).join("")}
+          ${events.length > 3 ? `<span class="day-event more">+${events.length - 3}</span>` : ""}
+        </div>`;
+      btn.addEventListener("click", () => selectDay(d, btn, true));
+      calendar.appendChild(btn);
+    }
+    const cells = firstDow + totalDays;
+    const nextCells = (Math.ceil(cells / 7) * 7) - cells;
+    for(let d=1;d<=nextCells;d++){
+      const blank = document.createElement("button");
+      blank.className = "day muted";
+      blank.innerHTML = `<div class="day-top"><small>${currentMonth === 12 ? "1月" : currentMonth + 1 + "月"}${d === 1 ? "1日" : d}</small><span class="lunar"></span></div>`;
+      calendar.appendChild(blank);
+    }
+    const selectedBtn = document.querySelector(`.day[data-day="${selectDayValue}"]`) || document.querySelector(".day[data-day='1']");
+    if(selectedBtn){
+      selectedBtn.classList.add("active");
+      if(syncTimeline) selectDay(Number(selectedBtn.dataset.day), selectedBtn, false);
+    }
+  }
+
+  function changeMonth(delta){
+    currentMonth += delta;
+    if(currentMonth < 1){currentMonth = 12; currentYear -= 1;}
+    if(currentMonth > 12){currentMonth = 1; currentYear += 1;}
+    selectedDay = Math.min(selectedDay, daysInMonth(currentYear, currentMonth));
+    renderCalendar(selectedDay, !isAgendaMode());
+  }
+
+  function selectDay(day, btn, closeAfterSelect = false){
+    selectedDay = day;
+    document.querySelectorAll(".day").forEach(d => d.classList.remove("active"));
+    btn.classList.add("active");
+    updateSelectedDayChrome(currentYear, currentMonth, day);
+    if(isAgendaMode()){
+      renderAgendaAroundDate(makeLocalDate(currentYear, currentMonth, day), true);
+      if(closeAfterSelect) closeCalendarPanel();
+      return;
+    }
+    renderSingleDayTimeline(currentYear, currentMonth, day);
+    if(closeAfterSelect) closeCalendarPanel();
+  }
+
+  function eventArticleHTML(year, month, day, item, event, index){
+    const [time,type,name,grade,desc] = event;
+    const dow = (item.label.split("·")[1] || "周四").trim().replace("周", "");
+    const dowEn = {日:"SUN",一:"MON",二:"TUE",三:"WED",四:"THU",五:"FRI",六:"SAT"}[dow] || "TODAY";
+    const customerEvent = isCustomerEvent(type, name);
+    const payload = encodeURIComponent(JSON.stringify({time,type,name,grade,desc,day,index,year,month}));
+    return `
+      <article class="event">
+        <div class="time"><span class="dow">${dowEn}</span><span class="date">${day}</span></div>
+        <div class="event-card ${type}">
+          <div class="event-title">
+            <strong>${name}</strong>
+            ${grade ? `<span class="badge ${grade.toLowerCase()}">${grade}</span>` : ""}
+          </div>
+          <p><span class="event-time">${time}</span>${desc}</p>
+          <div class="actions">
+            ${customerEvent ? `<button class="chip" data-customer="${name}">客户</button><button class="chip" data-plan="${payload}">计划</button><button class="chip" data-edit-event="${payload}">编辑</button>` : `<button class="chip" data-edit-event="${payload}">查看事项</button><button class="chip" data-complete-event="${payload}">完成</button><button class="chip" data-edit-event="${payload}">编辑</button>`}
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function emptyDayArticleHTML(year, month, day, item){
+    const dow = (item.label.split("·")[1] || "周四").trim().replace("周", "");
+    const dowEn = {日:"SUN",一:"MON",二:"TUE",三:"WED",四:"THU",五:"FRI",六:"SAT"}[dow] || "TODAY";
+    return `<article class="event"><div class="time"><span class="dow">${dowEn}</span><span class="date">${day}</span></div><div class="event-card custom"><div class="event-title"><strong>暂无日程</strong></div><p><span class="event-time">--:--</span>点击右下角 + 添加拜访或自定义内容。</p></div></article>`;
+  }
+
+  function renderSingleDayTimeline(year, month, day){
+    const item = getDayItem(year, month, day);
+    timeline.innerHTML = item.events.length
+      ? item.events.map((event, index) => eventArticleHTML(year, month, day, item, event, index)).join("")
+      : emptyDayArticleHTML(year, month, day, item);
+    bindDynamic();
+  }
+
+  function agendaDayHTML(date){
+    const {year, month, day} = dateParts(date);
+    const item = getDayItem(year, month, day);
+    const relation = dayRelation(date);
+    const isToday = dateKey(date) === "2026-5-14";
+    const body = item.events.length
+      ? item.events.map((event, index) => eventArticleHTML(year, month, day, item, event, index)).join("")
+      : emptyDayArticleHTML(year, month, day, item);
+    return `
+      <section class="agenda-day ${isToday ? "today" : ""} ${item.events.length ? "" : "empty"}" data-date-key="${dateKey(date)}">
+        <div class="agenda-day-label">
+          <div class="agenda-day-title"><strong>${formatDateLabel(year, month, day)}</strong><span>${relation}</span></div>
+          <div class="agenda-day-actions">
+            <button data-agenda-add="visit" data-agenda-date="${dateKey(date)}">+ 拜访</button>
+            <button data-agenda-add="custom" data-agenda-date="${dateKey(date)}">+ 计划</button>
+          </div>
+        </div>
+        ${body}
+      </section>
+    `;
+  }
+
+  function renderAgendaAroundDate(centerDate = makeLocalDate(currentYear, currentMonth, selectedDay), scrollToDate = false){
+    const center = normalizeDate(centerDate);
+    agendaStartDate = addDays(center, -30);
+    agendaEndDate = addDays(center, 45);
+    const days = [];
+    for(let cursor = agendaStartDate; cursor <= agendaEndDate; cursor = addDays(cursor, 1)){
+      days.push(agendaDayHTML(cursor));
+    }
+    timeline.innerHTML = days.join("");
+    bindDynamic();
+    if(scrollToDate) scrollAgendaToDate(center);
+  }
+
+  function scrollAgendaToDate(date){
+    const target = timeline.querySelector(`[data-date-key="${dateKey(date)}"]`);
+    if(!target) return;
+    syncingAgendaScroll = true;
+    const top = target.offsetTop + timeline.offsetTop - 74;
+    appScroll.scrollTop = Math.max(0, top);
+    setTimeout(() => {
+      syncingAgendaScroll = false;
+      updateAgendaSelectionFromScroll();
+    }, 80);
+  }
+
+  function appendAgendaDays(amount = 30){
+    if(!agendaEndDate) return;
+    const html = [];
+    let cursor = addDays(agendaEndDate, 1);
+    for(let i = 0; i < amount; i++){
+      html.push(agendaDayHTML(cursor));
+      agendaEndDate = cursor;
+      cursor = addDays(cursor, 1);
+    }
+    timeline.insertAdjacentHTML("beforeend", html.join(""));
+    bindDynamic();
+  }
+
+  function prependAgendaDays(amount = 30){
+    if(!agendaStartDate) return;
+    const oldHeight = appScroll.scrollHeight;
+    const html = [];
+    let cursor = addDays(agendaStartDate, -1);
+    for(let i = 0; i < amount; i++){
+      html.unshift(agendaDayHTML(cursor));
+      agendaStartDate = cursor;
+      cursor = addDays(cursor, -1);
+    }
+    timeline.insertAdjacentHTML("afterbegin", html.join(""));
+    appScroll.scrollTop += appScroll.scrollHeight - oldHeight;
+    bindDynamic();
+  }
+
+  function updateAgendaSelectionFromScroll(){
+    if(!isAgendaMode() || syncingAgendaScroll || !$("#calendarPage").classList.contains("active")) return;
+    const days = [...timeline.querySelectorAll(".agenda-day")];
+    if(!days.length) return;
+    const anchor = document.querySelector(".phone").getBoundingClientRect().top + 220;
+    let active = days[0];
+    for(const day of days){
+      if(day.getBoundingClientRect().top <= anchor) active = day;
+      else break;
+    }
+    const [year, month, day] = active.dataset.dateKey.split("-").map(Number);
+    const monthChanged = currentYear !== year || currentMonth !== month;
+    currentYear = year;
+    currentMonth = month;
+    if(monthChanged) renderCalendar(day, false);
+    updateSelectedDayChrome(year, month, day);
+    document.querySelectorAll(".day").forEach(item => item.classList.remove("active"));
+    document.querySelector(`.day[data-day="${day}"]`)?.classList.add("active");
+    if(appScroll.scrollTop < 360) prependAgendaDays(30);
+    if(appScroll.scrollTop + appScroll.clientHeight > appScroll.scrollHeight - 720) appendAgendaDays(30);
+  }
+
+  function handleAgendaScroll(){
+    if(agendaScrollTick) return;
+    agendaScrollTick = true;
+    requestAnimationFrame(() => {
+      agendaScrollTick = false;
+      updateAgendaSelectionFromScroll();
+    });
+  }
+
+  function refreshCalendarDay(day){
+    const btn = document.querySelector(`.day[data-day="${day}"]`);
+    if(!btn) return;
+    const events = getCalendarEvents(day);
+    const meta = dayMeta[day] || {types:[],count:0,state:""};
+    meta.count = events.length;
+    meta.types = events.map(([type]) => type);
+    btn.querySelector(".day-events").innerHTML = `
+      ${events.slice(0,3).map(([type,label]) => `<span class="day-event ${type}">${label}</span>`).join("")}
+      ${events.length > 3 ? `<span class="day-event more">+${events.length - 3}</span>` : ""}
+    `;
+  }
+
+  function refreshDayAfterEdit(day, year = currentYear, month = currentMonth){
+    const monthData = ensureMonthData(year, month);
+    if(monthData[day]){
+      monthData[day].events.sort((a,b) => a[0].localeCompare(b[0]));
+      const visitCount = monthData[day].events.filter(event => ["visit","warn"].includes(event[1])).length;
+      monthData[day].counts = [monthData[day].events.length, visitCount, monthData[day].events.filter(event => event[1] === "done").length];
+    }
+    if(year === currentYear && month === currentMonth){
+      refreshCalendarDay(day);
+      const btn = document.querySelector(`.day[data-day="${day}"]`);
+      if(btn) selectDay(day, btn);
+    }
+  }
+
+  function saveNewPlan(){
+    const rawCustomer = $("#newPlanCustomer").value.trim() || "未命名客户";
+    const customerName = rawCustomer.split("·")[0].trim();
+    const rawTime = $("#newPlanTime").value.trim();
+    const time = (rawTime.match(/\d{1,2}:\d{2}/) || ["09:00"])[0];
+    const dayMatch = rawTime.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    const targetYear = dayMatch ? Number(dayMatch[1]) : currentYear;
+    const targetMonth = dayMatch ? Number(dayMatch[2]) : currentMonth;
+    const day = dayMatch ? Number(dayMatch[3]) : selectedDay;
+    const purpose = $("#newPlanPurpose").value.trim() || "拜访客户并记录沟通内容。";
+    const activeType = $("#eventTypeGroup .seg.active")?.dataset.eventType || "visit";
+    const grade = customers[customerName]?.level?.slice(0,1) || "";
+    currentYear = targetYear;
+    currentMonth = targetMonth;
+    const targetMonthData = ensureMonthData();
+    if(!targetMonthData[day]){
+      targetMonthData[day] = {
+        label:formatDateLabel(targetYear, targetMonth, day),
+        counts:[0,0,0],
+        focus:["这天已有新的日程","拜访完成后可以补充内容，也可以记录临时工作事项。"],
+        events:[]
+      };
+    }
+    targetMonthData[day].events.push([time,activeType,customerName,grade,purpose]);
+    if(!dayMeta[day]) dayMeta[day] = {types:[],count:0,state:""};
+    renderCalendar(day);
+    refreshDayAfterEdit(day, targetYear, targetMonth);
+    closeSheets();
+    showToast(`已加入 ${targetMonth} 月 ${day} 日 ${time} 的日程。`);
+  }
+
+  function decodeEvent(raw){
+    try {
+      return JSON.parse(decodeURIComponent(raw));
+    } catch {
+      return {day:selectedDay,index:0,time:"09:00",type:"custom",name:"日程",desc:""};
+    }
+  }
+
+  function openEventEdit(raw){
+    const event = decodeEvent(raw);
+    editingEvent = event;
+    $("#editSheetTitle").textContent = event.type === "custom" ? "编辑自定义事项" : "编辑拜访计划";
+    $("#editEventTitle").value = event.name || "";
+    $("#editEventTime").value = `${event.year || currentYear}-${String(event.month || currentMonth).padStart(2,"0")}-${String(event.day || selectedDay).padStart(2,"0")} ${event.time || "09:00"}`;
+    $("#editEventDesc").value = event.desc || "";
+    openSheet("eventEdit");
+  }
+
+  function updateEditingEvent(markDone = false){
+    if(!editingEvent) return;
+    const fromDay = Number(editingEvent.day || selectedDay);
+    const fromYear = Number(editingEvent.year || currentYear);
+    const fromMonth = Number(editingEvent.month || currentMonth);
+    const rawTime = $("#editEventTime").value.trim();
+    const toDayMatch = rawTime.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    const toYear = toDayMatch ? Number(toDayMatch[1]) : fromYear;
+    const toMonth = toDayMatch ? Number(toDayMatch[2]) : fromMonth;
+    const toDay = toDayMatch ? Number(toDayMatch[3]) : fromDay;
+    const time = (rawTime.match(/\d{1,2}:\d{2}/) || [editingEvent.time || "09:00"])[0];
+    const fromData = ensureMonthData(fromYear, fromMonth);
+    const oldEvent = fromData[fromDay]?.events?.[editingEvent.index];
+    if(!oldEvent) return;
+    const type = markDone ? "done" : oldEvent[1];
+    const title = $("#editEventTitle").value.trim() || oldEvent[2] || "未命名日程";
+    const desc = $("#editEventDesc").value.trim() || oldEvent[4] || "";
+    const grade = type === "custom" ? "" : (customers[title]?.level?.slice(0,1) || oldEvent[3] || "");
+    fromData[fromDay].events.splice(editingEvent.index, 1);
+    currentYear = toYear;
+    currentMonth = toMonth;
+    const toData = ensureMonthData(toYear, toMonth);
+    if(!toData[toDay]){
+      toData[toDay] = {
+        label:formatDateLabel(toYear, toMonth, toDay),
+        counts:[0,0,0],
+        focus:["这天已有新的日程","可以继续编辑，也可以在完成拜访后补充内容。"],
+        events:[]
+      };
+    }
+    toData[toDay].events.push([time,type,title,grade,desc]);
+    if(!dayMeta[toDay]) dayMeta[toDay] = {types:[],count:0,state:""};
+    renderCalendar(toDay);
+    refreshDayAfterEdit(fromDay, fromYear, fromMonth);
+    refreshDayAfterEdit(toDay, toYear, toMonth);
+    closeSheets();
+    showToast(markDone ? "已标记完成。" : "已保存修改。");
+  }
+
+  function deleteEditingEvent(){
+    if(!editingEvent) return;
+    const day = Number(editingEvent.day || selectedDay);
+    currentYear = Number(editingEvent.year || currentYear);
+    currentMonth = Number(editingEvent.month || currentMonth);
+    const events = ensureMonthData()[day]?.events;
+    if(!events || !events[editingEvent.index]) return;
+    events.splice(editingEvent.index, 1);
+    renderCalendar(day);
+    refreshDayAfterEdit(day, currentYear, currentMonth);
+    closeSheets();
+    showToast("已删除这条日程。");
+  }
+
+  function selectEventType(type){
+    const nextType = type === "custom" ? "custom" : "visit";
+    document.querySelectorAll("#eventTypeGroup .seg").forEach(item => {
+      item.classList.toggle("active", item.dataset.eventType === nextType);
+    });
+  }
+
+  function nextPlanTimeForDate(year, month, day){
+    const events = (monthlyData[`${year}-${month}`]?.[day]?.events || []).map(event => event[0]).sort();
+    if(!events.length) return "09:00";
+    const last = events[events.length - 1];
+    const [hour, minute] = last.split(":").map(Number);
+    const nextHour = Math.min(18, (hour || 9) + 1);
+    return `${String(nextHour).padStart(2,"0")}:${String(minute || 0).padStart(2,"0")}`;
+  }
+
+  function openPlanForDate(year, month, day, type = "visit"){
+    currentYear = year;
+    currentMonth = month;
+    selectedDay = day;
+    selectEventType(type);
+    const time = nextPlanTimeForDate(year, month, day);
+    $("#newPlanTime").value = `${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")} ${time}`;
+    if(type === "custom"){
+      $("#newPlanCustomer").value = "整理客户计划";
+      $("#newPlanPurpose").value = "补充当天客户跟进计划、报价整理或临时工作事项。";
+    } else {
+      $("#newPlanCustomer").value = "锦华辅料 · 陈经理";
+      $("#newPlanPurpose").value = "安排客户拜访，完成后补充拜访内容并生成 AI 摘要。";
+    }
+    renderCalendar(day, false);
+    updateSelectedDayChrome(year, month, day);
+    openSheet("plan");
+  }
+
+  function openSheet(name){
+    closeCalendarPanel();
+    closeSheets(false);
+    overlay.classList.add("open");
+    if(name === "search") renderCustomerSearch();
+    const sheet = $(`#${name}Sheet`);
+    if(sheet) {
+      sheet.scrollTop = 0;
+      sheet.classList.add("open");
+    }
+  }
+  function openCustomer(name){
+    const c = customers[name] || customers["宏远服饰"];
+    $("#customerLevel").textContent = c.level;
+    $("#customerName").textContent = name in customers ? name : "宏远服饰";
+    $("#customerShort").textContent = c.short;
+    $("#customerOwner").textContent = c.owner;
+    $("#customerPhone").textContent = c.phone;
+    $("#customerLastDate").textContent = c.lastDate;
+    $("#customerDays").textContent = c.days;
+    $("#kpiVisits").textContent = c.visits;
+    $("#kpiSamples").textContent = c.samples;
+    $("#kpiOrders").textContent = c.orders;
+    $("#kpiRate").textContent = c.rate;
+    $("#customerContact").textContent = c.contact;
+    $("#customerAddress").textContent = c.address;
+    $("#customerVisitFeed").innerHTML = c.records.map(([time,method,owner,text], index) => {
+      const contactName = (c.contact || "客户联系人").split(" · ")[0];
+      const position = (c.contact || "客户联系人 · 负责人").split(" · ")[1] || "负责人";
+      const nextDate = index === 0 ? "2026-04-25" : "2026-05-20";
+      return `
+      <article class="visit-item">
+        <div class="visit-meta"><span>${time}</span><span class="method-pill">${method}</span><span>${owner}</span></div>
+        <p>${text}</p>
+        <div class="visit-detail-inline">
+          <div class="visit-detail-grid">
+            <div class="visit-detail-cell"><span>拜访时间</span><b>${time}</b></div>
+            <div class="visit-detail-cell"><span>拜访对象</span><b>${contactName}</b></div>
+            <div class="visit-detail-cell full"><span>对象职位</span><b>${position}</b></div>
+            <div class="visit-detail-cell full"><span>拜访内容</span><b>${text}</b></div>
+            <div class="visit-detail-cell full"><span class="progress-pill">进展良好</span><span class="follow-date">下次跟进：${nextDate}　跟进订单</span></div>
+          </div>
+        </div>
+        <button class="visit-link" data-toggle-visit>点击查看详情 -></button>
+      </article>
+    `}).join("");
+    bindDynamic();
+    openSheet("customer");
+  }
+  function openVisitDetail(raw){
+    let record;
+    try {
+      record = JSON.parse(decodeURIComponent(raw));
+    } catch {
+      record = {customer:"宏远服饰",time:"2026-05-14 09:30",method:"电话",owner:"张伟",text:"客户认可手感，担心颜色批次稳定性。"};
+    }
+    $("#visitDetailCustomer").textContent = record.customer;
+    $("#visitDetailMethod").textContent = record.method;
+    $("#visitDetailTime").textContent = record.time;
+    $("#visitDetailOwner").textContent = record.owner;
+    $("#visitDetailText").textContent = record.text;
+    $("#visitDetailAi").textContent = `AI 摘要：${record.customer} 本次${record.method}沟通重点是${record.text.slice(0,42)}${record.text.length > 42 ? "..." : ""}`;
+    openSheet("visitDetail");
+  }
+  function openReport(key){
+    const report = reports[key] || reports.w19;
+    $("#reportDetailTitle").textContent = report.title;
+    $("#reportSummary").textContent = report.summary;
+    $("#reportPlan").textContent = report.plan;
+    $("#reportNote").textContent = report.note;
+    $("#reportFiles").innerHTML = report.files.map(file => `<span class="attachment">${file}</span>`).join("");
+    openSheet("reportDetail");
+  }
+  function openPlanDetail(raw){
+    const plan = decodeEvent(raw);
+    const methodMap = {warn:"电话", sample:"微信", visit:"线下", done:"电话"};
+    const statusMap = {warn:"建议跟进", sample:"样板跟进", visit:"待拜访", done:"已完成"};
+    $("#planCustomer").textContent = plan.name;
+    $("#planStatus").textContent = statusMap[plan.type] || "待拜访";
+    $("#planTime").textContent = plan.time;
+    $("#planMethod").textContent = methodMap[plan.type] || "线下";
+    $("#planPurpose").textContent = plan.desc;
+    $("#planContext").textContent = customers[plan.name]?.records?.[0]?.[3] || "打开客户详情可查看最近拜访记录和样板订单情况。";
+    $("#planCustomerBtn").dataset.customer = customers[plan.name] ? plan.name : "宏远服饰";
+    openSheet("planDetail");
+  }
+  function closeSheets(hideOverlay = true){
+    document.querySelectorAll(".sheet").forEach(s => s.classList.remove("open"));
+    $("#aiDrawer")?.classList.remove("open");
+    if(hideOverlay) overlay.classList.remove("open");
+  }
+  function showToast(text){
+    toast.textContent = text;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2100);
+  }
+  function applyTone(tone = "warm", notify = false){
+    const nextTone = toneNames[tone] ? tone : "warm";
+    if(nextTone === "warm"){
+      document.documentElement.removeAttribute("data-tone");
+    } else {
+      document.documentElement.dataset.tone = nextTone;
+    }
+    document.querySelectorAll(".tone-option[data-tone]").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.tone === nextTone);
+    });
+    localStorage.setItem("dingwei-sales-tone", nextTone);
+    if(notify) showToast(`已切换为${toneNames[nextTone]}。`);
+  }
+  function applyAppearance(appearance = "light", notify = false){
+    const nextAppearance = appearanceNames[appearance] ? appearance : "light";
+    if(nextAppearance === "light"){
+      document.documentElement.removeAttribute("data-appearance");
+    } else {
+      document.documentElement.dataset.appearance = nextAppearance;
+    }
+    document.querySelectorAll(".theme-option[data-appearance-choice]").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.appearanceChoice === nextAppearance);
+    });
+    localStorage.setItem("dingwei-sales-appearance", nextAppearance);
+    if(notify) showToast(`已切换为${appearanceNames[nextAppearance]}。`);
+  }
+  function applyViewTheme(theme = "agenda", notify = false){
+    const nextTheme = viewThemeNames[theme] ? theme : "agenda";
+    const phone = document.querySelector(".phone");
+    phone.classList.toggle("agenda-theme", nextTheme === "agenda");
+    document.querySelectorAll("[data-view-theme]").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.viewTheme === nextTheme);
+    });
+    closeCalendarPanel();
+    if(phone.classList.contains("calendar-mode")){
+      if(nextTheme === "agenda"){
+        setAgendaTitle();
+        renderAgendaAroundDate(makeLocalDate(currentYear, currentMonth, selectedDay), true);
+      } else {
+        updateMonthChrome();
+        renderSingleDayTimeline(currentYear, currentMonth, selectedDay);
+      }
+    }
+    localStorage.setItem("dingwei-sales-view-theme", nextTheme);
+    if(notify) showToast(`已切换为${viewThemeNames[nextTheme]}主题。`);
+  }
+  function generateWeeklyReport(){
+    $("#weeklySummary").value = "本周围绕 A 类客户和样板推进完成 12 次拜访计划，其中宏远服饰确认宽度调整方向，锦华辅料完成新报价沟通，恒嘉箱包中板进入确认阶段，东晨制衣完成新采购联系人交接。整体客户跟进覆盖了电话、微信和线下拜访，重点客户未出现新的断档。";
+    $("#weeklyPlan").value = "1. 周三前确认宏远服饰宽度调整样板反馈；2. 线下拜访锦华辅料并提交新报价，争取确认下月需求；3. 补齐东晨制衣新采购联系方式并安排首次正式拜访；4. 跟进恒嘉箱包色牢度测试反馈，推动中板确认；5. 对超过 25 天未拜访的 A/B 类客户补充下周计划。";
+    $("#weeklyNote").value = "锦华辅料对价格较敏感，需要主管确认最低报价空间。宏远服饰月底可能有运动服试单机会，样板交期要优先保障。东晨制衣联系人变更后，历史沟通需要在客户详情里补齐。";
+    $("#weeklyFiles").value = "本周拜访摘要.pdf、宏远样板照片 3 张、锦华新报价单.xlsx";
+    openSheet("reportForm");
+    showToast("AI 已根据本周拜访计划和记录生成周报草稿。");
+  }
+  const aiReplies = {
+    customer:[
+      ["user","本周还没拜访的 A 类客户有哪些？"],
+      ["ai","本周建议优先跟进 2 个 A 类客户：宏远服饰 28 天未拜访，宽度调整样板待确认；锦华辅料 31 天未拜访，需要复核新报价。"]
+    ],
+    sample:[
+      ["user","哪些样板还没确认？"],
+      ["ai","当前样板待确认客户：恒嘉箱包中板关注色牢度；宏远服饰宽度调整样板需本周确认；盛南服饰起样中，建议明天微信跟进照片。"]
+    ],
+    weekly:[
+      ["user","根据本周拜访记录生成周报"],
+      ["ai","已整理周报草稿：本周完成 12 次拜访，推进宏远、锦华、恒嘉三个重点事项；下周建议优先处理 A 类客户超期和中板确认。可以在周报页点 AI 草稿继续编辑。"]
+    ],
+    order:[
+      ["user","宏远最近订单和拜访情况？"],
+      ["ai","宏远服饰：拜访 9 次、样板 3 个、转单 1 单，转化率 33%。最近一次记录提到客户认可手感，但担心颜色批次稳定性。"]
+    ]
+  };
+  function renderAiThread(messages = []){
+    $("#aiWelcome").style.display = messages.length ? "none" : "block";
+    $("#aiThread").innerHTML = messages.map(([role,text]) => `<div class="message ${role}">${text}</div>`).join("");
+  }
+  function loadAiHistory(key){
+    renderAiThread(aiReplies[key] || aiReplies.customer);
+    $("#aiDrawer").classList.remove("open");
+    overlay.classList.remove("open");
+  }
+  function sendAiMessage(){
+    const input = $("#aiChatInput");
+    const text = input.value.trim();
+    if(!text) return showToast("先输入你想查询的问题。");
+    const lower = text.toLowerCase();
+    let reply = "我可以按客户、拜访、样板、订单和周报来查。比如：本周未拜访客户、宏远上次说了什么、哪些样板待确认。";
+    if(text.includes("周报")) reply = aiReplies.weekly[1][1];
+    if(text.includes("样板") || text.includes("打样")) reply = aiReplies.sample[1][1];
+    if(text.includes("宏远") || text.includes("订单")) reply = aiReplies.order[1][1];
+    if(text.includes("未拜访") || text.includes("A 类") || lower.includes("a")) reply = aiReplies.customer[1][1];
+    renderAiThread([["user",text],["ai",reply]]);
+    input.value = "";
+  }
+  function runBoardSearch(){
+    const customer = $("#boardCustomer").value.trim() || "客户需求";
+    const query = $("#boardQuery").value.trim() || "织带样板";
+    const width = $("#boardWidth").value.trim() || "未填写";
+    const tension = $("#boardTension").value.trim() || "未填写";
+    const type = $("#boardType").value;
+    $("#boardResults").innerHTML = `
+      <div class="board-result">
+        <strong><span>HY-20-BK-软手感</span><em>92%</em></strong>
+        <p>${customer}：匹配 ${width} ${type}，开力度 ${tension}，${query}。关联记录：宏远服饰 2026-04-16 宽度调整样板。</p>
+      </div>
+      <div class="board-result">
+        <strong><span>JH-18-BK-耐磨款</span><em>84%</em></strong>
+        <p>相似需求来自锦华辅料，颜色稳定性反馈较好，宽度接近，可作为备选板样。</p>
+      </div>
+      <div class="board-result">
+        <strong><span>HJ-20-GR-色牢度款</span><em>78%</em></strong>
+        <p>恒嘉箱包中板记录中关注色牢度，适合需要更高测试标准和图片纹路比对的客户。</p>
+      </div>
+    `;
+    showToast(`已按 ${width} / ${type} / ${tension} 匹配历史板样。`);
+  }
+  function mockBoardUpload(){
+    $("#boardUploadBtn").classList.add("has-image");
+    $("#boardUploadText").textContent = "已添加：客户样板图 IMG_0421.jpg";
+    showToast("图片已加入找板条件。");
+  }
+  function resetBoardSearch(){
+    $("#boardCustomer").value = "";
+    $("#boardWidth").value = "";
+    $("#boardTension").value = "";
+    $("#boardType").value = "平纹织带";
+    $("#boardQuery").value = "";
+    $("#boardResults").innerHTML = "";
+    $("#boardUploadBtn").classList.remove("has-image");
+    $("#boardUploadText").textContent = "客户样板图、旧板照片、织带纹路图";
+  }
+  function switchPage(page){
+    closeCalendarPanel();
+    closeSheets();
+    const pageMap = {
+      calendar:"calendarPage",
+      customers:"customersPage",
+      reports:"reportsPage",
+      ai:"aiPage"
+    };
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    const target = $(`#${pageMap[page] || "calendarPage"}`);
+    if(target) target.classList.add("active");
+    document.querySelectorAll(".nav button").forEach(btn => btn.classList.toggle("active", btn.dataset.page === page));
+    const titles = {
+      calendar:'<span class="year">2026 年</span> <span class="month">5 月</span>',
+      customers:"我的<br>客户",
+      reports:"每周<br>复盘",
+      ai:"问问<br>客户数据"
+    };
+    $("#screenTitle").innerHTML = titles[page] || titles.calendar;
+    document.querySelector(".phone").classList.toggle("compact", page !== "calendar");
+    document.querySelector(".phone").classList.toggle("calendar-mode", page === "calendar");
+    document.querySelector(".fab").style.display = page === "calendar" ? "grid" : "none";
+    if(page === "calendar"){
+      if(document.querySelector(".phone").classList.contains("agenda-theme")){
+        setAgendaTitle();
+        renderAgendaAroundDate(makeLocalDate(currentYear, currentMonth, selectedDay), true);
+      } else {
+        updateMonthChrome();
+        renderSingleDayTimeline(currentYear, currentMonth, selectedDay);
+      }
+    }
+    if(page !== "calendar") appScroll.scrollTop = 0;
+  }
+  function bindDynamic(){
+    document.querySelectorAll("[data-open]").forEach(btn => {
+      btn.onclick = (event) => {
+        event.stopPropagation();
+        openSheet(btn.dataset.open);
+      };
+    });
+    document.querySelectorAll("[data-page]").forEach(btn => {
+      btn.onclick = (event) => {
+        event.stopPropagation();
+        switchPage(btn.dataset.page);
+      };
+    });
+    document.querySelectorAll("[data-toast]").forEach(btn => {
+      btn.onclick = (event) => {
+        event.stopPropagation();
+        showToast(btn.dataset.toast);
+      };
+    });
+    document.querySelectorAll("[data-customer]").forEach(btn => {
+      btn.onclick = (event) => {
+        event.stopPropagation();
+        openCustomer(btn.dataset.customer);
+      };
+    });
+    document.querySelectorAll("[data-report]").forEach(btn => {
+      btn.onclick = (event) => {
+        event.stopPropagation();
+        openReport(btn.dataset.report);
+      };
+    });
+    document.querySelectorAll("[data-customer-filter]").forEach(btn => {
+      btn.onclick = (event) => {
+        event.stopPropagation();
+        renderCustomers(btn.dataset.customerFilter);
+        showToast(`已筛选：${btn.textContent.trim()}`);
+      };
+    });
+    document.querySelectorAll("[data-plan]").forEach(btn => {
+      btn.onclick = (event) => {
+        event.stopPropagation();
+        openPlanDetail(btn.dataset.plan);
+      };
+    });
+    document.querySelectorAll("[data-agenda-add]").forEach(btn => {
+      btn.onclick = (event) => {
+        event.stopPropagation();
+        const [year, month, day] = btn.dataset.agendaDate.split("-").map(Number);
+        openPlanForDate(year, month, day, btn.dataset.agendaAdd);
+      };
+    });
+    document.querySelectorAll("[data-toggle-visit]").forEach(btn => {
+      btn.onclick = (event) => {
+        event.stopPropagation();
+        const item = btn.closest(".visit-item");
+        const expanded = item.classList.toggle("expanded");
+        btn.textContent = expanded ? "收起" : "点击查看详情 ->";
+      };
+    });
+    document.querySelectorAll("[data-edit-event]").forEach(btn => {
+      btn.onclick = (event) => {
+        event.stopPropagation();
+        openEventEdit(btn.dataset.editEvent);
+      };
+    });
+    document.querySelectorAll("[data-complete-event]").forEach(btn => {
+      btn.onclick = (event) => {
+        event.stopPropagation();
+        openEventEdit(btn.dataset.completeEvent);
+        updateEditingEvent(true);
+      };
+    });
+    document.querySelectorAll("[data-ai-history]").forEach(btn => {
+      btn.onclick = (event) => {
+        event.stopPropagation();
+        loadAiHistory(btn.dataset.aiHistory);
+      };
+    });
+  }
+
+  document.querySelectorAll("[data-close]").forEach(btn => btn.addEventListener("click", () => closeSheets()));
+  overlay.addEventListener("click", () => closeSheets());
+  appScroll.addEventListener("scroll", handleAgendaScroll, {passive:true});
+  $("#calendarMenuBtn").addEventListener("click", openCalendarPanel);
+  $("#calendarCloseBtn").addEventListener("click", closeCalendarPanel);
+  calendarPanel.addEventListener("click", (event) => {
+    if(event.target === calendarPanel) closeCalendarPanel();
+  });
+  calendarPanel.addEventListener("touchstart", (event) => {
+    const touch = event.touches[0];
+    calendarTouchStart = {x:touch.clientX,y:touch.clientY};
+  }, {passive:true});
+  calendarPanel.addEventListener("touchend", (event) => {
+    if(!calendarTouchStart) return;
+    const touch = event.changedTouches[0];
+    const dx = touch.clientX - calendarTouchStart.x;
+    const dy = touch.clientY - calendarTouchStart.y;
+    calendarTouchStart = null;
+    if(Math.abs(dx) > 80 && Math.abs(dx) > Math.abs(dy)) closeCalendarPanel();
+  }, {passive:true});
+  $("#prevMonthBtn").addEventListener("click", () => changeMonth(-1));
+  $("#nextMonthBtn").addEventListener("click", () => changeMonth(1));
+  $("#customerSearchInput").addEventListener("input", renderCustomerSearch);
+  $("#aiMenuBtn").addEventListener("click", () => {
+    $("#aiDrawer").classList.add("open");
+    overlay.classList.add("open");
+  });
+  $("#aiNewChatBtn").addEventListener("click", () => openSheet("boardSearch"));
+  $("#aiDrawerNewBtn").addEventListener("click", () => {
+    $("#aiDrawer").classList.remove("open");
+    overlay.classList.remove("open");
+    renderAiThread([]);
+  });
+  $("#aiAttachBtn").addEventListener("click", () => showToast("可以添加拜访照片、报价单或样板图片。"));
+  $("#aiVoiceBtn").addEventListener("click", () => showToast("已准备语音输入。"));
+  $("#aiSendBtn").addEventListener("click", sendAiMessage);
+  $("#aiChatInput").addEventListener("keydown", (event) => {
+    if(event.key === "Enter") sendAiMessage();
+  });
+  $("#toneBtn").addEventListener("click", () => openSheet("tone"));
+  document.querySelectorAll(".theme-option[data-appearance-choice]").forEach(btn => {
+    btn.addEventListener("click", () => applyAppearance(btn.dataset.appearanceChoice, true));
+  });
+  document.querySelectorAll("[data-view-theme]").forEach(btn => {
+    btn.addEventListener("click", () => applyViewTheme(btn.dataset.viewTheme, true));
+  });
+  document.querySelectorAll(".tone-option[data-tone]").forEach(btn => {
+    btn.addEventListener("click", () => applyTone(btn.dataset.tone, true));
+  });
+  $("#boardSearchBtn").addEventListener("click", runBoardSearch);
+  $("#boardUploadBtn").addEventListener("click", mockBoardUpload);
+  $("#boardResetBtn").addEventListener("click", resetBoardSearch);
+  document.querySelectorAll("#eventTypeGroup .seg").forEach(btn => {
+    btn.addEventListener("click", (event) => {
+      event.preventDefault();
+      document.querySelectorAll("#eventTypeGroup .seg").forEach(item => item.classList.remove("active"));
+      btn.classList.add("active");
+      const defaults = {
+        visit:["锦华辅料 · 陈经理","带新报价线下拜访，确认客户对价格复核的意见，并询问下月订单计划。"],
+        custom:["整理报价单","整理本周报价单和客户照片，提交给主管复核。"]
+      };
+      const [title, content] = defaults[btn.dataset.eventType] || defaults.visit;
+      $("#newPlanCustomer").value = title;
+      $("#newPlanPurpose").value = content;
+    });
+  });
+  $("#summarizeBtn").addEventListener("click", () => $("#aiResult").classList.add("show"));
+  $("#askBtn").addEventListener("click", () => showToast("已按客户、拜访、样板记录完成查询。"));
+  $("#weeklyAiGenerateBtn").addEventListener("click", generateWeeklyReport);
+  $("#weeklyAiDraftBtn").addEventListener("click", (event) => {
+    event.stopPropagation();
+    generateWeeklyReport();
+  });
+  $("#savePlanBtn").addEventListener("click", saveNewPlan);
+  $("#updateEventBtn").addEventListener("click", () => updateEditingEvent(false));
+  $("#completeEventBtn").addEventListener("click", () => updateEditingEvent(true));
+  $("#deleteEventBtn").addEventListener("click", deleteEditingEvent);
+  bindDynamic();
+  applyTone(localStorage.getItem("dingwei-sales-tone") || "warm");
+  applyAppearance(localStorage.getItem("dingwei-sales-appearance") || "light");
+  applyViewTheme(localStorage.getItem("dingwei-sales-view-theme") || "agenda");
+  renderCustomers("all");
+  renderCalendar(14);
+</script>
+</body>
+</html>
