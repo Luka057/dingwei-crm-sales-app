@@ -136,6 +136,84 @@
     --neutral:#686d69;
     --shadow:0 22px 60px rgba(18,22,18,.18);
   }
+  html[data-tone="milkfoam"]{
+    --paper:#FAF6F1;
+    --ink:#171412;
+    --muted:#7a7169;
+    --line:#e7ddd2;
+    --coral:#f05e50;
+    --sun:#e9ad39;
+    --mint:#2fae90;
+    --blue:#2f73df;
+    --violet:#7765dc;
+    --soft:#fffdf9;
+    --danger:#cf4038;
+    --body-bg:#25221f;
+    --top:#fffdfa;
+    --panel:#fffdfa;
+    --panel-strong:#fff;
+    --subtle:#f0e9e0;
+    --dark:#171412;
+    --nav-bg:rgba(250,246,241,.92);
+    --active-bg:#f7eadf;
+    --calendar-cell:#fffdfa;
+    --calendar-cell-soft:#f7eadf;
+    --calendar-week-bg:rgba(255,253,249,.7);
+    --neutral:#70675f;
+    --shadow:0 22px 60px rgba(30,24,18,.14);
+  }
+  html[data-tone="vanillalinen"]{
+    --paper:#F2E6D8;
+    --ink:#191411;
+    --muted:#78695d;
+    --line:#dfd0c0;
+    --coral:#ed634f;
+    --sun:#e8af3f;
+    --mint:#35a985;
+    --blue:#3372df;
+    --violet:#7663dc;
+    --soft:#fff8ef;
+    --danger:#ce4036;
+    --body-bg:#2a2420;
+    --top:#fff4e8;
+    --panel:#fff8ef;
+    --panel-strong:#fffdf8;
+    --subtle:#eadccc;
+    --dark:#191411;
+    --nav-bg:rgba(242,230,216,.92);
+    --active-bg:#f4dec8;
+    --calendar-cell:#fff8ef;
+    --calendar-cell-soft:#f4dec8;
+    --calendar-week-bg:rgba(255,248,239,.72);
+    --neutral:#76685e;
+    --shadow:0 22px 60px rgba(42,31,21,.16);
+  }
+  html[data-tone="strawberrymilk"]{
+    --paper:#F6C7CF;
+    --ink:#241417;
+    --muted:#855e67;
+    --line:#e9aeb9;
+    --coral:#df4d63;
+    --sun:#d99f35;
+    --mint:#2f9f83;
+    --blue:#346fdc;
+    --violet:#865bd6;
+    --soft:#fff2f5;
+    --danger:#c8374f;
+    --body-bg:#342328;
+    --top:#ffe7ec;
+    --panel:#fff2f5;
+    --panel-strong:#fffafb;
+    --subtle:#f3d5db;
+    --dark:#241417;
+    --nav-bg:rgba(246,199,207,.92);
+    --active-bg:#f7d6dd;
+    --calendar-cell:#fff2f5;
+    --calendar-cell-soft:#f7d6dd;
+    --calendar-week-bg:rgba(255,242,245,.72);
+    --neutral:#80606a;
+    --shadow:0 22px 60px rgba(67,28,39,.17);
+  }
   html[data-appearance="dark"]{
     color-scheme:dark;
     --paper:#080706;
@@ -222,6 +300,54 @@
     --calendar-cell-soft:#2f3431;
     --calendar-week-bg:rgba(37,39,37,.68);
     --neutral:#a4a8a5;
+  }
+  html[data-appearance="dark"][data-tone="milkfoam"]{
+    --paper:#0b0907;
+    --body-bg:#030302;
+    --top:#12100d;
+    --panel:#1e1a15;
+    --panel-strong:#2c261f;
+    --subtle:#332c24;
+    --line:#3e352b;
+    --muted:#a59c91;
+    --nav-bg:rgba(30,26,21,.88);
+    --active-bg:color-mix(in srgb,#FAF6F1 18%,#1e1a15);
+    --calendar-cell:#1e1a15;
+    --calendar-cell-soft:color-mix(in srgb,#FAF6F1 18%,#2c261f);
+    --calendar-week-bg:rgba(44,38,31,.68);
+    --neutral:#aca399;
+  }
+  html[data-appearance="dark"][data-tone="vanillalinen"]{
+    --paper:#100b07;
+    --body-bg:#050302;
+    --top:#18110b;
+    --panel:#241a12;
+    --panel-strong:#322419;
+    --subtle:#3b2b20;
+    --line:#4b372a;
+    --muted:#ad9d8d;
+    --nav-bg:rgba(36,26,18,.88);
+    --active-bg:color-mix(in srgb,#F2E6D8 17%,#241a12);
+    --calendar-cell:#241a12;
+    --calendar-cell-soft:color-mix(in srgb,#F2E6D8 17%,#322419);
+    --calendar-week-bg:rgba(50,36,25,.68);
+    --neutral:#b0a092;
+  }
+  html[data-appearance="dark"][data-tone="strawberrymilk"]{
+    --paper:#12070a;
+    --body-bg:#050203;
+    --top:#1c0c11;
+    --panel:#2a151b;
+    --panel-strong:#3a2028;
+    --subtle:#452630;
+    --line:#5a313c;
+    --muted:#b99aa2;
+    --nav-bg:rgba(42,21,27,.88);
+    --active-bg:color-mix(in srgb,#F6C7CF 18%,#2a151b);
+    --calendar-cell:#2a151b;
+    --calendar-cell-soft:color-mix(in srgb,#F6C7CF 18%,#3a2028);
+    --calendar-week-bg:rgba(58,32,40,.68);
+    --neutral:#bea1a8;
   }
   :root{
     --glass-active:rgba(255,255,255,.52);
@@ -1261,6 +1387,223 @@
   .visit-detail-cell b{display:block;color:#172033;font-size:14px;line-height:1.45}
   .progress-pill{display:inline-block;background:#fff1dc;color:#c87517;border-radius:6px;padding:4px 8px;font-size:12px;font-weight:900;margin-right:10px}
   .follow-date{color:#647086;font-size:13px;font-weight:800}
+  .metric,
+  .customer-card,
+  .report-card,
+  .ai-card,
+  .customer-detail-card,
+  .ai-board-card,
+  .ai-composer{
+    border-color:var(--line);
+    box-shadow:0 8px 22px color-mix(in srgb,var(--dark) 8%,transparent);
+  }
+  .calendar-mode .event{border-bottom-color:var(--line)}
+  .timeline::before,
+  .visit-feed::before{background:var(--line)}
+  .time,
+  .calendar-mode .event-card p,
+  .event-card p,
+  .customer-card p,
+  .report-card p,
+  .ai-card p,
+  .ai-board-card p,
+  .board-result p,
+  .sheet p,
+  .record p,
+  .subline,
+  .report-date,
+  .field label,
+  .report-block span,
+  .detail-field span,
+  .last-visit-bar span,
+  .last-visit-bar em,
+  .detail-kpi span,
+  .visit-meta,
+  .visit-detail-cell span,
+  .follow-date,
+  .ai-drawer h3{
+    color:var(--muted);
+  }
+  .quick,
+  .ai-model,
+  .chip,
+  .seg,
+  textarea,
+  input,
+  select,
+  .info-row,
+  .record,
+  .report-block,
+  .attachment,
+  .board-result,
+  .board-upload,
+  .theme-option,
+  .tone-option{
+    border-color:var(--line);
+    color:var(--ink);
+  }
+  textarea,
+  input,
+  select,
+  .quick,
+  .ai-profile-pill,
+  .board-result,
+  .record,
+  .info-row,
+  .report-block{
+    background:var(--panel-strong);
+  }
+  .attachment,
+  .level-pill,
+  .last-visit-bar,
+  .visit-detail-inline,
+  .ai-avatar{
+    background:var(--subtle);
+    border-color:var(--line);
+    color:var(--ink);
+  }
+  .detail-field b,
+  .visit-detail-cell b,
+  .report-block p,
+  .visit-item p,
+  .board-upload strong,
+  .theme-option strong,
+  .tone-name{
+    color:var(--ink);
+  }
+  .detail-kpi strong,
+  .last-visit-bar strong,
+  .visit-link{color:var(--blue)}
+  .visit-item::before{background:var(--blue)}
+  .method-pill{
+    background:color-mix(in srgb,var(--blue) 12%,var(--panel-strong));
+    border-color:color-mix(in srgb,var(--blue) 26%,var(--line));
+    color:var(--blue);
+  }
+  .progress-pill{
+    background:color-mix(in srgb,var(--sun) 18%,var(--panel-strong));
+    color:color-mix(in srgb,var(--sun) 70%,var(--ink));
+  }
+  .badge.a{background:color-mix(in srgb,var(--coral) 18%,var(--panel-strong));color:color-mix(in srgb,var(--coral) 76%,var(--ink))}
+  .badge.b{background:color-mix(in srgb,var(--blue) 16%,var(--panel-strong));color:color-mix(in srgb,var(--blue) 78%,var(--ink))}
+  .badge.c{background:color-mix(in srgb,var(--mint) 17%,var(--panel-strong));color:color-mix(in srgb,var(--mint) 72%,var(--ink))}
+  .chip.danger-chip{
+    background:color-mix(in srgb,var(--danger) 10%,var(--panel-strong));
+    color:var(--danger);
+    border-color:color-mix(in srgb,var(--danger) 24%,var(--line));
+  }
+  .focus .label,
+  .customer-hero .meta-line{color:color-mix(in srgb,var(--dark-contrast) 68%,var(--muted))}
+  .focus p,
+  .customer-hero p,
+  .ai-page-box p,
+  .ai-result ul{color:color-mix(in srgb,var(--dark-contrast) 78%,var(--muted))}
+  #customerSheet .customer-detail-card,
+  #visitDetailSheet .customer-detail-card,
+  #planDetailSheet .customer-detail-card{
+    background:linear-gradient(180deg,var(--panel-strong),var(--panel));
+    border-color:color-mix(in srgb,var(--line) 78%,var(--paper));
+  }
+  #customerSheet .detail-title h3,
+  #visitDetailSheet .detail-title h3,
+  #planDetailSheet .detail-title h3{
+    color:var(--ink);
+    font-weight:900;
+    letter-spacing:0;
+  }
+  #customerSheet .detail-field span,
+  #visitDetailSheet .detail-field span,
+  #planDetailSheet .detail-field span{
+    color:color-mix(in srgb,var(--muted) 88%,var(--ink));
+    font-size:11px;
+    letter-spacing:.03em;
+  }
+  #customerSheet .detail-field b,
+  #visitDetailSheet .detail-field b,
+  #planDetailSheet .detail-field b{
+    color:color-mix(in srgb,var(--ink) 94%,var(--coral));
+    font-weight:850;
+  }
+  #customerSheet .level-pill,
+  #visitDetailSheet .level-pill,
+  #planDetailSheet .level-pill{
+    background:color-mix(in srgb,var(--coral) 12%,var(--panel-strong));
+    border-color:color-mix(in srgb,var(--coral) 22%,var(--line));
+    color:color-mix(in srgb,var(--coral) 72%,var(--ink));
+  }
+  #customerSheet .last-visit-bar{
+    background:color-mix(in srgb,var(--active-bg) 62%,var(--panel-strong));
+    border:1px solid color-mix(in srgb,var(--line) 72%,var(--active-bg));
+  }
+  #customerSheet .last-visit-bar b{
+    color:var(--ink);
+    font-weight:900;
+  }
+  #customerSheet .last-visit-bar strong{
+    color:color-mix(in srgb,var(--coral) 70%,var(--ink));
+    font-weight:950;
+  }
+  #customerSheet .detail-kpi{
+    background:color-mix(in srgb,var(--panel-strong) 86%,var(--active-bg));
+    border-color:color-mix(in srgb,var(--line) 74%,var(--active-bg));
+  }
+  #customerSheet .detail-kpi strong{
+    color:color-mix(in srgb,var(--coral) 54%,var(--blue));
+    font-weight:950;
+  }
+  #customerSheet .detail-kpi span{
+    color:var(--muted);
+    letter-spacing:0;
+  }
+  #customerSheet .visit-feed{
+    margin-top:14px;
+    gap:14px;
+  }
+  #customerSheet .visit-feed::before{
+    background:linear-gradient(180deg,var(--line),color-mix(in srgb,var(--line) 35%,transparent));
+  }
+  #customerSheet .visit-item::before{
+    background:var(--panel-strong);
+    border:3px solid color-mix(in srgb,var(--coral) 55%,var(--blue));
+    box-shadow:0 0 0 4px color-mix(in srgb,var(--panel) 82%,transparent);
+  }
+  #customerSheet .visit-meta{
+    color:var(--muted);
+    font-size:12px;
+    font-weight:800;
+  }
+  #customerSheet .method-pill{
+    background:color-mix(in srgb,var(--blue) 10%,var(--panel-strong));
+    border-color:color-mix(in srgb,var(--blue) 20%,var(--line));
+    color:color-mix(in srgb,var(--blue) 72%,var(--ink));
+  }
+  #customerSheet .visit-item p{
+    color:color-mix(in srgb,var(--ink) 88%,var(--muted));
+    line-height:1.62;
+  }
+  #customerSheet .visit-link{
+    color:color-mix(in srgb,var(--coral) 66%,var(--blue));
+  }
+  #customerSheet .visit-detail-inline{
+    background:color-mix(in srgb,var(--panel-strong) 84%,var(--active-bg));
+    border:1px solid color-mix(in srgb,var(--line) 72%,var(--active-bg));
+  }
+  #customerSheet .visit-detail-cell span{
+    color:var(--muted);
+    font-size:11px;
+    font-weight:850;
+  }
+  #customerSheet .visit-detail-cell b{
+    color:var(--ink);
+    font-weight:820;
+  }
+  #customerSheet .progress-pill{
+    background:color-mix(in srgb,var(--mint) 14%,var(--panel-strong));
+    color:color-mix(in srgb,var(--mint) 72%,var(--ink));
+  }
+  #customerSheet .follow-date{
+    color:color-mix(in srgb,var(--muted) 92%,var(--ink));
+  }
   .overlay{
     position:absolute;
     inset:0;
@@ -1465,6 +1808,9 @@
   html[data-appearance="dark"] .tone-option[data-tone="forest"] .tone-dot{background:linear-gradient(135deg,#101d14 0 50%,#2f9f76 50% 100%)}
   html[data-appearance="dark"] .tone-option[data-tone="grape"] .tone-dot{background:linear-gradient(135deg,#1d1326 0 50%,#825ee8 50% 100%)}
   html[data-appearance="dark"] .tone-option[data-tone="graphite"] .tone-dot{background:linear-gradient(135deg,#181a19 0 50%,#8c918d 50% 100%)}
+  html[data-appearance="dark"] .tone-option[data-tone="milkfoam"] .tone-dot{background:linear-gradient(135deg,#1e1a15 0 50%,#FAF6F1 50% 100%)}
+  html[data-appearance="dark"] .tone-option[data-tone="vanillalinen"] .tone-dot{background:linear-gradient(135deg,#241a12 0 50%,#F2E6D8 50% 100%)}
+  html[data-appearance="dark"] .tone-option[data-tone="strawberrymilk"] .tone-dot{background:linear-gradient(135deg,#2a151b 0 50%,#F6C7CF 50% 100%)}
   @media (min-width:769px){
     body{padding:36px 0}
     .phone{border-radius:38px}
@@ -1612,18 +1958,23 @@
       <div class="report-list">
         <article class="report-card pending" data-open="reportForm">
           <div class="card-head"><strong>本周周报</strong><span class="report-date">待提交</span></div>
-          <p>AI 已根据 12 次拜访、2 个样板机会生成草稿，可继续补充备注和附件。</p>
+          <p>AI 已根据 18 次拜访、4 个样板节点和 3 个重点客户机会生成草稿，可继续补充备注和附件。</p>
           <div class="actions"><button class="chip primary" data-open="reportForm">继续填写</button><button class="chip" id="weeklyAiDraftBtn">AI 草稿</button></div>
         </article>
         <article class="report-card" data-report="w19">
           <div class="card-head"><strong>2026 第 19 周</strong><span class="report-date">已提交</span></div>
-          <p>完成拜访 14 次，推进宏远、东晨两个重点客户；盛南样板进入中板。</p>
-          <div class="subline"><span>总结 3 项</span><span>计划 4 项</span><span>附件 2</span></div>
+          <p>完成拜访 18 次，推进宏远、锦华、东晨和华瑞 4 个重点事项；月底转化机会更清晰。</p>
+          <div class="subline"><span>总结 4 项</span><span>计划 5 项</span><span>附件 3</span></div>
         </article>
         <article class="report-card" data-report="w18">
           <div class="card-head"><strong>2026 第 18 周</strong><span class="report-date">已提交</span></div>
-          <p>新增客户 2 家，完成线下拜访 6 次，锦华报价复核待下周继续跟进。</p>
-          <div class="subline"><span>总结 4 项</span><span>计划 3 项</span><span>附件 1</span></div>
+          <p>新增客户 3 家，完成线下拜访 8 次，锦华报价复核和柏盛样卡同步推进。</p>
+          <div class="subline"><span>总结 4 项</span><span>计划 4 项</span><span>附件 2</span></div>
+        </article>
+        <article class="report-card" data-report="w17">
+          <div class="card-head"><strong>2026 第 17 周</strong><span class="report-date">已提交</span></div>
+          <p>节前集中清理客户档案和样板清单，为 5 月节后拜访恢复做铺垫。</p>
+          <div class="subline"><span>总结 3 项</span><span>计划 3 项</span><span>附件 1</span></div>
         </article>
       </div>
     </div>
@@ -1763,6 +2114,15 @@
       <button class="tone-option" data-tone="warm" style="--tone-paper:#f7f4ed;--tone-accent:#ff5a49">
         <span class="tone-dot"></span><span><b class="tone-name">暖纸原色</b></span><span class="tone-check">已选</span>
       </button>
+      <button class="tone-option" data-tone="milkfoam" style="--tone-paper:#FAF6F1;--tone-accent:#d9b8a6">
+        <span class="tone-dot"></span><span><b class="tone-name">奶泡白</b></span><span class="tone-check">已选</span>
+      </button>
+      <button class="tone-option" data-tone="vanillalinen" style="--tone-paper:#F2E6D8;--tone-accent:#d1a57f">
+        <span class="tone-dot"></span><span><b class="tone-name">香草亚麻</b></span><span class="tone-check">已选</span>
+      </button>
+      <button class="tone-option" data-tone="strawberrymilk" style="--tone-paper:#F6C7CF;--tone-accent:#df4d63">
+        <span class="tone-dot"></span><span><b class="tone-name">草莓牛奶</b></span><span class="tone-check">已选</span>
+      </button>
       <button class="tone-option" data-tone="ocean" style="--tone-paper:#eef6fb;--tone-accent:#246fe8">
         <span class="tone-dot"></span><span><b class="tone-name">清爽蓝调</b></span><span class="tone-check">已选</span>
       </button>
@@ -1898,19 +2258,19 @@
     </div>
     <div class="field">
       <label>本周工作总结</label>
-      <textarea id="weeklySummary">本周完成 12 次客户拜访，重点推进宏远服饰宽度调整样板、锦华辅料价格复核。新增 2 个样板机会，东晨制衣联系人已开始交接。</textarea>
+      <textarea id="weeklySummary">本周完成 18 次客户拜访，重点推进宏远服饰宽度调整样板、锦华辅料价格复核、东晨制衣联系人交接和华瑞运动新提花方案。新增 4 个样板推进节点，月底已有 3 个客户存在明确转化窗口。</textarea>
     </div>
     <div class="field">
       <label>下周工作计划</label>
-      <textarea id="weeklyPlan">1. 周三前确认宏远服饰样板反馈；2. 线下拜访锦华辅料并提交新报价；3. 补齐东晨制衣新采购联系方式；4. 跟进盛南服饰中板调整。</textarea>
+      <textarea id="weeklyPlan">1. 周三前确认宏远服饰终版样板反馈；2. 二次拜访锦华辅料并推动 6 月首单；3. 补齐东晨制衣新采购联系方式并安排首次正式拜访；4. 跟进恒嘉箱包色牢度测试和盛南服饰中板颜色调整；5. 对超过 25 天未拜访的 A/B 类客户补齐排程。</textarea>
     </div>
     <div class="field">
       <label>备注事项</label>
-      <textarea id="weeklyNote">锦华辅料对价格敏感，需要主管确认最低报价空间。宏远服饰月底可能有试单机会。</textarea>
+      <textarea id="weeklyNote">锦华辅料对价格敏感，需要主管确认最低报价空间。宏远服饰月底可能有试单机会，样板交期要优先保障。华瑞运动的设计部评审如果再延期，会顺延到 6 月中旬。</textarea>
     </div>
     <div class="field">
       <label>附件</label>
-      <input id="weeklyFiles" value="报价单.xlsx、样板照片 3 张">
+      <input id="weeklyFiles" value="月末报价汇总.xlsx、拜访照片 6 张、宏远样板反馈.pdf">
     </div>
     <div class="actions">
       <button class="chip primary" data-toast="周报已提交，并同步到老板端。">提交周报</button>
@@ -2070,6 +2430,9 @@
   const toast = $("#toast");
   const toneNames = {
     warm:"暖纸原色",
+    milkfoam:"奶泡白",
+    vanillalinen:"香草亚麻",
+    strawberrymilk:"草莓牛奶",
     ocean:"清爽蓝调",
     forest:"松绿色调",
     grape:"淡紫色调",
@@ -2093,16 +2456,74 @@
   let agendaEndDate = null;
   let agendaScrollTick = false;
   let syncingAgendaScroll = false;
+  const agendaInitialPastDays = 10;
+  const agendaInitialFutureDays = 18;
+  const agendaChunkDays = 18;
 
   const data = {
+    3: {
+      label:"5 月 3 日 · 周日",
+      counts:[1,0,1],
+      focus:["假期留痕完整","宏达箱包节前补单已电话确认，后续只需等采购下正式单。"],
+      events:[
+        ["10:00","done","宏达箱包","B","电话确认节前补单数量，客户要求 5 月中旬前排产。"]
+      ]
+    },
+    5: {
+      label:"5 月 5 日 · 周二",
+      counts:[2,2,0],
+      focus:["收假先清超期","两家 A 类客户都超过拜访阈值，先电话摸清本周拜访窗口。"],
+      events:[
+        ["09:20","warn","宏远服饰","A","节后第一次跟进，确认样板是否已经内部评审。"],
+        ["15:10","warn","锦华辅料","A","客户恢复上班，先确认价格复核会议时间。"]
+      ]
+    },
+    6: {
+      label:"5 月 6 日 · 周三",
+      counts:[2,0,1],
+      focus:["节后恢复日常跟进","柏盛箱包有新报价需求，适合顺手安排样卡寄送。"],
+      events:[
+        ["10:00","visit","柏盛箱包","B","微信发送最新报价单，补充 25mm 灰黑配色样卡。"],
+        ["16:40","done","华美服饰","C","报价复盘完成，客户表示暂缓到月底再评估。"]
+      ]
+    },
+    8: {
+      label:"5 月 8 日 · 周五",
+      counts:[1,1,0],
+      focus:["样板优先","恒嘉箱包色牢度反馈是本周最明确的板样节点。"],
+      events:[
+        ["11:00","sample","恒嘉箱包","B","电话确认色牢度测试标准，客户要求下周给出实物样。"]
+      ]
+    },
+    11: {
+      label:"5 月 11 日 · 周一",
+      counts:[3,0,1],
+      focus:["周一拜访排得比较满","东晨联系人交接和华瑞运动新需求都值得继续推进。"],
+      events:[
+        ["09:00","visit","东晨制衣","B","电话确认新采购到岗时间，补齐客户组织架构。"],
+        ["13:30","sample","华瑞运动","A","寄出 25mm 提花运动带样卡，客户要看深灰和荧光橙组合。"],
+        ["16:30","done","新联织造","B","微信确认六月开款节奏，客户表示月底前给图稿。"]
+      ]
+    },
     12: {
       label:"5 月 12 日 · 周二",
       counts:[3,1,3],
-      focus:["本日记录完整", "3 次拜访都已生成摘要，东晨制衣需要下周继续确认新联系人。"],
+      focus:["本日记录完整","3 次拜访都已生成摘要，东晨制衣需要下周继续确认新联系人。"],
       events:[
         ["09:00","done","东晨制衣","B","电话确认新联系人，客户表示下周一给出采购负责人微信。"],
         ["11:30","done","华美服饰","C","微信跟进报价，客户暂时观望。"],
         ["16:00","done","宏达箱包","B","线下拜访，确认下月可能有补单。"]
+      ]
+    },
+    13: {
+      label:"5 月 13 日 · 周三",
+      counts:[4,1,1],
+      focus:["样板和报价并行","上午适合追宏远样板，下午可处理瑞成辅料和凯越服饰。"],
+      events:[
+        ["08:50","visit","凯越服饰","B","电话确认母带颜色，客户准备下周内部选款。"],
+        ["10:20","sample","宏远服饰","A","宽度调整样板已寄出，等待李总内部评估。"],
+        ["14:00","visit","瑞成辅料","B","线下带报价拜访，客户关注交期稳定性。"],
+        ["17:10","done","柏盛箱包","B","补发报价明细和样卡，客户反馈颜色方向可以。"]
       ]
     },
     14: {
@@ -2122,10 +2543,18 @@
       focus:["明天外访压力较高","5 个动作里有 3 个是超期客户，建议上午集中电话确认，下午只安排 2 家线下。"],
       events:[
         ["09:00","warn","锦华辅料","A","31 天未拜访，需确认价格复核意见。"],
-        ["10:30","warn","东晨制衣","A","联系人更换后未正式拜访。"],
-        ["13:40","visit","新联织造","B","计划微信跟进样板需求。"],
+        ["10:30","warn","东晨制衣","B","联系人更换后未正式拜访，需要补充新采购微信。"],
+        ["13:40","visit","新联织造","B","计划微信跟进样板需求和图稿进度。"],
         ["15:00","sample","盛南服饰","B","起样中，需确认宽度和颜色。"],
-        ["16:30","visit","荣兴箱包","C","普通维护。"]
+        ["16:30","visit","荣兴箱包","C","普通维护，确认下季度是否有补单。"]
+      ]
+    },
+    17: {
+      label:"5 月 17 日 · 周日",
+      counts:[1,0,1],
+      focus:["周末轻维护","适合整理照片和补录本周客户口径。"],
+      events:[
+        ["18:30","done","整理客户计划","","补录宏远、锦华、恒嘉三家本周重点纪要，更新周报素材。"]
       ]
     },
     18: {
@@ -2136,45 +2565,172 @@
         ["10:00","sample","盛南服饰","B","中板调整确认。"],
         ["15:30","visit","宏远服饰","A","计划复盘样板反馈和试单时间。"]
       ]
+    },
+    19: {
+      label:"5 月 19 日 · 周二",
+      counts:[3,0,1],
+      focus:["拜访密度均衡","上午华瑞和瑞成适合电话快跟，下午去凯越更顺路。"],
+      events:[
+        ["09:10","visit","华瑞运动","A","确认运动带提花效果，客户希望增加反光丝方案。"],
+        ["11:20","visit","瑞成辅料","B","电话确认新报价收悉，客户周四回复。"],
+        ["15:40","done","凯越服饰","B","已完成线下沟通，客户确定先开 2 个颜色试样。"]
+      ]
+    },
+    21: {
+      label:"5 月 21 日 · 周四",
+      counts:[3,2,0],
+      focus:["A 类客户要收口","宏远与华瑞都在关键节点，建议当天务必形成明确下一步。"],
+      events:[
+        ["09:00","warn","华瑞运动","A","寄出样卡后仍未收到正式反馈，建议电话催确认。"],
+        ["11:30","visit","柏盛箱包","B","带样卡和价格表复盘，争取锁定 6 月需求。"],
+        ["16:00","warn","宏远服饰","A","样板评审未回，需确认月底试单是否继续推进。"]
+      ]
+    },
+    23: {
+      label:"5 月 23 日 · 周六",
+      counts:[1,0,0],
+      focus:["周末留个口子处理板样","适合把恒嘉和盛南的样板状态补齐。"],
+      events:[
+        ["14:10","sample","恒嘉箱包","B","补传色牢度测试照片，等待客户确认是否转终板。"]
+      ]
+    },
+    24: {
+      label:"5 月 24 日 · 周日",
+      counts:[2,0,1],
+      focus:["周末整理和收尾","可把下周一的重点客户排程提前锁住。"],
+      events:[
+        ["10:30","visit","整理客户计划","","整理 A/B 类客户下周拜访顺序和路线。"],
+        ["18:00","done","本周拜访复盘","","补齐照片、摘要和样板备注，给周报生成做准备。"]
+      ]
+    },
+    26: {
+      label:"5 月 26 日 · 周二",
+      counts:[2,2,0],
+      focus:["月底前最后一轮预警","锦华和华瑞都要在本周给出更明确的口径。"],
+      events:[
+        ["09:20","warn","锦华辅料","A","价格复核已发一周，需确认采购会议结论。"],
+        ["15:00","warn","华瑞运动","A","反光丝方案待确认，月底不跟就会延到 6 月。"]
+      ]
+    },
+    27: {
+      label:"5 月 27 日 · 周三",
+      counts:[3,0,1],
+      focus:["适合追订单口子","荣兴和宏达都偏维护型，但能顺手问补单计划。"],
+      events:[
+        ["09:00","visit","荣兴箱包","C","电话维护，确认夏季补单是否有 20mm 灰色带需求。"],
+        ["11:40","visit","宏达箱包","B","跟进月中补单排产，确认交期表述。"],
+        ["16:20","done","瑞成辅料","B","已收客户反馈，6 月初安排第一次下样。"]
+      ]
+    },
+    29: {
+      label:"5 月 29 日 · 周五",
+      counts:[3,1,0],
+      focus:["月底清口径","把所有样板和报价状态整理清楚，方便周报和老板端同步。"],
+      events:[
+        ["09:30","visit","东晨制衣","B","完成新采购首次正式沟通，客户会补采购清单。"],
+        ["13:30","sample","盛南服饰","B","中板照片确认，客户要求再调一个深蓝色。"],
+        ["16:40","visit","锦华辅料","A","线下带最终报价，争取 6 月下第一单。"]
+      ]
+    },
+    30: {
+      label:"5 月 30 日 · 周六",
+      counts:[2,0,2],
+      focus:["月底复盘完成度高","建议用这天把所有关键客户的 AI 摘要和附件都补齐。"],
+      events:[
+        ["10:00","done","本月客户复盘","","整理 5 月客户拜访摘要、样板推进和订单机会。"],
+        ["15:20","done","周报附件整理","","汇总报价单、拜访照片和样板反馈截图。"]
+      ]
     }
   };
   const monthlyData = {
-    "2026-5": data
+    "2026-4": {
+      25:{
+        label:"4 月 25 日 · 周六",
+        counts:[2,0,1],
+        focus:["月底前的样板线索","恒嘉和柏盛都在等样卡回传。"],
+        events:[
+          ["10:40","sample","恒嘉箱包","B","发送中板照片，客户回复需要实物确认。"],
+          ["16:20","done","柏盛箱包","B","报价发送完成，客户进入内部评审。"]
+        ]
+      },
+      28:{
+        label:"4 月 28 日 · 周二",
+        counts:[3,1,1],
+        focus:["节前最后一轮跟进","宏远和锦华都要抢在放假前留口径。"],
+        events:[
+          ["09:10","warn","宏远服饰","A","节前确认样板评审安排，避免五一后继续滞后。"],
+          ["11:00","visit","凯越服饰","B","线下确认新一季带样风格。"],
+          ["16:50","done","锦华辅料","A","报价文件重发并确认节后第一周沟通。"]
+        ]
+      }
+    },
+    "2026-5": data,
+    "2026-6": {
+      2:{
+        label:"6 月 2 日 · 周二",
+        counts:[3,1,0],
+        focus:["新月开局先收样板","宏远和华瑞都适合在这一周形成明确转化判断。"],
+        events:[
+          ["09:30","visit","宏远服饰","A","确认试单时间和宽度终版。"],
+          ["11:30","sample","华瑞运动","A","反光丝版本回样，客户安排设计部评审。"],
+          ["15:40","visit","东晨制衣","B","首次正式拜访新采购，补齐需求清单。"]
+        ]
+      },
+      5:{
+        label:"6 月 5 日 · 周五",
+        counts:[2,0,1],
+        focus:["周末前适合锁结果","锦华若能确认价格区间，就能顺势推进首单。"],
+        events:[
+          ["10:00","visit","锦华辅料","A","追踪最终报价反馈，争取确认首单规格。"],
+          ["17:00","done","周报素材整理","","汇总 6 月首周客户推进结果和样板转化。"]
+        ]
+      }
+    }
   };
 
   const dayMeta = {
-    3:{types:["sample","done"],count:1,state:"low done"},
-    5:{types:["warn"],count:2,state:"hot"},
+    3:{types:["done"],count:1,state:"low done"},
+    5:{types:["warn","warn"],count:2,state:"hot"},
     6:{types:["visit","done"],count:2,state:"low done"},
     8:{types:["sample"],count:1,state:"mid"},
-    11:{types:["visit","sample"],count:3,state:"mid"},
-    12:{types:["done","visit"],count:3,state:"low done"},
-    14:{types:["warn","sample","done"],count:4,state:"hot today done"},
-    15:{types:["warn","visit","sample"],count:5,state:"hot"},
+    11:{types:["visit","sample","done"],count:3,state:"mid"},
+    12:{types:["done","done","done"],count:3,state:"low done"},
+    13:{types:["visit","sample","visit","done"],count:4,state:"mid"},
+    14:{types:["warn","sample","visit","done"],count:4,state:"hot today done"},
+    15:{types:["warn","warn","visit","sample","visit"],count:5,state:"hot"},
     17:{types:["done"],count:1,state:"low done"},
     18:{types:["sample","visit"],count:2,state:"mid"},
-    21:{types:["warn","visit"],count:3,state:"hot"},
+    19:{types:["visit","visit","done"],count:3,state:"low done"},
+    21:{types:["warn","visit","warn"],count:3,state:"hot"},
     23:{types:["sample"],count:1,state:"mid"},
-    24:{types:["done","visit"],count:2,state:"low done"},
-    26:{types:["warn"],count:2,state:"hot"},
-    29:{types:["visit","sample"],count:3,state:"mid"},
-    30:{types:["done","visit"],count:2,state:"low done"}
+    24:{types:["visit","done"],count:2,state:"low done"},
+    26:{types:["warn","warn"],count:2,state:"hot"},
+    27:{types:["visit","visit","done"],count:3,state:"low done"},
+    29:{types:["visit","sample","visit"],count:3,state:"mid"},
+    30:{types:["done","done"],count:2,state:"low done"}
   };
 
   const reports = {
     w19:{
       title:"2026 第 19 周",
-      summary:"本周完成拜访 14 次，重点推进宏远服饰样板确认、东晨制衣新联系人交接、盛南服饰中板调整。宏远服饰月底存在试单机会。",
-      plan:"下周重点完成宏远服饰宽度调整样板确认；拜访锦华辅料并提交新报价；补齐东晨制衣新采购联系方式；继续跟进盛南服饰中板。",
-      note:"宏远服饰可能需要加急排样；锦华辅料对价格敏感，需要主管确认最低报价空间。",
-      files:["拜访照片 2 张","报价单.xlsx"]
+      summary:"本周完成拜访 18 次，其中线下 7 次、电话 6 次、微信 5 次。重点推进宏远服饰宽度调整样板、锦华辅料价格复核、东晨制衣联系人交接、华瑞运动新提花方案。月末已有 3 个客户存在明确转化窗口。",
+      plan:"下周重点完成宏远服饰终版样板确认；二次拜访锦华辅料争取锁定 6 月首单；补齐东晨制衣新采购资料并安排首次正式拜访；跟进恒嘉箱包色牢度测试和盛南服饰中板颜色调整；对超过 25 天未拜访的 A/B 类客户补齐排程。",
+      note:"宏远服饰样板交期要优先保障；锦华辅料对价格非常敏感，需要主管确认最低让利空间；华瑞运动若本周不给方案反馈，设计部评审会顺延到 6 月中旬。",
+      files:["拜访照片 6 张","月末报价汇总.xlsx","宏远样板反馈.pdf"]
     },
     w18:{
       title:"2026 第 18 周",
-      summary:"本周新增客户 2 家，完成线下拜访 6 次、电话拜访 5 次。锦华辅料报价复核待下周继续跟进。",
-      plan:"下周优先跟进锦华辅料报价反馈；继续维护宏远服饰样板；安排东晨制衣新联系人拜访。",
-      note:"锦华辅料有价格比较动作，需要提前准备不同规格报价。",
-      files:["样板照片 1 张"]
+      summary:"本周新增客户 3 家，完成线下拜访 8 次、电话拜访 6 次。锦华辅料报价复核进入采购内部评估，柏盛箱包和瑞成辅料都形成了初步样卡需求。",
+      plan:"下周优先跟进锦华辅料报价反馈；继续维护宏远服饰样板进度；安排东晨制衣新联系人拜访；给华瑞运动寄出运动带提花样卡；补录柏盛箱包和瑞成辅料客户档案。",
+      note:"客户层级在本周有重新整理，A/B/C 拜访频率要继续校正。锦华辅料价格比较动作明显，需要提前准备两个规格报价口径。",
+      files:["样板照片 3 张","新增客户表.xlsx"]
+    },
+    w17:{
+      title:"2026 第 17 周",
+      summary:"节前主要完成客户档案梳理、样板清单清点和一轮电话回访。宏远服饰与恒嘉箱包两条样板线索继续保留，凯越服饰和柏盛箱包进入意向观察阶段。",
+      plan:"五一后先清超期客户，再集中推进宏远、锦华两家 A 类客户；同步补齐客户联系人和地址字段，保证后续 AI 查询结果更完整。",
+      note:"节前客户回复速度偏慢，记录中有几条微信纪要需要节后补录成正式拜访记录。",
+      files:["节前回访清单.xlsx"]
     }
   };
 
@@ -2184,6 +2740,7 @@
       lastDate:"2026-04-16", days:"28", visits:"9", samples:"3", orders:"1", rate:"33%",
       records:[
         ["2026-05-14 09:30","电话","张伟","客户认可手感，担心颜色批次稳定性。需本周重新确认宽度，月底可能有运动服试单。"],
+        ["2026-05-13 10:20","微信","张伟","宽度调整样板已寄出，李总会在周会后给出内部评审意见。"],
         ["2026-04-16 15:00","线下","张伟","确认宽度调整方向，客户要求先出一版中板再做最终确认。"],
         ["2026-03-28 10:20","微信","张伟","客户反馈上次样板手感可以，但颜色稳定性需要继续观察。"]
       ]
@@ -2192,15 +2749,26 @@
       level:"A 类客户", risk:"31 天未拜访", short:"锦华", owner:"张伟", contact:"陈经理 · 采购", phone:"139****4118", address:"广州番禺区石基镇锦华工业区",
       lastDate:"2026-04-13", days:"31", visits:"7", samples:"2", orders:"0", rate:"0%",
       records:[
+        ["2026-05-14 14:30","线下","张伟","带新报价到厂沟通，客户要求把 20mm 和 25mm 两个规格再拆开比较。"],
         ["2026-04-13 14:20","微信","张伟","客户反馈报价偏高，希望复核 20mm 黑色织带单价，并询问最快交期。"],
         ["2026-03-30 11:00","电话","张伟","客户对黑色织带有稳定需求，但希望价格保持季度内不波动。"],
         ["2026-03-12 16:30","线下","张伟","带样品沟通，客户认可质量，需要内部核价后回复。"]
+      ]
+    },
+    "华瑞运动": {
+      level:"A 类客户", risk:"样卡评审中", short:"华瑞", owner:"张伟", contact:"周总 · 产品经理", phone:"137****1012", address:"深圳龙岗区华瑞运动研发中心",
+      lastDate:"2026-05-11", days:"3", visits:"4", samples:"2", orders:"0", rate:"0%",
+      records:[
+        ["2026-05-19 09:10","电话","张伟","客户希望在运动带方案里加入反光丝，设计部本周内评审。"],
+        ["2026-05-11 13:30","微信","张伟","寄出 25mm 提花运动带样卡，客户重点看深灰和荧光橙组合。"],
+        ["2026-04-29 16:10","线下","张伟","第一次接触，确认夏季运动服新系列有带样需求。"]
       ]
     },
     "恒嘉箱包": {
       level:"B 类客户", risk:"样板中板", short:"恒嘉", owner:"张伟", contact:"王小姐 · 跟单", phone:"136****9082", address:"东莞厚街镇恒嘉箱包园区",
       lastDate:"2026-05-08", days:"6", visits:"5", samples:"2", orders:"1", rate:"50%",
       records:[
+        ["2026-05-14 11:00","电话","张伟","客户要求先发测试照片再寄中板，色牢度是当前唯一顾虑。"],
         ["2026-05-08 11:00","电话","张伟","客户要求提高色牢度测试标准，确认后可进入下一轮样板。"],
         ["2026-04-25 13:40","微信","张伟","发送中板照片，客户回复需要实物确认。"]
       ]
@@ -2210,15 +2778,95 @@
       lastDate:"2026-05-14", days:"0", visits:"6", samples:"1", orders:"2", rate:"100%",
       records:[
         ["2026-05-14 17:20","电话","张伟","原联系人离职，新采购下周确认。已提醒客户补发微信和采购清单。"],
-        ["2026-05-12 09:00","电话","张伟","电话确认新联系人，客户表示下周一给出采购负责人微信。"]
+        ["2026-05-12 09:00","电话","张伟","电话确认新联系人，客户表示下周一给出采购负责人微信。"],
+        ["2026-04-22 15:40","线下","张伟","客户对上次供货反馈稳定，若联系人交接顺利会继续追加订单。"]
+      ]
+    },
+    "盛南服饰": {
+      level:"B 类客户", risk:"起样中", short:"盛南", owner:"张伟", contact:"刘主管 · 开发", phone:"135****3320", address:"广州海珠区盛南服饰打样中心",
+      lastDate:"2026-05-15", days:"0", visits:"5", samples:"3", orders:"1", rate:"33%",
+      records:[
+        ["2026-05-18 10:00","微信","张伟","中板颜色需要再调一个深蓝色，客户回复下周继续确认。"],
+        ["2026-05-15 15:00","电话","张伟","起样中，需确认宽度和颜色，客户优先看深蓝和黑色。"],
+        ["2026-05-02 11:30","线下","张伟","客户确定先走小批量样板，月底前决定是否转订单。"]
+      ]
+    },
+    "新联织造": {
+      level:"B 类客户", risk:"图稿待出", short:"新联", owner:"张伟", contact:"许经理 · 业务", phone:"134****8861", address:"惠州博罗县新联织造厂",
+      lastDate:"2026-05-11", days:"3", visits:"4", samples:"1", orders:"0", rate:"0%",
+      records:[
+        ["2026-05-15 13:40","微信","张伟","客户预计月底前给图稿，想先确认价格区间和打样周期。"],
+        ["2026-05-11 16:30","微信","张伟","六月开款节奏确认，客户表示月底前给图稿。"],
+        ["2026-04-21 10:00","电话","张伟","初步确认会有 2 款织带开发需求。"]
+      ]
+    },
+    "瑞成辅料": {
+      level:"B 类客户", risk:"报价待回", short:"瑞成", owner:"张伟", contact:"黄小姐 · 采购", phone:"133****7206", address:"广州增城区瑞成辅料市场",
+      lastDate:"2026-05-19", days:"1", visits:"3", samples:"1", orders:"0", rate:"0%",
+      records:[
+        ["2026-05-19 11:20","电话","张伟","客户已收新报价，周四前给内部评估结果。"],
+        ["2026-05-13 14:00","线下","张伟","客户关注交期稳定性，希望先看灰黑系样卡。"],
+        ["2026-04-27 15:20","微信","张伟","首次收到需求，想找替代现有供应商的平纹织带。"]
+      ]
+    },
+    "凯越服饰": {
+      level:"B 类客户", risk:"试样待开", short:"凯越", owner:"张伟", contact:"马经理 · 开发", phone:"137****2290", address:"佛山禅城区凯越服饰工作室",
+      lastDate:"2026-05-19", days:"1", visits:"4", samples:"2", orders:"0", rate:"0%",
+      records:[
+        ["2026-05-19 15:40","线下","张伟","客户确认先开 2 个颜色试样，月底前给终版意见。"],
+        ["2026-05-13 08:50","电话","张伟","确认母带颜色方向，客户计划下周内部选款。"],
+        ["2026-04-28 11:00","线下","张伟","第一次带样沟通，客户对手感要求较高。"]
+      ]
+    },
+    "柏盛箱包": {
+      level:"B 类客户", risk:"报价与样卡跟进", short:"柏盛", owner:"张伟", contact:"宋小姐 · 跟单", phone:"136****1187", address:"东莞常平镇柏盛箱包园",
+      lastDate:"2026-05-13", days:"1", visits:"4", samples:"1", orders:"0", rate:"0%",
+      records:[
+        ["2026-05-13 17:10","微信","张伟","补发报价明细和样卡，客户反馈颜色方向可以。"],
+        ["2026-05-06 10:00","微信","张伟","发送最新报价单，补充 25mm 灰黑配色样卡。"],
+        ["2026-04-25 16:20","电话","张伟","客户表示节后会统一评审新供应商。"]
+      ]
+    },
+    "宏达箱包": {
+      level:"B 类客户", risk:"补单确认中", short:"宏达", owner:"张伟", contact:"吴总 · 采购", phone:"138****9054", address:"江门蓬江区宏达箱包厂",
+      lastDate:"2026-05-12", days:"2", visits:"5", samples:"1", orders:"2", rate:"200%",
+      records:[
+        ["2026-05-12 16:00","线下","张伟","确认下月可能有补单，客户主要关心交期和颜色稳定。"],
+        ["2026-05-03 10:00","电话","张伟","节前补单数量初步确定，等待正式采购单。"],
+        ["2026-04-17 14:20","微信","张伟","上批货质量反馈正常，五月有二次补单机会。"]
+      ]
+    },
+    "华美服饰": {
+      level:"C 类客户", risk:"报价观望", short:"华美", owner:"张伟", contact:"张小姐 · 采购", phone:"135****4781", address:"中山小榄镇华美服饰厂",
+      lastDate:"2026-05-12", days:"2", visits:"3", samples:"0", orders:"0", rate:"0%",
+      records:[
+        ["2026-05-12 11:30","微信","张伟","客户暂时观望，预计月底再看新系列辅料预算。"],
+        ["2026-05-06 16:40","电话","张伟","报价复盘完成，客户暂无新增需求。"]
+      ]
+    },
+    "荣兴箱包": {
+      level:"C 类客户", risk:"普通维护", short:"荣兴", owner:"张伟", contact:"何先生 · 业务", phone:"134****1570", address:"清远清城区荣兴箱包厂",
+      lastDate:"2026-05-15", days:"0", visits:"2", samples:"0", orders:"1", rate:"0%",
+      records:[
+        ["2026-05-27 09:00","电话","张伟","确认夏季补单窗口，客户表示仍以维护为主。"],
+        ["2026-05-15 16:30","电话","张伟","普通维护，确认下季度是否有补单。"]
       ]
     }
   };
   const customerCards = {
     "宏远服饰": {level:"A", className:"hot", summary:"李总 · 佛山南海 · 28 天未拜访 · 宽度调整样板待确认", tags:["overdue","a","sample"]},
     "锦华辅料": {level:"A", className:"hot", summary:"陈经理 · 广州番禺 · 31 天未拜访 · 价格复核后需线下拜访", tags:["overdue","a"]},
+    "华瑞运动": {level:"A", className:"sample", summary:"周总 · 深圳龙岗 · 新运动带方案评审中 · 反光丝版本待确认", tags:["a","sample","week"]},
     "恒嘉箱包": {level:"B", className:"sample", summary:"王小姐 · 东莞厚街 · 中板待确认，客户关注色牢度", tags:["sample","week"]},
-    "东晨制衣": {level:"B", className:"", summary:"新采购待确认 · 中山沙溪 · 联系人更换后需补微信", tags:["week"]}
+    "东晨制衣": {level:"B", className:"", summary:"新采购待确认 · 中山沙溪 · 联系人更换后需补微信", tags:["week"]},
+    "盛南服饰": {level:"B", className:"sample", summary:"刘主管 · 广州海珠 · 起样中，深蓝中板待调整", tags:["sample","week"]},
+    "新联织造": {level:"B", className:"", summary:"许经理 · 惠州博罗 · 图稿待出，月底前确认打样", tags:["week"]},
+    "瑞成辅料": {level:"B", className:"", summary:"黄小姐 · 广州增城 · 报价待回，交期稳定性是重点", tags:["week"]},
+    "凯越服饰": {level:"B", className:"", summary:"马经理 · 佛山禅城 · 两个颜色试样待开", tags:["week"]},
+    "柏盛箱包": {level:"B", className:"", summary:"宋小姐 · 东莞常平 · 报价与样卡已发，等内部评审", tags:["week"]},
+    "宏达箱包": {level:"B", className:"", summary:"吴总 · 江门蓬江 · 月中补单确认中", tags:["week"]},
+    "华美服饰": {level:"C", className:"", summary:"张小姐 · 中山小榄 · 报价观望中", tags:[]},
+    "荣兴箱包": {level:"C", className:"", summary:"何先生 · 清远清城 · 日常维护客户", tags:[]}
   };
 
   function renderCustomers(filter = activeCustomerFilter){
@@ -2499,8 +3147,8 @@
 
   function renderAgendaAroundDate(centerDate = makeLocalDate(currentYear, currentMonth, selectedDay), scrollToDate = false){
     const center = normalizeDate(centerDate);
-    agendaStartDate = addDays(center, -30);
-    agendaEndDate = addDays(center, 45);
+    agendaStartDate = addDays(center, -agendaInitialPastDays);
+    agendaEndDate = addDays(center, agendaInitialFutureDays);
     const days = [];
     for(let cursor = agendaStartDate; cursor <= agendaEndDate; cursor = addDays(cursor, 1)){
       days.push(agendaDayHTML(cursor));
@@ -2522,7 +3170,7 @@
     }, 80);
   }
 
-  function appendAgendaDays(amount = 30){
+  function appendAgendaDays(amount = agendaChunkDays){
     if(!agendaEndDate) return;
     const html = [];
     let cursor = addDays(agendaEndDate, 1);
@@ -2535,7 +3183,7 @@
     bindDynamic();
   }
 
-  function prependAgendaDays(amount = 30){
+  function prependAgendaDays(amount = agendaChunkDays){
     if(!agendaStartDate) return;
     const oldHeight = appScroll.scrollHeight;
     const html = [];
@@ -2568,8 +3216,8 @@
     updateSelectedDayChrome(year, month, day);
     document.querySelectorAll(".day").forEach(item => item.classList.remove("active"));
     document.querySelector(`.day[data-day="${day}"]`)?.classList.add("active");
-    if(appScroll.scrollTop < 360) prependAgendaDays(30);
-    if(appScroll.scrollTop + appScroll.clientHeight > appScroll.scrollHeight - 720) appendAgendaDays(30);
+    if(appScroll.scrollTop < 360) prependAgendaDays();
+    if(appScroll.scrollTop + appScroll.clientHeight > appScroll.scrollHeight - 720) appendAgendaDays();
   }
 
   function handleAgendaScroll(){
@@ -2888,29 +3536,29 @@
     if(notify) showToast(`已切换为${viewThemeNames[nextTheme]}主题。`);
   }
   function generateWeeklyReport(){
-    $("#weeklySummary").value = "本周围绕 A 类客户和样板推进完成 12 次拜访计划，其中宏远服饰确认宽度调整方向，锦华辅料完成新报价沟通，恒嘉箱包中板进入确认阶段，东晨制衣完成新采购联系人交接。整体客户跟进覆盖了电话、微信和线下拜访，重点客户未出现新的断档。";
-    $("#weeklyPlan").value = "1. 周三前确认宏远服饰宽度调整样板反馈；2. 线下拜访锦华辅料并提交新报价，争取确认下月需求；3. 补齐东晨制衣新采购联系方式并安排首次正式拜访；4. 跟进恒嘉箱包色牢度测试反馈，推动中板确认；5. 对超过 25 天未拜访的 A/B 类客户补充下周计划。";
-    $("#weeklyNote").value = "锦华辅料对价格较敏感，需要主管确认最低报价空间。宏远服饰月底可能有运动服试单机会，样板交期要优先保障。东晨制衣联系人变更后，历史沟通需要在客户详情里补齐。";
-    $("#weeklyFiles").value = "本周拜访摘要.pdf、宏远样板照片 3 张、锦华新报价单.xlsx";
+    $("#weeklySummary").value = "本周围绕 A 类客户、样板推进和月末转化机会完成 18 次拜访计划。其中宏远服饰完成宽度调整样板寄出并等待终版反馈，锦华辅料完成新报价线下沟通，东晨制衣推进了联系人交接，华瑞运动新增反光丝提花方案评审。整体客户跟进覆盖电话、微信和线下拜访，重点客户未出现新的断档。";
+    $("#weeklyPlan").value = "1. 周三前确认宏远服饰终版样板反馈并判断试单节奏；2. 二次拜访锦华辅料，争取锁定 6 月首单；3. 补齐东晨制衣新采购联系方式并安排首次正式拜访；4. 跟进恒嘉箱包色牢度测试和盛南服饰深蓝中板调整；5. 对超过 25 天未拜访的 A/B 类客户补充下周排程。";
+    $("#weeklyNote").value = "锦华辅料对价格较敏感，需要主管确认最低报价空间。宏远服饰月底可能有运动服试单机会，样板交期要优先保障。华瑞运动若本周不给方案反馈，设计部评审将顺延到 6 月中旬。";
+    $("#weeklyFiles").value = "本周拜访摘要.pdf、月末报价汇总.xlsx、宏远样板照片 4 张、华瑞提花方案截图.png";
     openSheet("reportForm");
     showToast("AI 已根据本周拜访计划和记录生成周报草稿。");
   }
   const aiReplies = {
     customer:[
       ["user","本周还没拜访的 A 类客户有哪些？"],
-      ["ai","本周建议优先跟进 2 个 A 类客户：宏远服饰 28 天未拜访，宽度调整样板待确认；锦华辅料 31 天未拜访，需要复核新报价。"]
+      ["ai","本周建议优先跟进 3 个 A 类客户：宏远服饰 28 天未拜访，宽度调整样板待确认；锦华辅料 31 天未拜访，需要复核新报价；华瑞运动样卡已寄出，反光丝方案还没拿到正式反馈。"]
     ],
     sample:[
       ["user","哪些样板还没确认？"],
-      ["ai","当前样板待确认客户：恒嘉箱包中板关注色牢度；宏远服饰宽度调整样板需本周确认；盛南服饰起样中，建议明天微信跟进照片。"]
+      ["ai","当前样板待确认客户有 4 家：宏远服饰宽度调整样板待终版反馈；恒嘉箱包中板关注色牢度；盛南服饰深蓝中板待调整；华瑞运动反光丝提花方案待设计部评审。"]
     ],
     weekly:[
       ["user","根据本周拜访记录生成周报"],
-      ["ai","已整理周报草稿：本周完成 12 次拜访，推进宏远、锦华、恒嘉三个重点事项；下周建议优先处理 A 类客户超期和中板确认。可以在周报页点 AI 草稿继续编辑。"]
+      ["ai","已整理周报草稿：本周完成 18 次拜访，推进宏远、锦华、东晨、华瑞 4 个重点事项；下周建议优先处理 A 类客户超期、样板终版确认和首单转化。可以在周报页点 AI 草稿继续编辑。"]
     ],
     order:[
       ["user","宏远最近订单和拜访情况？"],
-      ["ai","宏远服饰：拜访 9 次、样板 3 个、转单 1 单，转化率 33%。最近一次记录提到客户认可手感，但担心颜色批次稳定性。"]
+      ["ai","宏远服饰：累计拜访 9 次、样板 3 个、转单 1 单，转化率 33%。最近两次记录都围绕宽度调整样板，客户认可手感，但仍担心颜色批次稳定性，月底有试单机会。"]
     ]
   };
   function renderAiThread(messages = []){
@@ -2945,6 +3593,10 @@
       <div class="board-result">
         <strong><span>HY-20-BK-软手感</span><em>92%</em></strong>
         <p>${customer}：匹配 ${width} ${type}，开力度 ${tension}，${query}。关联记录：宏远服饰 2026-04-16 宽度调整样板。</p>
+      </div>
+      <div class="board-result">
+        <strong><span>HR-25-GY-反光提花</span><em>88%</em></strong>
+        <p>相似需求来自华瑞运动，25mm 提花运动带加反光丝，适合做高识别度版本备选。</p>
       </div>
       <div class="board-result">
         <strong><span>JH-18-BK-耐磨款</span><em>84%</em></strong>

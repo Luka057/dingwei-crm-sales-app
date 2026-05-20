@@ -38,6 +38,21 @@ npm run dev
 http://localhost:5173
 ```
 
+### 手机/同事快速预览原型
+
+```bash
+cd frontend/prototype
+node crm-prototype-server.mjs
+```
+
+访问：
+
+```text
+http://localhost:8088
+```
+
+如果要给同一 Wi-Fi 下的手机访问，把 `localhost` 换成电脑局域网 IP。
+
 ### 后端 mock API
 
 ```bash
@@ -75,7 +90,7 @@ docker compose up -d
 
 - 日程优先 / 月历优先双主题。
 - 浅色 / 深色双显示模式。
-- 暖纸、蓝调、绿调、紫调、石墨多配色，深色模式下各自有对应深色版本。
+- 暖纸、蓝调、绿调、紫调、石墨、奶泡白、香草亚麻、草莓牛奶多配色，深色模式下各自有对应深色版本。
 - 日程优先主题支持上下连续滚动日期。
 - 左上角打开完整月历浮窗。
 - 每一天模块内可直接新增拜访 / 计划，右下角加号也保留。

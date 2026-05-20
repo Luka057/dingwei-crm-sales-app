@@ -1,6 +1,6 @@
 # Agent 交接文档：鼎伟 CRM 业务人员端
 
-最后更新：2026-05-15
+最后更新：2026-05-20
 
 ## 1. 当前工作目标
 
@@ -71,7 +71,7 @@
 
 localStorage key：
 
-- `dingwei-sales-tone`：`warm` / `ocean` / `forest` / `grape` / `graphite`
+- `dingwei-sales-tone`：`warm` / `ocean` / `forest` / `grape` / `graphite` / `milkfoam` / `vanillalinen` / `strawberrymilk`
 - `dingwei-sales-view-theme`：`agenda` / `calendar`
 - `dingwei-sales-appearance`：`light` / `dark`
 
@@ -81,6 +81,7 @@ CSS 变量：
 - 深色模式在 `html[data-appearance="dark"]`。
 - 深色 + 色调组合在 `html[data-appearance="dark"][data-tone="..."]`。
 - 选中毛玻璃态变量：`--glass-active`、`--glass-active-border`、`--glass-active-shadow`。
+- 新增亮白色系包括奶泡白、香草亚麻、草莓牛奶；客户 360、拜访时间线、周报详情、AI 找板等二/三级界面也需要跟随主题变量。
 
 ## 6. 工程状态
 
