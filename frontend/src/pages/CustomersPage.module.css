@@ -1,0 +1,136 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.count {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.chip {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.chipActive {
+  background: var(--coral);
+  border-color: var(--coral);
+  color: #fff;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.level {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.level_A {
+  background: rgba(255, 90, 73, 0.15);
+  color: var(--coral);
+}
+
+.level_B {
+  background: rgba(248, 185, 51, 0.18);
+  color: var(--sun);
+}
+
+.level_C {
+  background: var(--subtle);
+  color: var(--muted);
+}
+
+.name {
+  font-size: 15px;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.overduePill {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(217, 54, 43, 0.12);
+  color: var(--danger);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.meta {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.muted {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.note {
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--subtle);
+  color: var(--muted);
+  font-size: 12px;
+  border: 1px dashed var(--line);
+}

@@ -1,0 +1,145 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.page h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.summary {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.status_draft {
+  background: var(--subtle);
+  color: var(--muted);
+}
+
+.status_submitted {
+  background: rgba(57, 185, 154, 0.15);
+  color: var(--mint);
+}
+
+.status_reopened {
+  background: rgba(248, 185, 51, 0.18);
+  color: var(--sun);
+}
+
+.note {
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--subtle);
+  color: var(--muted);
+  font-size: 12px;
+  border: 1px dashed var(--line);
+  line-height: 1.6;
+}
+
+/* AIPage 共享 */
+.aiChat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bubble {
+  padding: 12px 14px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 86%;
+}
+
+.userBubble {
+  align-self: flex-end;
+  background: var(--coral);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.aiBubble {
+  align-self: flex-start;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  border-bottom-left-radius: 4px;
+}
+
+.input {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+}
+
+.input input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  padding: 8px;
+  color: var(--ink);
+}
+
+.input button {
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: var(--coral);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.input button:disabled {
+  opacity: 0.5;
+}

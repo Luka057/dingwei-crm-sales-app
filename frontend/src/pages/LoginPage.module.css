@@ -1,0 +1,125 @@
+.shell {
+  min-height: 100vh;
+  background: var(--body-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.card {
+  width: min(420px, 100%);
+  background: var(--panel-strong);
+  border-radius: 24px;
+  padding: 36px 28px 28px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--coral);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.title {
+  margin: 6px 0 4px;
+  font-size: 32px;
+  color: var(--ink);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  margin: 0 0 28px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field span {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.field input {
+  padding: 14px 16px;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  background: var(--soft);
+  font-size: 16px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.16s, box-shadow 0.16s;
+}
+
+.field input:focus {
+  border-color: var(--coral);
+  box-shadow: 0 0 0 4px rgba(255, 90, 73, 0.12);
+}
+
+.error {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(217, 54, 43, 0.08);
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.submit {
+  margin-top: 4px;
+  padding: 15px 16px;
+  border-radius: 14px;
+  background: var(--coral);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: filter 0.16s, transform 0.06s;
+}
+
+.submit:active {
+  transform: scale(0.99);
+  filter: brightness(0.94);
+}
+
+.submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hint {
+  margin: 24px 0 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--subtle);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  border: 1px dashed var(--line);
+}
+
+.hint code {
+  background: var(--panel);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  color: var(--ink);
+}
