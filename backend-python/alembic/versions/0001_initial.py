@@ -297,6 +297,7 @@ def upgrade() -> None:
     op.create_table(
         "visit_attachment",
         sa.Column("id", sa.Uuid(as_uuid=True), primary_key=True),
+        # 1A:nullable 允许"先上传后绑定 visit"(orphan attachment 由 1B GC 清理)
         sa.Column(
             "visit_record_id",
             sa.Uuid(as_uuid=True),
@@ -304,6 +305,17 @@ def upgrade() -> None:
                 "visit_record.id",
                 ondelete="CASCADE",  # 拜访记录删除时级联清照片
                 name="FK_attachment_visit",
+            ),
+            nullable=True,
+        ),
+        # uploader_id:权限校验 + 限速依据,NOT NULL
+        sa.Column(
+            "uploader_id",
+            sa.Uuid(as_uuid=True),
+            sa.ForeignKey(
+                "user.id",
+                ondelete="NO ACTION",
+                name="FK_attachment_uploader",
             ),
             nullable=False,
         ),
@@ -328,6 +340,11 @@ def upgrade() -> None:
         "IX_visit_attachment_visit",
         "visit_attachment",
         ["visit_record_id"],
+    )
+    op.create_index(
+        "IX_visit_attachment_uploader_uploaded",
+        "visit_attachment",
+        ["uploader_id", "uploaded_at"],
     )
 
     # ══════════════════════════════════════════════════════════════

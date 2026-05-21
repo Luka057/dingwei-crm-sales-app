@@ -18,9 +18,10 @@ from typing import TYPE_CHECKING
 from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, Integer, Unicode
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.db.base import Base, CreatedAt, FKUuid, PKUuid
+from app.db.base import Base, CreatedAt, FKUuid, OptFKUuid, PKUuid
 
 if TYPE_CHECKING:
+    from app.models.user import User
     from app.models.visit_record import VisitRecord
 
 
@@ -34,13 +35,28 @@ class VisitAttachment(Base):
     __tablename__ = "visit_attachment"
     __table_args__ = (
         Index("IX_visit_attachment_visit", "visit_record_id"),
+        Index("IX_visit_attachment_uploader_uploaded", "uploader_id", "uploaded_at"),
         CheckConstraint("type IN ('photo')", name="CK_attachment_type"),
     )
 
     id: Mapped[PKUuid]
 
-    visit_record_id: Mapped[FKUuid] = mapped_column(
+    # Phase 1A 设计:visit_record_id 可空 — 允许"先上传后绑定 visit"
+    # 流程:
+    #   1. POST /uploads/visit-photo → 写 attachment(visit_record_id=NULL)
+    #   2. POST /visit-records body 含 attachment_ids → UPDATE
+    #      visit_attachment SET visit_record_id=:vid WHERE id IN (...)
+    # Phase 1B 加 GC 任务清未绑定的 orphan attachment(超过 24h 等)。
+    visit_record_id: Mapped[OptFKUuid] = mapped_column(
         ForeignKey("visit_record.id", ondelete="CASCADE"),
+        nullable=True,
+    )
+
+    # uploader_id:谁上传的(权限 + 限速依据)。NOT NULL。
+    # 即便 attachment 后来绑到别人的 visit_record(理论上不允许),
+    # uploader_id 仍记录原始上传者。
+    uploader_id: Mapped[FKUuid] = mapped_column(
+        ForeignKey("user.id", ondelete="NO ACTION"),
         nullable=False,
     )
 
@@ -65,10 +81,14 @@ class VisitAttachment(Base):
     uploaded_at: Mapped[CreatedAt]
 
     # ── 关系 ───────────────────────────────────────────────────
-    visit_record: Mapped[VisitRecord] = relationship(
+    visit_record: Mapped["VisitRecord | None"] = relationship(
         "VisitRecord",
         back_populates="attachments",
         foreign_keys=[visit_record_id],
+    )
+    uploader: Mapped["User"] = relationship(
+        "User",
+        foreign_keys=[uploader_id],
     )
 
     def __repr__(self) -> str:

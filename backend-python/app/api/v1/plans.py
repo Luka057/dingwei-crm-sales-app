@@ -2,13 +2,10 @@
 Plans router.
 
 角色矩阵参考:docs/需求文档-v2.md §3.5.2
-- GET /plans/calendar   Sales/Manager 自己的 plan(全部含 is_personal)
-- POST /plans           创建 plan,无审批立即生效(§3.5.6)
+- GET /plans/calendar   Sales/Manager 自己的 plan(含 is_personal)
+- POST /plans           Q8 is_personal 后端推断 + 前端 toggle 可改
 - PUT /plans/{id}       owner 校验
 - DELETE /plans/{id}    owner 校验
-
-Q8 决议:POST 时 is_personal=None 表示后端推断
-  (type='custom' AND customer_id IS NULL → True)
 """
 
 from uuid import UUID
@@ -17,6 +14,7 @@ from fastapi import APIRouter, HTTPException, Query, status
 
 from app.core.deps import CurrentUser, DBSession
 from app.schemas.plan import CalendarResponse, PlanCreate, PlanItem, PlanUpdate
+from app.services import plan_service
 
 router = APIRouter(prefix="/plans", tags=["plans"])
 
@@ -32,14 +30,7 @@ async def calendar(
     year: int = Query(ge=2000, le=2100),
     month: int = Query(ge=1, le=12),
 ) -> CalendarResponse:
-    """Sales 看自己的全部 plan(含个人提醒);Manager 调本端点也是看自己的。
-
-    主管看下属的 plan 走 /manager/subordinates/{userId}/visits(自动 filter is_personal=0)。
-    """
-    raise HTTPException(
-        status.HTTP_501_NOT_IMPLEMENTED,
-        "Not implemented (Phase 1A.3 — plans module)",
-    )
+    return await plan_service.get_calendar(db, user, year, month)
 
 
 @router.post(
@@ -53,11 +44,12 @@ async def create_plan(
     user: CurrentUser,
     db: DBSession,
 ) -> PlanItem:
-    """Q8 推断:is_personal 未传时 type='custom' AND customer_id IS NULL → True。"""
-    raise HTTPException(
-        status.HTTP_501_NOT_IMPLEMENTED,
-        "Not implemented (Phase 1A.3 — plans module)",
-    )
+    try:
+        return await plan_service.create_plan(db, user, payload)
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
+    except PermissionError as exc:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
 
 
 @router.put(
@@ -71,11 +63,13 @@ async def update_plan(
     user: CurrentUser,
     db: DBSession,
 ) -> PlanItem:
-    """WHERE salesperson_id = current_user.id 强制 owner。"""
-    raise HTTPException(
-        status.HTTP_501_NOT_IMPLEMENTED,
-        "Not implemented (Phase 1A.3 — plans module)",
-    )
+    try:
+        item = await plan_service.update_plan(db, user, plan_id, payload)
+    except PermissionError as exc:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
+    if item is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Plan not found or not owned")
+    return item
 
 
 @router.delete(
@@ -88,7 +82,6 @@ async def delete_plan(
     user: CurrentUser,
     db: DBSession,
 ) -> None:
-    raise HTTPException(
-        status.HTTP_501_NOT_IMPLEMENTED,
-        "Not implemented (Phase 1A.3 — plans module)",
-    )
+    ok = await plan_service.delete_plan(db, user, plan_id)
+    if not ok:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Plan not found or not owned")
