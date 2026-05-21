@@ -1,33 +1,77 @@
+# 鼎伟 CRM 业务人员端 - docker compose
+#
+# 关键变更(Phase 1A):
+# - postgres → sqlserver(mssql:2022,O2 决议 Apple Silicon 加 platform: linux/amd64)
+# - backend: ./backend(Node Express mock,保留作契约参照)
+#   新启用 ./backend-python(Python FastAPI)
+# - Redis 留位,1A 不使用
+#
+# 起步:
+#   docker compose up -d sqlserver         # 等 healthy(首次 30-60s)
+#   docker compose up -d backend           # 自动跑 alembic + seed + uvicorn
+#   docker compose up -d frontend          # nginx 静态资源 + /api 反代
+#
+# 注意:
+# - SQL Server sa 密码内网 / 仅本地,生产前必须改强密码 + 走密钥管理
+# - Mac M 系列需 softwareupdate --install-rosetta(一次性)
+
 services:
-  postgres:
-    image: postgres:16
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64  # Apple Silicon 必加(O2 决议)
     environment:
-      POSTGRES_USER: crm
-      POSTGRES_PASSWORD: crm_password
-      POSTGRES_DB: dingwei_crm
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Dingwei!Strong#2026"  # 仅本地;生产改强密码 + secret 管理
+      MSSQL_PID: Developer
     ports:
-      - "5432:5432"
+      - "1433:1433"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mssql_data:/var/opt/mssql
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - |
+          /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -Q 'SELECT 1' -C -N o || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
 
   redis:
     image: redis:7
     ports:
       - "6379:6379"
+    # 1A 不使用,Phase 1B/2 用于 AI 上下文缓存 / Celery 队列
 
   backend:
-    build: ./backend
+    build: ./backend-python
     environment:
-      PORT: 3000
-      DATABASE_URL: postgresql://crm:crm_password@postgres:5432/dingwei_crm
-      REDIS_URL: redis://redis:6379
-      JWT_SECRET: change_me
-      DEEPSEEK_API_KEY: change_me
+      ENV: dev
+      DATABASE_URL: "mssql+aioodbc://sa:Dingwei!Strong#2026@sqlserver:1433/dingwei_crm_sales?driver=ODBC+Driver+18+for+SQL+Server&TrustServerCertificate=yes"
+      REDIS_URL: "redis://redis:6379"
+      JWT_SECRET: "change_me_in_prod_or_will_be_breached"
+      DEEPSEEK_API_KEY: "change_me"
+      UPLOAD_DIR: "/app/uploads"
     ports:
       - "3000:3000"
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
-      - postgres
-      - redis
+      sqlserver:
+        condition: service_healthy
+    command:
+      - "sh"
+      - "-c"
+      - |
+        echo "==> Creating DB if not exists..." && \
+        /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P "Dingwei!Strong#2026" -C -N o \
+          -Q "IF DB_ID('dingwei_crm_sales') IS NULL CREATE DATABASE dingwei_crm_sales" && \
+        echo "==> Running alembic upgrade head..." && \
+        alembic upgrade head && \
+        echo "==> Seeding (if empty)..." && \
+        python -m app.db.seed --if-empty && \
+        echo "==> Starting uvicorn..." && \
+        uvicorn app.main:app --host 0.0.0.0 --port 3000
 
   frontend:
     build: ./frontend
@@ -37,4 +81,5 @@ services:
       - backend
 
 volumes:
-  postgres_data:
+  mssql_data:
+  uploads_data:  # 拜访照片本地存储(Q7 决议)

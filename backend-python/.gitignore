@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Test / lint cache
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.cover
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Env vars
+.env
+.env.local
+!.env.example
+
+# Uploads(本地 docker volume,不进 git)
+uploads/visits/*
+!uploads/visits/.gitkeep
+
+# OS
+.DS_Store

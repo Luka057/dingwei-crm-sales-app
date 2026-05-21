@@ -1,0 +1,96 @@
+[project]
+name = "dingwei-crm-backend"
+version = "0.1.0"
+description = "鼎伟 CRM 业务人员端 — Python 后端 (Phase 1A)"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Luka057", email = "2574450602@qq.com" }]
+license = { text = "Proprietary" }
+
+dependencies = [
+    # Web framework
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "python-multipart>=0.0.20",  # FastAPI multipart (照片上传)
+
+    # ORM / 迁移 / DB 驱动
+    "sqlalchemy[asyncio]>=2.0.36",
+    "alembic>=1.14.0",
+    "aioodbc>=0.5.0",             # async ODBC for SQL Server
+    "pyodbc>=5.2.0",              # aioodbc 依赖,Mac 本机非 docker 需 brew install msodbcsql18
+
+    # 鉴权
+    "python-jose[cryptography]>=3.3.0",  # JWT
+    "passlib[bcrypt]>=1.7.4",            # bcrypt 密码哈希
+    "bcrypt>=4.2.0",                     # 显式锁版本,passlib bcrypt 4.x 兼容问题已修
+
+    # 配置 / 数据
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.7.0",
+
+    # 工具
+    "httpx>=0.28.0",              # 测试 client + 未来 DeepSeek HTTP client
+    "python-magic>=0.4.27",       # 照片上传 magic bytes 校验(Q7 决议)
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.25.0",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "types-python-jose",
+    "types-passlib",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+extend-exclude = ["alembic/versions"]  # 迁移文件 auto-generate 不强制 lint
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # bugbear
+    "UP",     # pyupgrade
+    "N",      # pep8-naming
+    "ASYNC",  # async lint
+    "S",      # bandit (security)
+    "BLE",    # blind-except
+    "RET",    # return value lint
+    "SIM",    # simplify
+]
+ignore = [
+    "S101",   # allow assert(test 用)
+    "B008",   # FastAPI Depends() in function defaults is fine
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106"]  # 允许测试硬编码密码
+"app/db/seed.py" = ["S105", "S106"]    # seed 脚本允许硬编码密码
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-v --tb=short"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["aioodbc.*", "pyodbc.*"]
+ignore_missing_imports = true
