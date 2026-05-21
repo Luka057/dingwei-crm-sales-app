@@ -15,7 +15,7 @@ from __future__ import annotations
 import enum
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, Integer, String
+from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, Integer, Unicode
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, CreatedAt, FKUuid, PKUuid
@@ -56,10 +56,10 @@ class VisitAttachment(Base):
     )
 
     # 存储路径(相对 settings.upload_dir),如 visits/202605/{uuid}.jpg
-    storage_path: Mapped[str] = mapped_column(String(255), nullable=False)
+    storage_path: Mapped[str] = mapped_column(Unicode(255), nullable=False)
 
     file_size: Mapped[int] = mapped_column(Integer, nullable=False)  # bytes
-    mime_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    mime_type: Mapped[str] = mapped_column(Unicode(32), nullable=False)
 
     # 上传时由 upload_service 经 magic bytes 校验后填入
     uploaded_at: Mapped[CreatedAt]

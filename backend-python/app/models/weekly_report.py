@@ -25,7 +25,7 @@ from sqlalchemy import (
     Enum,
     ForeignKey,
     Index,
-    Text,
+    UnicodeText,
     UniqueConstraint,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -71,11 +71,11 @@ class WeeklyReport(Base):
 
     # ── 4 段固定结构(§4.2 / §3.5.6) ─────────────────────────
     # ① summary 本周工作总结(必填,前端校验)
-    summary: Mapped[str | None] = mapped_column(Text, nullable=True)
+    summary: Mapped[str | None] = mapped_column(UnicodeText, nullable=True)
     # ② next_plan 下周工作计划 — 自由文本,与 plan 表不同步(§5.5)
-    next_plan: Mapped[str | None] = mapped_column(Text, nullable=True)
+    next_plan: Mapped[str | None] = mapped_column(UnicodeText, nullable=True)
     # ③ notes 备注事项
-    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    notes: Mapped[str | None] = mapped_column(UnicodeText, nullable=True)
     # ④ attachments 附件(1A 字段保留不开 UI;Phase 1B 实现)
     attachments: Mapped[list | None] = mapped_column(JSON, nullable=True)
 

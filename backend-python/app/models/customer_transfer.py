@@ -17,7 +17,7 @@ import enum
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, String
+from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, Unicode
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import DateTime
 
@@ -99,7 +99,7 @@ class CustomerTransfer(Base):
         default=TransferStatus.PENDING,
     )
 
-    reason: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    reason: Mapped[str | None] = mapped_column(Unicode(500), nullable=True)
 
     # ── 时间 ───────────────────────────────────────────────────
     requested_at: Mapped[CreatedAt]

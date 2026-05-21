@@ -19,7 +19,7 @@ import enum
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, CheckConstraint, Enum, ForeignKey, Index, String, Text
+from sqlalchemy import Boolean, CheckConstraint, Enum, ForeignKey, Index, Unicode, UnicodeText
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import DateTime
 
@@ -67,7 +67,7 @@ class Plan(Base):
         nullable=True,
     )
 
-    title: Mapped[str] = mapped_column(String(128), nullable=False)
+    title: Mapped[str] = mapped_column(Unicode(128), nullable=False)
     type: Mapped[PlanType] = mapped_column(
         Enum(
             PlanType,
@@ -81,7 +81,7 @@ class Plan(Base):
         DateTime(timezone=False),
         nullable=False,
     )
-    content: Mapped[str | None] = mapped_column(Text, nullable=True)
+    content: Mapped[str | None] = mapped_column(UnicodeText, nullable=True)
     status: Mapped[PlanStatus] = mapped_column(
         Enum(
             PlanStatus,

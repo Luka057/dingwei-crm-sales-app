@@ -15,7 +15,7 @@ from decimal import Decimal
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, Numeric, String
+from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, Numeric, Unicode
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import DateTime
 
@@ -72,12 +72,12 @@ class Customer(Base):
     id: Mapped[PKUuid]
 
     # ── 基本资料 ───────────────────────────────────────────────
-    name: Mapped[str] = mapped_column(String(128), nullable=False)
-    short_name: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    contact_name: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    contact_title: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    phone: Mapped[str | None] = mapped_column(String(32), nullable=True)
-    address: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    name: Mapped[str] = mapped_column(Unicode(128), nullable=False)
+    short_name: Mapped[str | None] = mapped_column(Unicode(64), nullable=True)
+    contact_name: Mapped[str | None] = mapped_column(Unicode(64), nullable=True)
+    contact_title: Mapped[str | None] = mapped_column(Unicode(64), nullable=True)
+    phone: Mapped[str | None] = mapped_column(Unicode(32), nullable=True)
+    address: Mapped[str | None] = mapped_column(Unicode(255), nullable=True)
 
     # ── 等级 / 状态 ────────────────────────────────────────────
     level: Mapped[CustomerLevel] = mapped_column(

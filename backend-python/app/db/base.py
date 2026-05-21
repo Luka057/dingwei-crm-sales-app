@@ -15,7 +15,7 @@ from datetime import datetime
 from typing import Annotated
 from uuid import UUID, uuid4
 
-from sqlalchemy import DateTime, String, Uuid, func
+from sqlalchemy import DateTime, Unicode, Uuid, func
 from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass, mapped_column
 
 
@@ -77,8 +77,8 @@ UpdatedAt = Annotated[
 
 # 集成预留字段(user / customer / sample 用)
 # 见 docs/需求文档-v2.md §5.3 共享 ID
-ExternalId = Annotated[str | None, mapped_column(String(64), nullable=True)]
-SourceSystem = Annotated[str | None, mapped_column(String(32), nullable=True)]
+ExternalId = Annotated[str | None, mapped_column(Unicode(64), nullable=True)]
+SourceSystem = Annotated[str | None, mapped_column(Unicode(32), nullable=True)]
 SyncedAt = Annotated[datetime | None, mapped_column(DateTime(timezone=False), nullable=True)]
 
 

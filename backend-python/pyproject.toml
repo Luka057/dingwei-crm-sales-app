@@ -21,8 +21,7 @@ dependencies = [
 
     # 鉴权
     "python-jose[cryptography]>=3.3.0",  # JWT
-    "passlib[bcrypt]>=1.7.4",            # bcrypt 密码哈希
-    "bcrypt>=4.2.0",                     # 显式锁版本,passlib bcrypt 4.x 兼容问题已修
+    "bcrypt>=4.2.0",                     # 直接调,不走 passlib(passlib 1.7.4 与 bcrypt 4.x 探测冲突)
 
     # 配置 / 数据
     "pydantic>=2.10.0",
@@ -41,7 +40,6 @@ dev = [
     "ruff>=0.8.0",
     "mypy>=1.13.0",
     "types-python-jose",
-    "types-passlib",
 ]
 
 [build-system]

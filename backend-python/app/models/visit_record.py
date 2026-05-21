@@ -16,7 +16,7 @@ import enum
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, String, Text
+from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, Unicode, UnicodeText
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import DateTime
 
@@ -91,12 +91,12 @@ class VisitRecord(Base):
         default=VisitIntention.NONE,
     )
 
-    target_person: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    target_title: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    content: Mapped[str | None] = mapped_column(Text, nullable=True)
+    target_person: Mapped[str | None] = mapped_column(Unicode(64), nullable=True)
+    target_title: Mapped[str | None] = mapped_column(Unicode(64), nullable=True)
+    content: Mapped[str | None] = mapped_column(UnicodeText, nullable=True)
 
     # AI 摘要(1A stub 写固定文案;Phase 1B DeepSeek 真接入)
-    ai_summary: Mapped[str | None] = mapped_column(Text, nullable=True)
+    ai_summary: Mapped[str | None] = mapped_column(UnicodeText, nullable=True)
 
     next_follow_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=False),

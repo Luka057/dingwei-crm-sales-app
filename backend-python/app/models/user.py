@@ -13,7 +13,7 @@ from __future__ import annotations
 import enum
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, String
+from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, Unicode
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import (
@@ -73,9 +73,9 @@ class User(Base):
     id: Mapped[PKUuid]
 
     # ── 业务字段 ────────────────────────────────────────────────
-    username: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
-    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
-    name: Mapped[str] = mapped_column(String(64), nullable=False)
+    username: Mapped[str] = mapped_column(Unicode(64), unique=True, nullable=False)
+    password_hash: Mapped[str] = mapped_column(Unicode(255), nullable=False)
+    name: Mapped[str] = mapped_column(Unicode(64), nullable=False)
 
     role: Mapped[UserRole] = mapped_column(
         Enum(

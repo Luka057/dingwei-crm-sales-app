@@ -15,7 +15,7 @@ from __future__ import annotations
 import enum
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, String, Text
+from sqlalchemy import CheckConstraint, Enum, ForeignKey, Index, Unicode, UnicodeText
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import (
@@ -69,7 +69,7 @@ class Sample(Base):
         nullable=False,
     )
 
-    sample_no: Mapped[str] = mapped_column(String(64), nullable=False)
+    sample_no: Mapped[str] = mapped_column(Unicode(64), nullable=False)
     status: Mapped[SampleStatus] = mapped_column(
         Enum(
             SampleStatus,
@@ -82,13 +82,13 @@ class Sample(Base):
     )
 
     # 工艺参数(AI 找板 metadata filter 用)
-    width: Mapped[str | None] = mapped_column(String(32), nullable=True)
-    tension: Mapped[str | None] = mapped_column(String(32), nullable=True)
-    ribbon_type: Mapped[str | None] = mapped_column(String(32), nullable=True)
-    color: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    width: Mapped[str | None] = mapped_column(Unicode(32), nullable=True)
+    tension: Mapped[str | None] = mapped_column(Unicode(32), nullable=True)
+    ribbon_type: Mapped[str | None] = mapped_column(Unicode(32), nullable=True)
+    color: Mapped[str | None] = mapped_column(Unicode(64), nullable=True)
 
-    image_url: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    image_url: Mapped[str | None] = mapped_column(Unicode(255), nullable=True)
+    notes: Mapped[str | None] = mapped_column(UnicodeText, nullable=True)
 
     # ── 集成预留 ───────────────────────────────────────────────
     external_id: Mapped[ExternalId]

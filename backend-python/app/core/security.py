@@ -2,35 +2,52 @@
 鉴权工具 — bcrypt 密码哈希 + JWT 签发/解码。
 
 参考:`../../docs/需求文档-v2.md §7 安全`。
+
+设计决策(2026-05-21 实施时调整):
+- 直接用 `bcrypt` 库,**不走 passlib**。原因:
+  passlib 1.7.4(2024-至今最后版)的后端探测 routine
+  在初始化 CryptContext 时调用 `bcrypt.hashpw(>72_byte_secret, ...)`,
+  bcrypt 4.x 不再 silent-truncate,会 raise ValueError → CryptContext
+  初始化崩。短期解决方案是 pin bcrypt<4.1,但与时俱进的做法是
+  跳过 passlib 直接调 bcrypt 4.x。bcrypt 库本身够稳定,
+  passlib 的 multi-scheme 抽象在本项目用不到(只 bcrypt)。
+
+bcrypt 限制:secret 最长 72 字节,UTF-8 编码后超出需手动截断
+(我们对 password 做 [:72] 截断,与 passlib 1.7.x 的旧默认行为一致)。
 """
 
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 from app.core.config import get_settings
 
-# bcrypt 上下文 — passlib + bcrypt 4.x 兼容
-# (deprecated="auto" 会在未来 bcrypt 升级时自动 re-hash 旧密码)
-_pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# 默认轮数 12(2^12 = 4096 次,~250ms/hash on M1,适合用户登录场景)
+_BCRYPT_ROUNDS = 12
 
 
 # ── 密码 ────────────────────────────────────────────────────────
 
 
+def _secret_bytes(plain: str) -> bytes:
+    """UTF-8 编码 + 截断到 72 字节(bcrypt 上限)。"""
+    return plain.encode("utf-8")[:72]
+
+
 def hash_password(plain: str) -> str:
-    """bcrypt 哈希密码。"""
-    return _pwd_context.hash(plain)
+    """bcrypt 哈希密码,返回 UTF-8 字符串供存 DB。"""
+    salt = bcrypt.gensalt(rounds=_BCRYPT_ROUNDS)
+    return bcrypt.hashpw(_secret_bytes(plain), salt).decode("utf-8")
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    """校验密码;hash 不对返回 False,不抛错。"""
+    """校验密码;hash 字符串无效或不匹配返 False,不抛错。"""
     try:
-        return _pwd_context.verify(plain, hashed)
-    except ValueError:
-        # 异常 hash 字符串
+        return bcrypt.checkpw(_secret_bytes(plain), hashed.encode("utf-8"))
+    except (ValueError, TypeError):
+        # hash 字符串格式错(非 bcrypt 字符串)
         return False
 
 
