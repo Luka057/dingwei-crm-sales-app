@@ -15,6 +15,8 @@ import { applyHtmlAttrs } from "./store/theme";
 
 import "./styles/themes.css";
 import "./styles/reset.css";
+import "./styles/prototype.css"; // 原型 HTML 全部 CSS — 视觉/布局/sheet/动效
+import "./styles/compat.css"; // React 组件用到、原型 CSS 没覆盖的 class 补丁
 
 // 启动时立刻把 tone / appearance 写到 <html>(避免首屏闪烁)
 applyHtmlAttrs();
