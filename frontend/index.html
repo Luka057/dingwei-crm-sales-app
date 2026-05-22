@@ -2992,9 +2992,12 @@
     if(!id) return showToast("请从客户 360 或计划详情进入拜访录入(需先确定客户)。");
     const method = segValue("#visitMethodSeg", VISIT_METHOD_BY_LABEL, "offline");
     const intention = segValue("#visitIntentionSeg", VISIT_INTENTION_BY_LABEL, "none");
+    const _n = new Date();
+    const _p = (x) => String(x).padStart(2, "0");
+    const visit_at = `${_n.getFullYear()}-${_p(_n.getMonth()+1)}-${_p(_n.getDate())}T${_p(_n.getHours())}:${_p(_n.getMinutes())}:${_p(_n.getSeconds())}`;
     try{
       await CRM.api.createVisit({
-        customer_id: id, visit_at: new Date().toISOString().slice(0,19),
+        customer_id: id, visit_at,
         method, intention, content: $("#visitText").value.trim() || null,
         attachment_ids: _visitPhotoIds,
       });
@@ -3198,6 +3201,7 @@
     } catch {
       record = {customer:"宏远服饰",time:"2026-05-14 09:30",method:"电话",owner:"张伟",text:"客户认可手感，担心颜色批次稳定性。"};
     }
+    window._currentCustomerId = customerIdByName[record.customer] || null;
     $("#visitDetailCustomer").textContent = record.customer;
     $("#visitDetailMethod").textContent = record.method;
     $("#visitDetailTime").textContent = record.time;
@@ -3219,6 +3223,7 @@
     const plan = decodeEvent(raw);
     const methodMap = {warn:"电话", sample:"微信", visit:"线下", done:"电话"};
     const statusMap = {warn:"建议跟进", sample:"样板跟进", visit:"待拜访", done:"已完成"};
+    window._currentCustomerId = customerIdByName[plan.name] || null;
     $("#planCustomer").textContent = plan.name;
     $("#planStatus").textContent = statusMap[plan.type] || "待拜访";
     $("#planTime").textContent = plan.time;
