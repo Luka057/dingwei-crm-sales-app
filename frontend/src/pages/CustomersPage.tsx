@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 
 import { api } from "../lib/api";
+import { useSheetStore } from "../store/sheets";
 import type { CustomerListItem } from "../types/api";
 
 type Filter = "all" | "overdue" | "a" | "sample" | "week";
@@ -114,6 +115,7 @@ export function CustomersPage() {
 }
 
 function CustomerCard({ c }: { c: CustomerListItem }) {
+  const openSheet = useSheetStore((s) => s.openSheet);
   const lastVisit = c.last_visit_at
     ? new Date(c.last_visit_at).toLocaleDateString("zh-CN", {
         month: "short",
@@ -128,7 +130,11 @@ function CustomerCard({ c }: { c: CustomerListItem }) {
     : null;
 
   return (
-    <article className={`customer-card level-${c.level.toLowerCase()}`}>
+    <article
+      className={`customer-card level-${c.level.toLowerCase()}`}
+      onClick={() => openSheet("customer", { customer_id: c.id })}
+      style={{ cursor: "pointer" }}
+    >
       <div className="card-head">
         <strong>{c.name}</strong>
         <span className={`level-badge level-${c.level.toLowerCase()}`}>

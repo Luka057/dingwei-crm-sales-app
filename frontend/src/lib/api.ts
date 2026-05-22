@@ -104,4 +104,47 @@ export const api = {
   del<T>(path: string, options?: RequestOptions): Promise<T> {
     return request<T>(path, { ...options, method: "DELETE" });
   },
+  /**
+   * multipart/form-data POST(供照片上传等 binary 场景)。
+   * 不设 content-type — 浏览器会自动加 boundary。
+   */
+  async postForm<T>(path: string, form: FormData): Promise<T> {
+    const finalHeaders: Record<string, string> = {};
+    const token = useAuthStore.getState().token;
+    if (token) finalHeaders["authorization"] = `Bearer ${token}`;
+
+    const resp = await fetch(`${BASE}${path}`, {
+      method: "POST",
+      headers: finalHeaders,
+      body: form,
+    });
+
+    if (resp.status === 401) {
+      useAuthStore.getState().logout();
+      if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+        window.location.href = "/login";
+      }
+    }
+
+    const text = await resp.text();
+    let body: unknown = undefined;
+    try {
+      body = text ? JSON.parse(text) : undefined;
+    } catch {
+      body = text;
+    }
+
+    if (!resp.ok) {
+      const detail =
+        typeof body === "object" && body !== null && "detail" in body
+          ? (body as { detail: unknown }).detail
+          : body;
+      throw new ApiError(
+        resp.status,
+        detail,
+        typeof detail === "string" ? detail : `Upload failed: HTTP ${resp.status}`
+      );
+    }
+    return body as T;
+  },
 };

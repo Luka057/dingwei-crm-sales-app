@@ -76,6 +76,80 @@ export interface OverdueSummary {
   items: CustomerListItem[];
 }
 
+// ── customer 360(GET /customers/{id})────────────────────────────
+
+export interface CustomerKpis {
+  visits: number;
+  samples: number;
+  orders: number;
+  conversion_rate: number; // 0~1
+}
+
+export interface VisitRecordSummary {
+  id: string;
+  visit_at: string;
+  method: VisitMethod;
+  intention: VisitIntention;
+  target_person: string | null;
+  content_preview: string;
+  has_attachments: boolean;
+  ai_summary: string | null;
+}
+
+export interface CustomerDetail {
+  id: string;
+  name: string;
+  short_name: string | null;
+  level: CustomerLevel;
+  ai_score: number | null;
+  status: string;
+  owner_id: string;
+  contact_name: string | null;
+  contact_title: string | null;
+  phone: string | null;
+  address: string | null;
+  last_visit_at: string | null;
+  is_overdue: boolean;
+  created_at: string;
+  kpis: CustomerKpis;
+  visit_records: VisitRecordSummary[];
+}
+
+export interface PlanCreate {
+  type: PlanType;
+  customer_id?: string | null;
+  title: string;
+  scheduled_at: string; // ISO local datetime, e.g. "2026-05-14T15:30:00"
+  content?: string | null;
+  is_personal?: boolean | null; // Q8: 后端推断,前端 toggle 可改
+}
+
+// ── visit-record / upload ───────────────────────────────────────
+
+export type VisitMethod = "offline" | "phone" | "wechat";
+export type VisitIntention = "good" | "likely_order" | "wait" | "none";
+
+export interface VisitPhotoUploadResponse {
+  id: string; // attachment id,visit_attachment.id
+  type: "photo";
+  storage_path: string;
+  file_size: number;
+  mime_type: string;
+  uploaded_at: string;
+}
+
+export interface VisitRecordCreate {
+  customer_id: string;
+  visit_at: string; // ISO datetime,拜访发生的时间;后端必填
+  method: VisitMethod;
+  intention: VisitIntention;
+  target_person?: string | null; // 拜访对象姓名
+  target_title?: string | null; // 拜访对象职位
+  content: string;
+  next_follow_at?: string | null; // ISO datetime,下次跟进时间
+  attachment_ids?: string[];
+}
+
 // ── manager (Q1 决议:日历 tab 顶部「团队概览」卡数据源) ────────
 
 export interface SubordinateRow {

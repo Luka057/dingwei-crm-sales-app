@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 import { TeamOverviewCard } from "../components/calendar/TeamOverviewCard";
 import { api } from "../lib/api";
 import { useAuthStore } from "../store/auth";
+import { useSheetStore } from "../store/sheets";
 import type {
   CalendarResponse,
   OverdueSummary,
@@ -47,6 +48,7 @@ function isSameDay(a: Date, b: Date) {
 
 export function CalendarPage() {
   const isManager = useAuthStore((s) => s.isManager());
+  const openSheet = useSheetStore((s) => s.openSheet);
   const today = new Date();
 
   const calQ = useQuery({
@@ -108,12 +110,13 @@ export function CalendarPage() {
       </div>
 
       <div className="quick-grid">
-        <Link to="/app/customers?overdue=true" className="quick">
+        {/* 对齐原型:计划 / 找客户 / AI / 周报 */}
+        <button className="quick" onClick={() => openSheet("plan")}>
           <svg viewBox="0 0 24 24">
             <path d="M12 5v14M5 12h14" />
           </svg>
-          <span>跟进</span>
-        </Link>
+          <span>计划</span>
+        </button>
         <Link to="/app/customers" className="quick">
           <svg viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="7" />
@@ -145,6 +148,20 @@ export function CalendarPage() {
         <div className="label">AI 今日建议</div>
         <h2>{focusTitle}</h2>
         <p>{focusText}</p>
+        <div className="actions" style={{ marginTop: 12 }}>
+          <button
+            type="button"
+            className="chip primary"
+            onClick={() => openSheet("visit")}
+          >
+            记录拜访
+          </button>
+          {topOverdue && (
+            <Link to="/app/customers?overdue=true" className="chip">
+              查看全部超期({riskCount})
+            </Link>
+          )}
+        </div>
       </section>
 
       <div className="section-head">
@@ -188,6 +205,7 @@ export function CalendarPage() {
 }
 
 function PlanRow({ plan }: { plan: PlanItem }) {
+  const openSheet = useSheetStore((s) => s.openSheet);
   // 原型用 article.event > .event-card.{type} > .event-title + p > .event-time + desc
   const cardType = plan.is_personal
     ? "personal"
@@ -195,7 +213,12 @@ function PlanRow({ plan }: { plan: PlanItem }) {
     ? "visit"
     : "custom";
   return (
-    <article className="event" data-status={plan.status}>
+    <article
+      className="event"
+      data-status={plan.status}
+      onClick={() => openSheet("planDetail", { plan })}
+      style={{ cursor: "pointer" }}
+    >
       <div className={`event-card ${cardType}`}>
         <div className="event-title">
           {plan.customer_name ? (
