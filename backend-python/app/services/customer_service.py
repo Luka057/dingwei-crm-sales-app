@@ -66,7 +66,7 @@ def _build_tags(level: CustomerLevel, is_overdue: bool, has_active_sample: bool)
     if has_active_sample:
         tags.append("sample")
     if level == CustomerLevel.A:
-        tags.append("a-level")
+        tags.append("a")  # 对齐前端筛选 chip data-customer-filter="a"(原 "a-level" 与前端不匹配)
     return tags
 
 
