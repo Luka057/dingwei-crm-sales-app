@@ -2032,7 +2032,7 @@
     </div>
     <div class="field">
       <label>拜访方式</label>
-      <div class="segmented">
+      <div class="segmented" id="visitMethodSeg">
         <button class="seg active">电话</button>
         <button class="seg">微信</button>
         <button class="seg">线下</button>
@@ -2040,7 +2040,7 @@
     </div>
     <div class="field">
       <label>客户意向</label>
-      <div class="segmented four">
+      <div class="segmented four" id="visitIntentionSeg">
         <button class="seg">进展良好</button>
         <button class="seg active">下单有望</button>
         <button class="seg">持平等待</button>
@@ -2056,8 +2056,9 @@
       <input value="2026-05-20 10:00 · 确认宽度调整样板">
     </div>
     <div class="actions">
+      <button class="chip primary" id="saveVisitBtn">保存拜访</button>
+      <button class="chip" id="visitPhotoBtn">+ 照片</button>
       <button class="chip primary" id="summarizeBtn">AI 摘要</button>
-      <button class="chip" data-toast="已保存草稿，稍后可继续补充。">存草稿</button>
       <button class="chip" data-toast="已创建下周三 10:00 跟进计划。">下次跟进</button>
       <button class="chip" data-toast="已生成样板记录：宏远服饰 · 宽度调整。">产生样板</button>
     </div>
@@ -2259,7 +2260,7 @@
       <input id="weeklyFiles" value="月末报价汇总.xlsx、拜访照片 6 张、宏远样板反馈.pdf">
     </div>
     <div class="actions">
-      <button class="chip primary" data-toast="周报已提交，并同步到老板端。">提交周报</button>
+      <button class="chip primary" id="submitWeeklyBtn">提交周报</button>
       <button class="chip" id="weeklyAiGenerateBtn">AI 生成</button>
       <button class="chip" data-toast="已保存为草稿。">存草稿</button>
     </div>
@@ -2307,7 +2308,7 @@
       </div>
     </div>
     <div class="field"><label>标题 / 客户</label><input id="newPlanCustomer" value="锦华辅料 · 陈经理"></div>
-    <div class="field"><label>时间</label><input id="newPlanTime" value="2026-05-14 15:30"></div>
+    <div class="field"><label>时间</label><input id="newPlanTime" value=""></div>
     <div class="field"><label>内容</label><textarea id="newPlanPurpose">带新报价线下拜访，确认客户对价格复核的意见，并询问下月订单计划。</textarea></div>
     <div class="actions">
       <button class="chip primary" id="savePlanBtn">保存到日历</button>
@@ -2541,7 +2542,7 @@
         level: `${c.level} 类客户`, risk, short: c.short_name || "", owner: "",
         contact: c.contact_name || "", phone: c.phone || "", address: "",
         lastDate: (c.last_visit_at || "").slice(0, 10) || "—", days: CRM.daysSince(c.last_visit_at),
-        visits: "—", samples: "—", orders: "—", rate: "—", records: [],
+        visits: 0, samples: 0, orders: 0, rate: "0%", records: [],
       };
     }
     // 客户页顶部三个指标(原静态 18/5/3)改真值
@@ -2969,34 +2970,81 @@
     }
   }
 
-  function saveNewPlan(){
-    const rawCustomer = $("#newPlanCustomer").value.trim() || "未命名客户";
+  const VISIT_METHOD_BY_LABEL = { "电话":"phone", "微信":"wechat", "线下":"offline" };
+  const VISIT_INTENTION_BY_LABEL = { "进展良好":"good", "下单有望":"likely_order", "持平等待":"wait", "没有意向":"none" };
+  let _visitPhotoIds = [];
+
+  function bindSegGroup(sel){
+    document.querySelectorAll(`${sel} .seg`).forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(`${sel} .seg`).forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+      });
+    });
+  }
+  function segValue(sel, map, fallback){
+    const txt = document.querySelector(`${sel} .seg.active`)?.textContent.trim();
+    return map[txt] || fallback;
+  }
+
+  async function saveVisit(){
+    const id = window._currentCustomerId || customerIdByName[($("#visitSheet input")?.value || "").split("·")[0].trim()];
+    if(!id) return showToast("请从客户 360 或计划详情进入拜访录入(需先确定客户)。");
+    const method = segValue("#visitMethodSeg", VISIT_METHOD_BY_LABEL, "offline");
+    const intention = segValue("#visitIntentionSeg", VISIT_INTENTION_BY_LABEL, "none");
+    try{
+      await CRM.api.createVisit({
+        customer_id: id, visit_at: new Date().toISOString().slice(0,19),
+        method, intention, content: $("#visitText").value.trim() || null,
+        attachment_ids: _visitPhotoIds,
+      });
+      _visitPhotoIds = [];
+      closeSheets();
+      showToast("拜访记录已保存。");
+      // 刷新当前月(last_visit_at 变了,日历/超期也会变)
+      await loadOverdue(); await loadMonth(currentYear, currentMonth); renderCalendar(selectedDay);
+    }catch(e){ showToast("保存拜访失败:" + e.message); }
+  }
+
+  function pickVisitPhoto(){
+    const input = $("#crmPhotoInput");
+    input.onchange = async () => {
+      const f = input.files[0]; if(!f) return;
+      try{ const a = await CRM.api.uploadPhoto(f); _visitPhotoIds.push(a.id); showToast("照片已上传(" + _visitPhotoIds.length + " 张)。"); }
+      catch(e){ showToast("照片上传失败:" + e.message); }
+      input.value = "";
+    };
+    input.click();
+  }
+
+  async function saveNewPlan(){
+    const rawCustomer = $("#newPlanCustomer").value.trim() || "未命名";
     const customerName = rawCustomer.split("·")[0].trim();
     const rawTime = $("#newPlanTime").value.trim();
-    const time = (rawTime.match(/\d{1,2}:\d{2}/) || ["09:00"])[0];
+    const scheduled_at = CRM.isoLocalToBackend(rawTime)
+      || CRM.isoLocalToBackend(`${currentYear}-${currentMonth}-${selectedDay} 09:00`);
     const dayMatch = rawTime.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
     const targetYear = dayMatch ? Number(dayMatch[1]) : currentYear;
     const targetMonth = dayMatch ? Number(dayMatch[2]) : currentMonth;
     const day = dayMatch ? Number(dayMatch[3]) : selectedDay;
-    const purpose = $("#newPlanPurpose").value.trim() || "拜访客户并记录沟通内容。";
     const activeType = $("#eventTypeGroup .seg.active")?.dataset.eventType || "visit";
-    const grade = customers[customerName]?.level?.slice(0,1) || "";
-    currentYear = targetYear;
-    currentMonth = targetMonth;
-    const targetMonthData = ensureMonthData();
-    if(!targetMonthData[day]){
-      targetMonthData[day] = {
-        label:formatDateLabel(targetYear, targetMonth, day),
-        counts:[0,0,0],
-        focus:["这天已有新的日程","拜访完成后可以补充内容，也可以记录临时工作事项。"],
-        events:[]
-      };
+    const customer_id = customerIdByName[customerName] || null;
+    if(activeType === "visit" && !customer_id){
+      return showToast("拜访类型要选已有客户(自定义事项请切到「自定义」)。");
     }
-    targetMonthData[day].events.push([time,activeType,customerName,grade,purpose]);
-    renderCalendar(day);
-    refreshDayAfterEdit(day, targetYear, targetMonth);
-    closeSheets();
-    showToast(`已加入 ${targetMonth} 月 ${day} 日 ${time} 的日程。`);
+    try{
+      await CRM.api.createPlan({
+        type: activeType, customer_id, title: customerName,
+        scheduled_at, content: $("#newPlanPurpose").value.trim() || null, is_personal: null,
+      });
+      currentYear = targetYear; currentMonth = targetMonth;
+      await loadMonth(targetYear, targetMonth);
+      renderCalendar(day);
+      if(isAgendaMode()) await renderAgendaAroundDate(makeLocalDate(targetYear, targetMonth, day), true);
+      closeSheets();
+      $("#newPlanTime").value = "";
+      showToast(`已加入 ${targetMonth} 月 ${day} 日的日程。`);
+    }catch(e){ showToast("保存失败:" + e.message); }
   }
 
   function decodeEvent(raw){
@@ -3017,56 +3065,37 @@
     openSheet("eventEdit");
   }
 
-  function updateEditingEvent(markDone = false){
+  async function updateEditingEvent(markDone = false){
     if(!editingEvent) return;
-    const fromDay = Number(editingEvent.day || selectedDay);
-    const fromYear = Number(editingEvent.year || currentYear);
-    const fromMonth = Number(editingEvent.month || currentMonth);
-    const rawTime = $("#editEventTime").value.trim();
-    const toDayMatch = rawTime.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
-    const toYear = toDayMatch ? Number(toDayMatch[1]) : fromYear;
-    const toMonth = toDayMatch ? Number(toDayMatch[2]) : fromMonth;
-    const toDay = toDayMatch ? Number(toDayMatch[3]) : fromDay;
-    const time = (rawTime.match(/\d{1,2}:\d{2}/) || [editingEvent.time || "09:00"])[0];
-    const fromData = ensureMonthData(fromYear, fromMonth);
-    const oldEvent = fromData[fromDay]?.events?.[editingEvent.index];
-    if(!oldEvent) return;
-    const type = markDone ? "done" : oldEvent[1];
-    const title = $("#editEventTitle").value.trim() || oldEvent[2] || "未命名日程";
-    const desc = $("#editEventDesc").value.trim() || oldEvent[4] || "";
-    const grade = type === "custom" ? "" : (customers[title]?.level?.slice(0,1) || oldEvent[3] || "");
-    fromData[fromDay].events.splice(editingEvent.index, 1);
-    currentYear = toYear;
-    currentMonth = toMonth;
-    const toData = ensureMonthData(toYear, toMonth);
-    if(!toData[toDay]){
-      toData[toDay] = {
-        label:formatDateLabel(toYear, toMonth, toDay),
-        counts:[0,0,0],
-        focus:["这天已有新的日程","可以继续编辑，也可以在完成拜访后补充内容。"],
-        events:[]
-      };
-    }
-    toData[toDay].events.push([time,type,title,grade,desc]);
-    renderCalendar(toDay);
-    refreshDayAfterEdit(fromDay, fromYear, fromMonth);
-    refreshDayAfterEdit(toDay, toYear, toMonth);
-    closeSheets();
-    showToast(markDone ? "已标记完成。" : "已保存修改。");
+    const id = editingEvent.id;
+    if(!id){ return showToast("这条日程缺少 ID,无法保存。"); }
+    try{
+      if(markDone){
+        await CRM.api.updatePlan(id, { status: "done" });
+      } else {
+        const body = { title: $("#editEventTitle").value.trim(), content: $("#editEventDesc").value.trim() };
+        const sched = CRM.isoLocalToBackend($("#editEventTime").value.trim());
+        if(sched) body.scheduled_at = sched;
+        await CRM.api.updatePlan(id, body);
+      }
+      await loadMonth(currentYear, currentMonth);
+      renderCalendar(selectedDay);
+      if(isAgendaMode()) await renderAgendaAroundDate(makeLocalDate(currentYear, currentMonth, selectedDay), true);
+      closeSheets();
+      showToast(markDone ? "已标记完成。" : "已保存修改。");
+    }catch(e){ showToast("操作失败:" + e.message); }
   }
 
-  function deleteEditingEvent(){
-    if(!editingEvent) return;
-    const day = Number(editingEvent.day || selectedDay);
-    currentYear = Number(editingEvent.year || currentYear);
-    currentMonth = Number(editingEvent.month || currentMonth);
-    const events = ensureMonthData()[day]?.events;
-    if(!events || !events[editingEvent.index]) return;
-    events.splice(editingEvent.index, 1);
-    renderCalendar(day);
-    refreshDayAfterEdit(day, currentYear, currentMonth);
-    closeSheets();
-    showToast("已删除这条日程。");
+  async function deleteEditingEvent(){
+    if(!editingEvent || !editingEvent.id) return;
+    try{
+      await CRM.api.deletePlan(editingEvent.id);
+      await loadMonth(currentYear, currentMonth);
+      renderCalendar(selectedDay);
+      if(isAgendaMode()) await renderAgendaAroundDate(makeLocalDate(currentYear, currentMonth, selectedDay), true);
+      closeSheets();
+      showToast("已删除这条日程。");
+    }catch(e){ showToast("删除失败:" + e.message); }
   }
 
   function selectEventType(type){
@@ -3109,6 +3138,10 @@
     closeSheets(false);
     overlay.classList.add("open");
     if(name === "search") renderCustomerSearch();
+    // #newPlanTime 为空时自动填今天 09:00(openPlanForDate 会在调 openSheet 之前先设置,不会被覆盖)
+    if(name === "plan" && !$("#newPlanTime").value) {
+      $("#newPlanTime").value = `${currentYear}-${String(currentMonth).padStart(2,"0")}-${String(selectedDay).padStart(2,"0")} 09:00`;
+    }
     const sheet = $(`#${name}Sheet`);
     if(sheet) {
       sheet.scrollTop = 0;
@@ -3251,14 +3284,28 @@
     localStorage.setItem("dingwei-sales-view-theme", nextTheme);
     if(notify) showToast(`已切换为${viewThemeNames[nextTheme]}主题。`);
   }
-  function generateWeeklyReport(){
-    $("#weeklySummary").value = "本周围绕 A 类客户、样板推进和月末转化机会完成 18 次拜访计划。其中宏远服饰完成宽度调整样板寄出并等待终版反馈，锦华辅料完成新报价线下沟通，东晨制衣推进了联系人交接，华瑞运动新增反光丝提花方案评审。整体客户跟进覆盖电话、微信和线下拜访，重点客户未出现新的断档。";
-    $("#weeklyPlan").value = "1. 周三前确认宏远服饰终版样板反馈并判断试单节奏；2. 二次拜访锦华辅料，争取锁定 6 月首单；3. 补齐东晨制衣新采购联系方式并安排首次正式拜访；4. 跟进恒嘉箱包色牢度测试和盛南服饰深蓝中板调整；5. 对超过 25 天未拜访的 A/B 类客户补充下周排程。";
-    $("#weeklyNote").value = "锦华辅料对价格较敏感，需要主管确认最低报价空间。宏远服饰月底可能有运动服试单机会，样板交期要优先保障。华瑞运动若本周不给方案反馈，设计部评审将顺延到 6 月中旬。";
-    $("#weeklyFiles").value = "本周拜访摘要.pdf、月末报价汇总.xlsx、宏远样板照片 4 张、华瑞提花方案截图.png";
-    openSheet("reportForm");
-    showToast("AI 已根据本周拜访计划和记录生成周报草稿。");
+  async function generateWeeklyReport(){
+    try{
+      const d = await CRM.api.aiDraft();
+      $("#weeklySummary").value = d.summary || "";
+      $("#weeklyPlan").value = d.next_plan || "";
+      $("#weeklyNote").value = d.notes || "";
+      openSheet("reportForm");
+      showToast("AI 已生成周报草稿(1A 为 stub)。");
+    }catch(e){ showToast("生成失败:" + e.message); }
   }
+  async function submitWeekly(){
+    try{
+      const created = await CRM.api.createWeekly({
+        summary: $("#weeklySummary").value, next_plan: $("#weeklyPlan").value, notes: $("#weeklyNote").value,
+      });
+      await CRM.api.submitWeekly(created.id);
+      await loadReports(); renderReportList();
+      closeSheets();
+      showToast("周报已提交,主管可见。");
+    }catch(e){ showToast("提交失败(本周可能已有周报):" + e.message); }
+  }
+
   const aiReplies = {
     customer:[
       ["user","本周还没拜访的 A 类客户有哪些？"],
@@ -3286,49 +3333,46 @@
     $("#aiDrawer").classList.remove("open");
     overlay.classList.remove("open");
   }
-  function sendAiMessage(){
+  async function sendAiMessage(){
     const input = $("#aiChatInput");
     const text = input.value.trim();
     if(!text) return showToast("先输入你想查询的问题。");
-    const lower = text.toLowerCase();
-    let reply = "我可以按客户、拜访、样板、订单和周报来查。比如：本周未拜访客户、宏远上次说了什么、哪些样板待确认。";
-    if(text.includes("周报")) reply = aiReplies.weekly[1][1];
-    if(text.includes("样板") || text.includes("打样")) reply = aiReplies.sample[1][1];
-    if(text.includes("宏远") || text.includes("订单")) reply = aiReplies.order[1][1];
-    if(text.includes("未拜访") || text.includes("A 类") || lower.includes("a")) reply = aiReplies.customer[1][1];
-    renderAiThread([["user",text],["ai",reply]]);
+    renderAiThread([["user", text], ["ai", "正在查询…"]]);
     input.value = "";
+    try{ const r = await CRM.api.aiChat(text); renderAiThread([["user", text], ["ai", r.reply]]); }
+    catch(e){ renderAiThread([["user", text], ["ai", "AI 暂时不可用:" + e.message]]); }
   }
-  function runBoardSearch(){
-    const customer = $("#boardCustomer").value.trim() || "客户需求";
-    const query = $("#boardQuery").value.trim() || "织带样板";
-    const width = $("#boardWidth").value.trim() || "未填写";
-    const tension = $("#boardTension").value.trim() || "未填写";
-    const type = $("#boardType").value;
-    $("#boardResults").innerHTML = `
-      <div class="board-result">
-        <strong><span>HY-20-BK-软手感</span><em>92%</em></strong>
-        <p>${customer}：匹配 ${width} ${type}，开力度 ${tension}，${query}。关联记录：宏远服饰 2026-04-16 宽度调整样板。</p>
-      </div>
-      <div class="board-result">
-        <strong><span>HR-25-GY-反光提花</span><em>88%</em></strong>
-        <p>相似需求来自华瑞运动，25mm 提花运动带加反光丝，适合做高识别度版本备选。</p>
-      </div>
-      <div class="board-result">
-        <strong><span>JH-18-BK-耐磨款</span><em>84%</em></strong>
-        <p>相似需求来自锦华辅料，颜色稳定性反馈较好，宽度接近，可作为备选板样。</p>
-      </div>
-      <div class="board-result">
-        <strong><span>HJ-20-GR-色牢度款</span><em>78%</em></strong>
-        <p>恒嘉箱包中板记录中关注色牢度，适合需要更高测试标准和图片纹路比对的客户。</p>
-      </div>
-    `;
-    showToast(`已按 ${width} / ${type} / ${tension} 匹配历史板样。`);
+  window._boardImageIds = [];
+  async function runBoardSearch(){
+    try{
+      const r = await CRM.api.aiBoardSearch({
+        customer_scene: $("#boardCustomer").value.trim(),
+        image_ids: window._boardImageIds || [],
+        width: $("#boardWidth").value.trim(),
+        tension: $("#boardTension").value.trim(),
+        ribbon_type: $("#boardType").value,
+        requirements: $("#boardQuery").value.trim(),
+      });
+      $("#boardResults").innerHTML = r.matches.map(m => `
+        <div class="board-result">
+          <strong><span>${m.sample_no}</span><em>${Math.round(m.score*100)}%</em></strong>
+          <p>${m.reason}</p>
+        </div>`).join("");
+      showToast("已按条件匹配历史板样(1A 为 stub 结果)。");
+    }catch(e){ showToast("找板失败:" + e.message); }
   }
   function mockBoardUpload(){
-    $("#boardUploadBtn").classList.add("has-image");
-    $("#boardUploadText").textContent = "已添加：客户样板图 IMG_0421.jpg";
-    showToast("图片已加入找板条件。");
+    const input = $("#crmPhotoInput");
+    input.onchange = async () => {
+      const f = input.files[0]; if(!f) return;
+      try{ const a = await CRM.api.uploadPhoto(f); window._boardImageIds = [a.id];
+        $("#boardUploadBtn").classList.add("has-image");
+        $("#boardUploadText").textContent = "已添加:" + f.name;
+        showToast("图片已上传,已加入找板条件。");
+      }catch(e){ showToast("上传失败:" + e.message); }
+      input.value = "";
+    };
+    input.click();
   }
   function resetBoardSearch(){
     $("#boardCustomer").value = "";
@@ -3339,6 +3383,7 @@
     $("#boardResults").innerHTML = "";
     $("#boardUploadBtn").classList.remove("has-image");
     $("#boardUploadText").textContent = "客户样板图、旧板照片、织带纹路图";
+    window._boardImageIds = [];
   }
   function switchPage(page){
     closeCalendarPanel();
@@ -3527,6 +3572,11 @@
     event.stopPropagation();
     generateWeeklyReport();
   });
+  bindSegGroup("#visitMethodSeg");
+  bindSegGroup("#visitIntentionSeg");
+  $("#saveVisitBtn")?.addEventListener("click", saveVisit);
+  $("#visitPhotoBtn")?.addEventListener("click", pickVisitPhoto);
+  $("#submitWeeklyBtn")?.addEventListener("click", submitWeekly);
   $("#savePlanBtn").addEventListener("click", saveNewPlan);
   $("#updateEventBtn").addEventListener("click", () => updateEditingEvent(false));
   $("#completeEventBtn").addEventListener("click", () => updateEditingEvent(true));
@@ -3565,7 +3615,7 @@
   $("#loginBtn").addEventListener("click", doLogin);
   $("#loginPass").addEventListener("keydown", (e) => { if (e.key === "Enter") doLogin(); });
 
-  // 真正的 app 初始化(登录后调)—— F2 会往里加 loadCustomers/loadMonth/loadReports
+  // 真正的 app 初始化(登录后调)
   async function initApp() {
     const user = CRM.getUser();
     if (user) {
