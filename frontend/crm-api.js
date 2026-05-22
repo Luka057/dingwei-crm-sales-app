@@ -27,7 +27,7 @@
     if (!res.ok) { throw new Error(res.status + " " + (await res.text())); }
     if (res.status === 204) return null;
     const ct = res.headers.get("content-type") || "";
-    return ct.includes("application/json") ? res.json() : res;
+    return ct.includes("application/json") ? res.json() : res.text();
   }
 
   const api = {

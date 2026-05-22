@@ -1961,21 +1961,7 @@
           <p>AI 已根据 18 次拜访、4 个样板节点和 3 个重点客户机会生成草稿，可继续补充备注和附件。</p>
           <div class="actions"><button class="chip primary" data-open="reportForm">继续填写</button><button class="chip" id="weeklyAiDraftBtn">AI 草稿</button></div>
         </article>
-        <article class="report-card" data-report="w19">
-          <div class="card-head"><strong>2026 第 19 周</strong><span class="report-date">已提交</span></div>
-          <p>完成拜访 18 次，推进宏远、锦华、东晨和华瑞 4 个重点事项；月底转化机会更清晰。</p>
-          <div class="subline"><span>总结 4 项</span><span>计划 5 项</span><span>附件 3</span></div>
-        </article>
-        <article class="report-card" data-report="w18">
-          <div class="card-head"><strong>2026 第 18 周</strong><span class="report-date">已提交</span></div>
-          <p>新增客户 3 家，完成线下拜访 8 次，锦华报价复核和柏盛样卡同步推进。</p>
-          <div class="subline"><span>总结 4 项</span><span>计划 4 项</span><span>附件 2</span></div>
-        </article>
-        <article class="report-card" data-report="w17">
-          <div class="card-head"><strong>2026 第 17 周</strong><span class="report-date">已提交</span></div>
-          <p>节前集中清理客户档案和样板清单，为 5 月节后拜访恢复做铺垫。</p>
-          <div class="subline"><span>总结 3 项</span><span>计划 3 项</span><span>附件 1</span></div>
-        </article>
+        <div id="reportHistoryList"></div>
       </div>
     </div>
 
@@ -2486,7 +2472,13 @@
   const agendaInitialFutureDays = 18;
   const agendaChunkDays = 18;
 
-  const data = {
+  // ── F2: 静态数据字面量已全部删除,改由 API 填充 ──
+
+  let monthlyData = {};   // 由 loadMonth() 按 `${year}-${month}` 填充
+  let _overdue = { count: 0, items: [] };
+
+  // 以下 if(false) 块保留原型数据结构注释,永不执行
+  if(false){ const __dummy_data = {
     3: {
       label:"5 月 3 日 · 周日",
       counts:[1,0,1],
@@ -2667,233 +2659,106 @@
         ["15:20","done","周报附件整理","","汇总报价单、拜访照片和样板反馈截图。"]
       ]
     }
-  };
-  const monthlyData = {
-    "2026-4": {
-      25:{
-        label:"4 月 25 日 · 周六",
-        counts:[2,0,1],
-        focus:["月底前的样板线索","恒嘉和柏盛都在等样卡回传。"],
-        events:[
-          ["10:40","sample","恒嘉箱包","B","发送中板照片，客户回复需要实物确认。"],
-          ["16:20","done","柏盛箱包","B","报价发送完成，客户进入内部评审。"]
-        ]
-      },
-      28:{
-        label:"4 月 28 日 · 周二",
-        counts:[3,1,1],
-        focus:["节前最后一轮跟进","宏远和锦华都要抢在放假前留口径。"],
-        events:[
-          ["09:10","warn","宏远服饰","A","节前确认样板评审安排，避免五一后继续滞后。"],
-          ["11:00","visit","凯越服饰","B","线下确认新一季带样风格。"],
-          ["16:50","done","锦华辅料","A","报价文件重发并确认节后第一周沟通。"]
-        ]
-      }
-    },
-    "2026-5": data,
-    "2026-6": {
-      2:{
-        label:"6 月 2 日 · 周二",
-        counts:[3,1,0],
-        focus:["新月开局先收样板","宏远和华瑞都适合在这一周形成明确转化判断。"],
-        events:[
-          ["09:30","visit","宏远服饰","A","确认试单时间和宽度终版。"],
-          ["11:30","sample","华瑞运动","A","反光丝版本回样，客户安排设计部评审。"],
-          ["15:40","visit","东晨制衣","B","首次正式拜访新采购，补齐需求清单。"]
-        ]
-      },
-      5:{
-        label:"6 月 5 日 · 周五",
-        counts:[2,0,1],
-        focus:["周末前适合锁结果","锦华若能确认价格区间，就能顺势推进首单。"],
-        events:[
-          ["10:00","visit","锦华辅料","A","追踪最终报价反馈，争取确认首单规格。"],
-          ["17:00","done","周报素材整理","","汇总 6 月首周客户推进结果和样板转化。"]
-        ]
-      }
-    }
-  };
+  }; } // ── 结束 if(false) 原型数据注释块 ──
 
-  const dayMeta = {
-    3:{types:["done"],count:1,state:"low done"},
-    5:{types:["warn","warn"],count:2,state:"hot"},
-    6:{types:["visit","done"],count:2,state:"low done"},
-    8:{types:["sample"],count:1,state:"mid"},
-    11:{types:["visit","sample","done"],count:3,state:"mid"},
-    12:{types:["done","done","done"],count:3,state:"low done"},
-    13:{types:["visit","sample","visit","done"],count:4,state:"mid"},
-    14:{types:["warn","sample","visit","done"],count:4,state:"hot today done"},
-    15:{types:["warn","warn","visit","sample","visit"],count:5,state:"hot"},
-    17:{types:["done"],count:1,state:"low done"},
-    18:{types:["sample","visit"],count:2,state:"mid"},
-    19:{types:["visit","visit","done"],count:3,state:"low done"},
-    21:{types:["warn","visit","warn"],count:3,state:"hot"},
-    23:{types:["sample"],count:1,state:"mid"},
-    24:{types:["visit","done"],count:2,state:"low done"},
-    26:{types:["warn","warn"],count:2,state:"hot"},
-    27:{types:["visit","visit","done"],count:3,state:"low done"},
-    29:{types:["visit","sample","visit"],count:3,state:"mid"},
-    30:{types:["done","done"],count:2,state:"low done"}
-  };
+  // ── F2: 真实数据容器(由 API 填充) ──
+  let reports = {};
+  let customers = {};
+  let customerCards = {};
+  let customerIdByName = {};   // name → 后端 UUID
+  let levelByName = {};        // name → A/B/C(日历事件 grade 用)
 
-  const reports = {
-    w19:{
-      title:"2026 第 19 周",
-      summary:"本周完成拜访 18 次，其中线下 7 次、电话 6 次、微信 5 次。重点推进宏远服饰宽度调整样板、锦华辅料价格复核、东晨制衣联系人交接、华瑞运动新提花方案。月末已有 3 个客户存在明确转化窗口。",
-      plan:"下周重点完成宏远服饰终版样板确认；二次拜访锦华辅料争取锁定 6 月首单；补齐东晨制衣新采购资料并安排首次正式拜访；跟进恒嘉箱包色牢度测试和盛南服饰中板颜色调整；对超过 25 天未拜访的 A/B 类客户补齐排程。",
-      note:"宏远服饰样板交期要优先保障；锦华辅料对价格非常敏感，需要主管确认最低让利空间；华瑞运动若本周不给方案反馈，设计部评审会顺延到 6 月中旬。",
-      files:["拜访照片 6 张","月末报价汇总.xlsx","宏远样板反馈.pdf"]
-    },
-    w18:{
-      title:"2026 第 18 周",
-      summary:"本周新增客户 3 家，完成线下拜访 8 次、电话拜访 6 次。锦华辅料报价复核进入采购内部评估，柏盛箱包和瑞成辅料都形成了初步样卡需求。",
-      plan:"下周优先跟进锦华辅料报价反馈；继续维护宏远服饰样板进度；安排东晨制衣新联系人拜访；给华瑞运动寄出运动带提花样卡；补录柏盛箱包和瑞成辅料客户档案。",
-      note:"客户层级在本周有重新整理，A/B/C 拜访频率要继续校正。锦华辅料价格比较动作明显，需要提前准备两个规格报价口径。",
-      files:["样板照片 3 张","新增客户表.xlsx"]
-    },
-    w17:{
-      title:"2026 第 17 周",
-      summary:"节前主要完成客户档案梳理、样板清单清点和一轮电话回访。宏远服饰与恒嘉箱包两条样板线索继续保留，凯越服饰和柏盛箱包进入意向观察阶段。",
-      plan:"五一后先清超期客户，再集中推进宏远、锦华两家 A 类客户；同步补齐客户联系人和地址字段，保证后续 AI 查询结果更完整。",
-      note:"节前客户回复速度偏慢，记录中有几条微信纪要需要节后补录成正式拜访记录。",
-      files:["节前回访清单.xlsx"]
-    }
-  };
+  // ════════ 适配器:后端 DTO → 原型形状 ════════
+  async function loadOverdue() {
+    _overdue = await CRM.api.overdueSummary();
+  }
 
-  const customers = {
-    "宏远服饰": {
-      level:"A 类客户", risk:"28 天未拜访", short:"宏远", owner:"张伟", contact:"李总 · 总经理", phone:"138****6271", address:"佛山南海区里水镇宏远工业园",
-      lastDate:"2026-04-16", days:"28", visits:"9", samples:"3", orders:"1", rate:"33%",
-      records:[
-        ["2026-05-14 09:30","电话","张伟","客户认可手感，担心颜色批次稳定性。需本周重新确认宽度，月底可能有运动服试单。"],
-        ["2026-05-13 10:20","微信","张伟","宽度调整样板已寄出，李总会在周会后给出内部评审意见。"],
-        ["2026-04-16 15:00","线下","张伟","确认宽度调整方向，客户要求先出一版中板再做最终确认。"],
-        ["2026-03-28 10:20","微信","张伟","客户反馈上次样板手感可以，但颜色稳定性需要继续观察。"]
-      ]
-    },
-    "锦华辅料": {
-      level:"A 类客户", risk:"31 天未拜访", short:"锦华", owner:"张伟", contact:"陈经理 · 采购", phone:"139****4118", address:"广州番禺区石基镇锦华工业区",
-      lastDate:"2026-04-13", days:"31", visits:"7", samples:"2", orders:"0", rate:"0%",
-      records:[
-        ["2026-05-14 14:30","线下","张伟","带新报价到厂沟通，客户要求把 20mm 和 25mm 两个规格再拆开比较。"],
-        ["2026-04-13 14:20","微信","张伟","客户反馈报价偏高，希望复核 20mm 黑色织带单价，并询问最快交期。"],
-        ["2026-03-30 11:00","电话","张伟","客户对黑色织带有稳定需求，但希望价格保持季度内不波动。"],
-        ["2026-03-12 16:30","线下","张伟","带样品沟通，客户认可质量，需要内部核价后回复。"]
-      ]
-    },
-    "华瑞运动": {
-      level:"A 类客户", risk:"样卡评审中", short:"华瑞", owner:"张伟", contact:"周总 · 产品经理", phone:"137****1012", address:"深圳龙岗区华瑞运动研发中心",
-      lastDate:"2026-05-11", days:"3", visits:"4", samples:"2", orders:"0", rate:"0%",
-      records:[
-        ["2026-05-19 09:10","电话","张伟","客户希望在运动带方案里加入反光丝，设计部本周内评审。"],
-        ["2026-05-11 13:30","微信","张伟","寄出 25mm 提花运动带样卡，客户重点看深灰和荧光橙组合。"],
-        ["2026-04-29 16:10","线下","张伟","第一次接触，确认夏季运动服新系列有带样需求。"]
-      ]
-    },
-    "恒嘉箱包": {
-      level:"B 类客户", risk:"样板中板", short:"恒嘉", owner:"张伟", contact:"王小姐 · 跟单", phone:"136****9082", address:"东莞厚街镇恒嘉箱包园区",
-      lastDate:"2026-05-08", days:"6", visits:"5", samples:"2", orders:"1", rate:"50%",
-      records:[
-        ["2026-05-14 11:00","电话","张伟","客户要求先发测试照片再寄中板，色牢度是当前唯一顾虑。"],
-        ["2026-05-08 11:00","电话","张伟","客户要求提高色牢度测试标准，确认后可进入下一轮样板。"],
-        ["2026-04-25 13:40","微信","张伟","发送中板照片，客户回复需要实物确认。"]
-      ]
-    },
-    "东晨制衣": {
-      level:"B 类客户", risk:"联系人更换", short:"东晨", owner:"张伟", contact:"新采购待确认", phone:"待补充", address:"中山沙溪镇东晨制衣",
-      lastDate:"2026-05-14", days:"0", visits:"6", samples:"1", orders:"2", rate:"100%",
-      records:[
-        ["2026-05-14 17:20","电话","张伟","原联系人离职，新采购下周确认。已提醒客户补发微信和采购清单。"],
-        ["2026-05-12 09:00","电话","张伟","电话确认新联系人，客户表示下周一给出采购负责人微信。"],
-        ["2026-04-22 15:40","线下","张伟","客户对上次供货反馈稳定，若联系人交接顺利会继续追加订单。"]
-      ]
-    },
-    "盛南服饰": {
-      level:"B 类客户", risk:"起样中", short:"盛南", owner:"张伟", contact:"刘主管 · 开发", phone:"135****3320", address:"广州海珠区盛南服饰打样中心",
-      lastDate:"2026-05-15", days:"0", visits:"5", samples:"3", orders:"1", rate:"33%",
-      records:[
-        ["2026-05-18 10:00","微信","张伟","中板颜色需要再调一个深蓝色，客户回复下周继续确认。"],
-        ["2026-05-15 15:00","电话","张伟","起样中，需确认宽度和颜色，客户优先看深蓝和黑色。"],
-        ["2026-05-02 11:30","线下","张伟","客户确定先走小批量样板，月底前决定是否转订单。"]
-      ]
-    },
-    "新联织造": {
-      level:"B 类客户", risk:"图稿待出", short:"新联", owner:"张伟", contact:"许经理 · 业务", phone:"134****8861", address:"惠州博罗县新联织造厂",
-      lastDate:"2026-05-11", days:"3", visits:"4", samples:"1", orders:"0", rate:"0%",
-      records:[
-        ["2026-05-15 13:40","微信","张伟","客户预计月底前给图稿，想先确认价格区间和打样周期。"],
-        ["2026-05-11 16:30","微信","张伟","六月开款节奏确认，客户表示月底前给图稿。"],
-        ["2026-04-21 10:00","电话","张伟","初步确认会有 2 款织带开发需求。"]
-      ]
-    },
-    "瑞成辅料": {
-      level:"B 类客户", risk:"报价待回", short:"瑞成", owner:"张伟", contact:"黄小姐 · 采购", phone:"133****7206", address:"广州增城区瑞成辅料市场",
-      lastDate:"2026-05-19", days:"1", visits:"3", samples:"1", orders:"0", rate:"0%",
-      records:[
-        ["2026-05-19 11:20","电话","张伟","客户已收新报价，周四前给内部评估结果。"],
-        ["2026-05-13 14:00","线下","张伟","客户关注交期稳定性，希望先看灰黑系样卡。"],
-        ["2026-04-27 15:20","微信","张伟","首次收到需求，想找替代现有供应商的平纹织带。"]
-      ]
-    },
-    "凯越服饰": {
-      level:"B 类客户", risk:"试样待开", short:"凯越", owner:"张伟", contact:"马经理 · 开发", phone:"137****2290", address:"佛山禅城区凯越服饰工作室",
-      lastDate:"2026-05-19", days:"1", visits:"4", samples:"2", orders:"0", rate:"0%",
-      records:[
-        ["2026-05-19 15:40","线下","张伟","客户确认先开 2 个颜色试样，月底前给终版意见。"],
-        ["2026-05-13 08:50","电话","张伟","确认母带颜色方向，客户计划下周内部选款。"],
-        ["2026-04-28 11:00","线下","张伟","第一次带样沟通，客户对手感要求较高。"]
-      ]
-    },
-    "柏盛箱包": {
-      level:"B 类客户", risk:"报价与样卡跟进", short:"柏盛", owner:"张伟", contact:"宋小姐 · 跟单", phone:"136****1187", address:"东莞常平镇柏盛箱包园",
-      lastDate:"2026-05-13", days:"1", visits:"4", samples:"1", orders:"0", rate:"0%",
-      records:[
-        ["2026-05-13 17:10","微信","张伟","补发报价明细和样卡，客户反馈颜色方向可以。"],
-        ["2026-05-06 10:00","微信","张伟","发送最新报价单，补充 25mm 灰黑配色样卡。"],
-        ["2026-04-25 16:20","电话","张伟","客户表示节后会统一评审新供应商。"]
-      ]
-    },
-    "宏达箱包": {
-      level:"B 类客户", risk:"补单确认中", short:"宏达", owner:"张伟", contact:"吴总 · 采购", phone:"138****9054", address:"江门蓬江区宏达箱包厂",
-      lastDate:"2026-05-12", days:"2", visits:"5", samples:"1", orders:"2", rate:"200%",
-      records:[
-        ["2026-05-12 16:00","线下","张伟","确认下月可能有补单，客户主要关心交期和颜色稳定。"],
-        ["2026-05-03 10:00","电话","张伟","节前补单数量初步确定，等待正式采购单。"],
-        ["2026-04-17 14:20","微信","张伟","上批货质量反馈正常，五月有二次补单机会。"]
-      ]
-    },
-    "华美服饰": {
-      level:"C 类客户", risk:"报价观望", short:"华美", owner:"张伟", contact:"张小姐 · 采购", phone:"135****4781", address:"中山小榄镇华美服饰厂",
-      lastDate:"2026-05-12", days:"2", visits:"3", samples:"0", orders:"0", rate:"0%",
-      records:[
-        ["2026-05-12 11:30","微信","张伟","客户暂时观望，预计月底再看新系列辅料预算。"],
-        ["2026-05-06 16:40","电话","张伟","报价复盘完成，客户暂无新增需求。"]
-      ]
-    },
-    "荣兴箱包": {
-      level:"C 类客户", risk:"普通维护", short:"荣兴", owner:"张伟", contact:"何先生 · 业务", phone:"134****1570", address:"清远清城区荣兴箱包厂",
-      lastDate:"2026-05-15", days:"0", visits:"2", samples:"0", orders:"1", rate:"0%",
-      records:[
-        ["2026-05-27 09:00","电话","张伟","确认夏季补单窗口，客户表示仍以维护为主。"],
-        ["2026-05-15 16:30","电话","张伟","普通维护，确认下季度是否有补单。"]
-      ]
+  function monthFocus(y, m, d) {
+    // 后端无 per-day focus;今天叠加超期提醒,其它天中性文案
+    if (`${y}-${m}-${d}` === TODAY_KEY && _overdue.count > 0) {
+      return [`今天有 ${_overdue.count} 个超期客户待跟进`,
+              _overdue.items.map(c => c.name).join("、") + " —— 建议优先安排。"];
     }
-  };
-  const customerCards = {
-    "宏远服饰": {level:"A", className:"hot", summary:"李总 · 佛山南海 · 28 天未拜访 · 宽度调整样板待确认", tags:["overdue","a","sample"]},
-    "锦华辅料": {level:"A", className:"hot", summary:"陈经理 · 广州番禺 · 31 天未拜访 · 价格复核后需线下拜访", tags:["overdue","a"]},
-    "华瑞运动": {level:"A", className:"sample", summary:"周总 · 深圳龙岗 · 新运动带方案评审中 · 反光丝版本待确认", tags:["a","sample","week"]},
-    "恒嘉箱包": {level:"B", className:"sample", summary:"王小姐 · 东莞厚街 · 中板待确认，客户关注色牢度", tags:["sample","week"]},
-    "东晨制衣": {level:"B", className:"", summary:"新采购待确认 · 中山沙溪 · 联系人更换后需补微信", tags:["week"]},
-    "盛南服饰": {level:"B", className:"sample", summary:"刘主管 · 广州海珠 · 起样中，深蓝中板待调整", tags:["sample","week"]},
-    "新联织造": {level:"B", className:"", summary:"许经理 · 惠州博罗 · 图稿待出，月底前确认打样", tags:["week"]},
-    "瑞成辅料": {level:"B", className:"", summary:"黄小姐 · 广州增城 · 报价待回，交期稳定性是重点", tags:["week"]},
-    "凯越服饰": {level:"B", className:"", summary:"马经理 · 佛山禅城 · 两个颜色试样待开", tags:["week"]},
-    "柏盛箱包": {level:"B", className:"", summary:"宋小姐 · 东莞常平 · 报价与样卡已发，等内部评审", tags:["week"]},
-    "宏达箱包": {level:"B", className:"", summary:"吴总 · 江门蓬江 · 月中补单确认中", tags:["week"]},
-    "华美服饰": {level:"C", className:"", summary:"张小姐 · 中山小榄 · 报价观望中", tags:[]},
-    "荣兴箱包": {level:"C", className:"", summary:"何先生 · 清远清城 · 日常维护客户", tags:[]}
-  };
+    return ["今天的安排", "点开事项查看详情,或右下角 + 新增拜访 / 计划。"];
+  }
+
+  async function loadMonth(year, month) {
+    const resp = await CRM.api.calendar(year, month);
+    const out = {};
+    for (const day of resp.days) {
+      const d = Number(day.date.split("-")[2]);
+      const events = day.items.slice()
+        .sort((a, b) => a.scheduled_at.localeCompare(b.scheduled_at))
+        .map(it => {
+          const time = it.scheduled_at.slice(11, 16);                  // "HH:MM"
+          const type = it.status === "done" ? "done"
+                     : (it.type === "custom" ? "custom" : "visit");    // warn/sample 1A 无来源
+          const name = it.customer_name || it.title;
+          const grade = levelByName[it.customer_name] || "";
+          return [time, type, name, grade, it.content || "", it.id];   // 第 6 位 = plan.id(编辑/删除用)
+        });
+      out[d] = {
+        label: formatDateLabel(year, month, d),
+        counts: [events.length,
+                 events.filter(e => ["visit", "warn"].includes(e[1])).length,
+                 events.filter(e => e[1] === "done").length],
+        focus: monthFocus(year, month, d),
+        events,
+      };
+    }
+    monthlyData[`${year}-${month}`] = out;
+    return out;
+  }
+
+  async function loadCustomers() {
+    const list = await CRM.api.customers();
+    customers = {}; customerCards = {}; customerIdByName = {}; levelByName = {};
+    for (const c of list) {
+      customerIdByName[c.name] = c.id;
+      levelByName[c.name] = c.level;
+      const className = c.is_overdue ? "hot" : (c.tags.includes("sample") ? "sample" : "");
+      const risk = c.is_overdue ? `${CRM.daysSince(c.last_visit_at)} 天未拜访` : "正常跟进";
+      const summary = [c.contact_name, c.phone, risk].filter(Boolean).join(" · ");
+      customerCards[c.name] = { level: c.level, className, summary, tags: c.tags };
+      customers[c.name] = {
+        level: `${c.level} 类客户`, risk, short: c.short_name || "", owner: "",
+        contact: c.contact_name || "", phone: c.phone || "", address: "",
+        lastDate: (c.last_visit_at || "").slice(0, 10) || "—", days: CRM.daysSince(c.last_visit_at),
+        visits: "—", samples: "—", orders: "—", rate: "—", records: [],
+      };
+    }
+    // 客户页顶部三个指标(原静态 18/5/3)改真值
+    const metrics = document.querySelectorAll("#customersPage .summary .metric strong");
+    if (metrics.length === 3) {
+      metrics[0].textContent = list.length;
+      metrics[1].textContent = list.filter(c => c.level === "A").length;
+      metrics[2].textContent = list.filter(c => c.is_overdue).length;
+    }
+  }
+
+  async function loadReports() {
+    const list = await CRM.api.weeklyReports();
+    const statusCn = { draft: "草稿", submitted: "已提交", reopened: "已退回" };
+    reports = {};
+    for (const r of list) {
+      reports[r.id] = {
+        title: `${r.week_start} 周报 · ${statusCn[r.status] || r.status}`,
+        summary: r.summary || "", plan: r.next_plan || "", note: r.notes || "",
+        files: (r.attachments || []).map(a => (typeof a === "string" ? a : (a.name || "附件"))),
+      };
+    }
+  }
+  function renderReportList() {
+    const box = $("#reportHistoryList");
+    if (!box) return;
+    box.innerHTML = Object.entries(reports).map(([id, r]) => `
+      <article class="report-card" data-report="${id}">
+        <div class="card-head"><strong>${r.title}</strong></div>
+        <p>${(r.summary || "本周报").slice(0, 48)}</p>
+      </article>`).join("") || `<article class="report-card"><p>还没有历史周报。</p></article>`;
+    bindDynamic();
+  }
+  // ════════ 适配器结束 ════════
 
   function renderCustomers(filter = activeCustomerFilter){
     activeCustomerFilter = filter;
@@ -2996,9 +2861,11 @@
   }
 
   function heat(day){
-    if(currentYear !== 2026 || currentMonth !== 5) return "";
-    const meta = dayMeta[day];
-    return meta ? meta.state : "";
+    const item = (monthlyData[`${currentYear}-${currentMonth}`] || {})[day];
+    if(!item || !item.events.length) return "";
+    if(item.events.some(e => e[1] === "warn")) return "hot";
+    if(item.events.every(e => e[1] === "done")) return "low done";
+    return item.events.length >= 4 ? "hot" : "mid";
   }
 
   const lunarLabels = {
@@ -3090,11 +2957,12 @@
     }
   }
 
-  function changeMonth(delta){
+  async function changeMonth(delta){
     currentMonth += delta;
     if(currentMonth < 1){currentMonth = 12; currentYear -= 1;}
     if(currentMonth > 12){currentMonth = 1; currentYear += 1;}
     selectedDay = Math.min(selectedDay, daysInMonth(currentYear, currentMonth));
+    await loadMonth(currentYear, currentMonth);
     renderCalendar(selectedDay, !isAgendaMode());
   }
 
@@ -3113,11 +2981,11 @@
   }
 
   function eventArticleHTML(year, month, day, item, event, index){
-    const [time,type,name,grade,desc] = event;
+    const [time,type,name,grade,desc,id] = event;
     const dow = (item.label.split("·")[1] || "周四").trim().replace("周", "");
     const dowEn = {日:"SUN",一:"MON",二:"TUE",三:"WED",四:"THU",五:"FRI",六:"SAT"}[dow] || "TODAY";
     const customerEvent = isCustomerEvent(type, name);
-    const payload = encodeURIComponent(JSON.stringify({time,type,name,grade,desc,day,index,year,month}));
+    const payload = encodeURIComponent(JSON.stringify({time,type,name,grade,desc,day,index,year,month,id}));
     return `
       <article class="event">
         <div class="time"><span class="dow">${dowEn}</span><span class="date">${day}</span></div>
@@ -3171,8 +3039,12 @@
     `;
   }
 
-  function renderAgendaAroundDate(centerDate = makeLocalDate(currentYear, currentMonth, selectedDay), scrollToDate = false){
+  async function renderAgendaAroundDate(centerDate = makeLocalDate(currentYear, currentMonth, selectedDay), scrollToDate = false){
     const center = normalizeDate(centerDate);
+    // 预加载中心 ± 1 月(更远的月在滚动跨月时由 updateAgendaSelectionFromScroll 懒加载)
+    const months = new Set();
+    for(const off of [-1,0,1]){ const dt = addDays(center, off*30); months.add(`${dt.getFullYear()}-${dt.getMonth()+1}`); }
+    await Promise.all([...months].filter(k=>!monthlyData[k]).map(k=>{const [y,m]=k.split("-").map(Number); return loadMonth(y,m);}));
     agendaStartDate = addDays(center, -agendaInitialPastDays);
     agendaEndDate = addDays(center, agendaInitialFutureDays);
     const days = [];
@@ -3238,7 +3110,7 @@
     const monthChanged = currentYear !== year || currentMonth !== month;
     currentYear = year;
     currentMonth = month;
-    if(monthChanged) renderCalendar(day, false);
+    if(monthChanged){ if(!monthlyData[`${year}-${month}`]) loadMonth(year,month).then(()=>renderCalendar(day,false)); else renderCalendar(day,false); }
     updateSelectedDayChrome(year, month, day);
     document.querySelectorAll(".day").forEach(item => item.classList.remove("active"));
     document.querySelector(`.day[data-day="${day}"]`)?.classList.add("active");
@@ -3259,9 +3131,7 @@
     const btn = document.querySelector(`.day[data-day="${day}"]`);
     if(!btn) return;
     const events = getCalendarEvents(day);
-    const meta = dayMeta[day] || {types:[],count:0,state:""};
-    meta.count = events.length;
-    meta.types = events.map(([type]) => type);
+    btn.className = "day " + heat(day) + (day === selectedDay ? " active" : "");
     btn.querySelector(".day-events").innerHTML = `
       ${events.slice(0,3).map(([type,label]) => `<span class="day-event ${type}">${label}</span>`).join("")}
       ${events.length > 3 ? `<span class="day-event more">+${events.length - 3}</span>` : ""}
@@ -3306,7 +3176,6 @@
       };
     }
     targetMonthData[day].events.push([time,activeType,customerName,grade,purpose]);
-    if(!dayMeta[day]) dayMeta[day] = {types:[],count:0,state:""};
     renderCalendar(day);
     refreshDayAfterEdit(day, targetYear, targetMonth);
     closeSheets();
@@ -3362,7 +3231,6 @@
       };
     }
     toData[toDay].events.push([time,type,title,grade,desc]);
-    if(!dayMeta[toDay]) dayMeta[toDay] = {types:[],count:0,state:""};
     renderCalendar(toDay);
     refreshDayAfterEdit(fromDay, fromYear, fromMonth);
     refreshDayAfterEdit(toDay, toYear, toMonth);
@@ -3430,43 +3298,48 @@
       sheet.classList.add("open");
     }
   }
-  function openCustomer(name){
-    const c = customers[name] || customers["宏远服饰"];
-    $("#customerLevel").textContent = c.level;
-    $("#customerName").textContent = name in customers ? name : "宏远服饰";
-    $("#customerShort").textContent = c.short;
-    $("#customerOwner").textContent = c.owner;
-    $("#customerPhone").textContent = c.phone;
-    $("#customerLastDate").textContent = c.lastDate;
-    $("#customerDays").textContent = c.days;
-    $("#kpiVisits").textContent = c.visits;
-    $("#kpiSamples").textContent = c.samples;
-    $("#kpiOrders").textContent = c.orders;
-    $("#kpiRate").textContent = c.rate;
-    $("#customerContact").textContent = c.contact;
-    $("#customerAddress").textContent = c.address;
-    $("#customerVisitFeed").innerHTML = c.records.map(([time,method,owner,text], index) => {
-      const contactName = (c.contact || "客户联系人").split(" · ")[0];
-      const position = (c.contact || "客户联系人 · 负责人").split(" · ")[1] || "负责人";
-      const nextDate = index === 0 ? "2026-04-25" : "2026-05-20";
-      return `
-      <article class="visit-item">
-        <div class="visit-meta"><span>${time}</span><span class="method-pill">${method}</span><span>${owner}</span></div>
-        <p>${text}</p>
-        <div class="visit-detail-inline">
-          <div class="visit-detail-grid">
-            <div class="visit-detail-cell"><span>拜访时间</span><b>${time}</b></div>
-            <div class="visit-detail-cell"><span>拜访对象</span><b>${contactName}</b></div>
-            <div class="visit-detail-cell full"><span>对象职位</span><b>${position}</b></div>
-            <div class="visit-detail-cell full"><span>拜访内容</span><b>${text}</b></div>
-            <div class="visit-detail-cell full"><span class="progress-pill">进展良好</span><span class="follow-date">下次跟进：${nextDate}　跟进订单</span></div>
-          </div>
-        </div>
-        <button class="visit-link" data-toggle-visit>点击查看详情 -></button>
-      </article>
-    `}).join("");
-    bindDynamic();
+  async function openCustomer(name){
+    const id = customerIdByName[name];
+    const base = customers[name] || {};
+    $("#customerName").textContent = name;
+    $("#customerLevel").textContent = base.level || "—";
+    $("#customerShort").textContent = base.short || "—";
+    $("#customerOwner").textContent = (CRM.getUser()?.name) || base.owner || "—";
+    $("#customerPhone").textContent = base.phone || "—";
+    $("#customerContact").textContent = base.contact || "—";
+    $("#customerAddress").textContent = base.address || "—";
+    $("#customerLastDate").textContent = base.lastDate || "—";
+    $("#customerDays").textContent = base.days || "—";
+    $("#customerVisitFeed").innerHTML = `<article class="visit-item"><p>加载中…</p></article>`;
     openSheet("customer");
+    if(!id){ return; }
+    try{
+      const d = await CRM.api.customerDetail(id);
+      $("#customerLevel").textContent = `${d.level} 类客户`;
+      $("#customerShort").textContent = d.short_name || "—";
+      $("#customerContact").textContent = d.contact_name || "—";
+      $("#customerPhone").textContent = d.phone || "—";
+      $("#customerAddress").textContent = d.address || "—";
+      $("#customerLastDate").textContent = (d.last_visit_at || "").slice(0,10) || "—";
+      $("#customerDays").textContent = CRM.daysSince(d.last_visit_at);
+      $("#kpiVisits").textContent = d.kpis.visits;
+      $("#kpiSamples").textContent = d.kpis.samples;
+      $("#kpiOrders").textContent = d.kpis.orders;
+      $("#kpiRate").textContent = Math.round((d.kpis.conversion_rate||0)*100) + "%";
+      window._currentCustomerId = id;            // 记录拜访时用
+      window._currentCustomerName = name;
+      $("#customerVisitFeed").innerHTML = (d.visit_records||[]).map(v => `
+        <article class="visit-item">
+          <div class="visit-meta"><span>${(v.visit_at||"").replace("T"," ").slice(0,16)}</span>
+            <span class="method-pill">${CRM.METHOD_CN[v.method]||v.method}</span><span>${v.target_person||""}</span></div>
+          <p>${v.content_preview || ""}</p>
+          <div class="visit-detail-inline"><div class="visit-detail-grid">
+            <div class="visit-detail-cell full"><span>AI 摘要</span><b>${v.ai_summary || "（暂无）"}</b></div>
+          </div></div>
+          <button class="visit-link" data-toggle-visit>点击查看详情 -></button>
+        </article>`).join("") || `<article class="visit-item"><p>暂无拜访记录。</p></article>`;
+      bindDynamic();
+    }catch(e){ $("#customerVisitFeed").innerHTML = `<article class="visit-item"><p>加载失败:${e.message}</p></article>`; }
   }
   function openVisitDetail(raw){
     let record;
@@ -3884,14 +3757,20 @@
       if (avatar) avatar.textContent = (user.name || "U").slice(0, 2);
       if (nameEl) nameEl.textContent = user.name || "我";
     }
-    // ↓ F2 在此处插入:await loadCustomers(); await loadMonth(currentYear,currentMonth);
-    //                    await loadReports(); 然后再 renderCustomers / renderCalendar
+    try {
+      await loadCustomers();
+      await loadOverdue();
+      await loadMonth(currentYear, currentMonth);
+      await loadReports();
+    } catch (e) { showToast("加载数据失败:" + e.message); }
     renderCustomers("all");
+    renderReportList();
     renderCalendar(selectedDay);
+    if (isAgendaMode()) await renderAgendaAroundDate(makeLocalDate(currentYear, currentMonth, selectedDay), true);
   }
 
   // 入口:有 token 直接进,无 token 弹登录
-  if (CRM.getToken()) { hideLogin(); initApp(); }
+  if (CRM.getToken()) { hideLogin(); (async () => { try { await initApp(); } catch (e) { showToast("加载失败:" + e.message); } })(); }
   else { showLogin(); }
 </script>
 </body>
