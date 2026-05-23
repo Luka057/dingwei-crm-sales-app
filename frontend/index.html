@@ -1093,6 +1093,9 @@
   }
   .board-result strong{display:flex;justify-content:space-between;gap:10px;font-size:15px}
   .board-result p{margin:7px 0 0;color:#625b52;font-size:13px;line-height:1.5}
+  .board-result{display:flex;gap:12px;align-items:center}
+  .board-result-thumb{width:54px;height:54px;border-radius:10px;object-fit:cover;flex:0 0 auto;background:var(--glass-active,rgba(0,0,0,.04))}
+  .board-result-body{flex:1;min-width:0}
   .board-upload{
     margin-top:14px;
     border:1.5px dashed #d8cec0;
@@ -2399,6 +2402,27 @@
       <button class="chip" data-page="ai">问 AI</button>
     </div>
   </section>
+
+  <section class="sheet" id="boardResultDetailSheet">
+    <div class="grab"></div>
+    <div class="sheet-head">
+      <h2>样板工艺详情</h2>
+      <button class="icon-btn" data-close aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="customer-detail-card">
+      <div class="detail-title">
+        <h3 id="boardDetailNo">货号</h3>
+        <span class="level-pill" id="boardDetailStatus">状态</span>
+      </div>
+      <img id="boardDetailImg" alt="样板图" style="width:100%;max-height:200px;object-fit:contain;border-radius:12px;margin:8px 0" onerror="this.style.display='none'">
+      <div class="detail-grid">
+        <div class="detail-field"><span>宽度</span><b id="boardDetailWidth">—</b></div>
+        <div class="detail-field"><span>开力度</span><b id="boardDetailTension">—</b></div>
+        <div class="detail-field"><span>织带类型</span><b id="boardDetailType">—</b></div>
+        <div class="detail-field"><span>颜色</span><b id="boardDetailColor">—</b></div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <!-- 登录门:无 token 时显示,覆盖全屏。用原型主题变量,保证配色一致 -->
@@ -3358,13 +3382,33 @@
         ribbon_type: $("#boardType").value,
         requirements: $("#boardQuery").value.trim(),
       });
-      $("#boardResults").innerHTML = r.matches.map(m => `
-        <div class="board-result">
-          <strong><span>${m.sample_no}</span><em>${Math.round(m.score*100)}%</em></strong>
-          <p>${m.reason}</p>
+      window._boardMatches = r.matches;
+      $("#boardResults").innerHTML = r.matches.map((m, i) => `
+        <div class="board-result" data-board-idx="${i}">
+          <img class="board-result-thumb" src="${m.image_url || ''}" alt="${m.sample_no}" onerror="this.style.visibility='hidden'">
+          <div class="board-result-body">
+            <strong><span>${m.sample_no}</span><em>${Math.round(m.score*100)}%</em></strong>
+            <p>${m.reason || (m.ribbon_type||'') + ' ' + (m.color||'')}</p>
+          </div>
         </div>`).join("");
-      showToast("已按条件匹配历史板样(1A 为 stub 结果)。");
+      document.querySelectorAll('#boardResults .board-result').forEach(el => {
+        el.onclick = () => openBoardResultDetail(window._boardMatches[Number(el.dataset.boardIdx)]);
+      });
+      showToast("已按条件匹配历史板样。");
     }catch(e){ showToast("找板失败:" + e.message); }
+  }
+  const BOARD_STATUS_CN = {qiyang:"起样", zhongban:"中板", queren:"确认", yizhuandingdan:"已转订单", yifangqi:"已放弃"};
+  function openBoardResultDetail(m){
+    if(!m) return;
+    $("#boardDetailNo").textContent = m.sample_no || "—";
+    $("#boardDetailStatus").textContent = BOARD_STATUS_CN[m.status] || m.status || "—";
+    $("#boardDetailWidth").textContent = m.width || "—";
+    $("#boardDetailTension").textContent = m.tension || "—";
+    $("#boardDetailType").textContent = m.ribbon_type || "—";
+    $("#boardDetailColor").textContent = m.color || "—";
+    const img = $("#boardDetailImg");
+    if(m.image_url){ img.src = m.image_url; img.style.display = ""; } else { img.style.display = "none"; }
+    openSheet("boardResultDetail");
   }
   function mockBoardUpload(){
     const input = $("#crmPhotoInput");

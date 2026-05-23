@@ -57,7 +57,15 @@ class AiBoardSearchRequest(APIModel):
 class AiBoardSearchMatch(APIModel):
     sample_no: str
     score: float = Field(ge=0.0, le=1.0)
-    reason: str
+    reason: str | None = None
+    # 视觉服务返回的扩展字段(optional,旧行为优雅降级)
+    image_url: str | None = None
+    external_id: str | None = None
+    width: str | None = None
+    tension: str | None = None
+    ribbon_type: str | None = None
+    color: str | None = None
+    status: str | None = None
 
 
 class AiBoardSearchResponse(APIModel):
