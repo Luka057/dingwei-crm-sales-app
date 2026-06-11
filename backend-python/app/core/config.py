@@ -52,6 +52,12 @@ class Settings(BaseSettings):
         description="DeepSeek API key,1A 不使用",
     )
 
+    # ── 视觉服务(AI 找板,Phase 2 真接入) ──────────────────────
+    vision_service_url: str = "http://vision:8000"
+    vision_timeout_seconds: float = 30.0
+    vision_top_k: int = 10
+    vision_service_token: SecretStr | None = None   # 可选 bearer,本地可空
+
     # ── 缓存(infra 留位,1A 不写代码) ───────────────────────
     redis_url: str = "redis://redis:6379"
 

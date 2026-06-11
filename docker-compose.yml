@@ -52,8 +52,9 @@ services:
       JWT_SECRET: "change_me_in_prod_or_will_be_breached"
       DEEPSEEK_API_KEY: "change_me"
       UPLOAD_DIR: "/app/uploads"
+      VISION_SERVICE_URL: "http://vision:8000"   # AI 找板:调视觉服务(SigLIP2)
     ports:
-      - "3000:3000"
+      - "3001:3000"   # 主机 3001 避开 IoT 项目的 Vite (容器内仍 3000, nginx 反代不变)
     volumes:
       - uploads_data:/app/uploads
     depends_on:
@@ -79,6 +80,19 @@ services:
       - "8080:80"
     depends_on:
       - backend
+
+  # AI 找板视觉服务(SigLIP2 + 向量索引)。本地默认 mock 模式(无需 torch/transformers)。
+  # 真模型:挂 ./vision-service/models + VISION_USE_MOCK=false(需装 torch/transformers,Linux+GPU 生产)。
+  # index/corpus 由 vision-service 离线索引器生成,挂到默认路径 /app/index、/app/corpus。
+  vision:
+    build: ./vision-service
+    environment:
+      VISION_USE_MOCK: "true"
+    volumes:
+      - ./vision-service/index:/app/index:ro
+      - ./vision-service/corpus:/app/corpus:ro
+    # 内部服务:仅 backend(vision:8000)+ nginx(/vision-images/)经 docker 网络访问,
+    # 不映射宿主端口(避免 :8000 冲突;生产同样内网/GPU 机不对外)。调试用 docker compose exec。
 
 volumes:
   mssql_data:

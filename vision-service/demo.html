@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>AI 找版 — Demo</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+    margin: 0; padding: 0; background: #f5f5f7; color: #1d1d1f;
+  }
+  header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff; padding: 20px 32px;
+  }
+  header h1 { margin: 0; font-size: 22px; font-weight: 600; }
+  header .sub { opacity: 0.85; font-size: 13px; margin-top: 4px; }
+
+  .container { display: grid; grid-template-columns: 360px 1fr; gap: 20px; padding: 24px; max-width: 1600px; margin: 0 auto; }
+
+  .panel { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+  .panel h2 { margin: 0 0 12px 0; font-size: 15px; color: #6e6e73; font-weight: 500; }
+
+  /* 上传区 */
+  #drop {
+    border: 2px dashed #c7c7cc; border-radius: 12px; padding: 32px 12px;
+    text-align: center; cursor: pointer; transition: 0.2s;
+    background: #fafafa; min-height: 260px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  #drop.hover { border-color: #667eea; background: #eef0ff; }
+  #drop.has-image { padding: 8px; border-style: solid; border-color: #d2d2d7; background: #fff; }
+  #drop img { max-width: 100%; max-height: 260px; border-radius: 8px; }
+  #drop .hint { color: #86868b; font-size: 13px; margin-top: 8px; }
+  #drop .icon { font-size: 32px; opacity: 0.4; }
+
+  .controls { margin-top: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .row { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .row label { color: #6e6e73; min-width: 80px; }
+  .row input[type=range] { flex: 1; }
+  .row .val { color: #1d1d1f; font-weight: 600; min-width: 28px; text-align: right; }
+
+  button.primary {
+    margin-top: 8px; padding: 12px 16px; border: none; border-radius: 10px;
+    background: #667eea; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: 0.2s;
+  }
+  button.primary:hover { background: #5568d3; }
+  button.primary:disabled { background: #c7c7cc; cursor: not-allowed; }
+
+  /* 结果区 */
+  .status { color: #6e6e73; font-size: 13px; margin-bottom: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+  .card {
+    background: #fff; border: 1px solid #e5e5ea; border-radius: 10px;
+    overflow: hidden; transition: 0.2s;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+  .card img { width: 100%; height: 180px; object-fit: cover; display: block; background: #f5f5f7; }
+  .card .meta { padding: 10px 12px; }
+  .card .meta .id { font-weight: 600; font-size: 14px; color: #1d1d1f; }
+  .card .meta .score { font-size: 12px; color: #6e6e73; margin-top: 2px; }
+  .card .rank {
+    position: absolute; top: 8px; left: 8px;
+    background: rgba(102,126,234,0.95); color: #fff;
+    padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;
+  }
+  .card-wrap { position: relative; }
+
+  .empty {
+    padding: 80px 20px; text-align: center; color: #86868b; font-size: 14px;
+  }
+  .loading { padding: 80px 20px; text-align: center; color: #667eea; font-size: 14px; }
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 3px solid #e5e5ea; border-top-color: #667eea; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎀 AI 找版 — Demo</h1>
+  <div class="sub">DINOv2-base · 678 张样板 / 227 个独立货号 · 同货号自动去重</div>
+</header>
+
+<div class="container">
+  <!-- 左:上传 + 控件 -->
+  <div class="panel">
+    <h2>上传查询图</h2>
+    <div id="drop">
+      <div class="icon">📷</div>
+      <div><strong>拖图到这里</strong> 或 <u>点击选择</u></div>
+      <div class="hint">支持 jpg / png / webp · 可粘贴剪贴板</div>
+      <input type="file" id="file" accept="image/*" hidden>
+    </div>
+
+    <div class="controls">
+      <div class="row">
+        <label>展示个数</label>
+        <input type="range" id="topk" min="3" max="30" value="10">
+        <span class="val" id="topk-val">10</span>
+      </div>
+      <button class="primary" id="go" disabled>🔍 找版</button>
+    </div>
+  </div>
+
+  <!-- 右:结果 -->
+  <div class="panel">
+    <h2>Top 货号</h2>
+    <div class="status" id="status">👈 上传图片后点「找版」</div>
+    <div id="results" class="grid"></div>
+  </div>
+</div>
+
+<script>
+const drop = document.getElementById('drop');
+const fileInput = document.getElementById('file');
+const goBtn = document.getElementById('go');
+const topkSlider = document.getElementById('topk');
+const topkVal = document.getElementById('topk-val');
+const statusEl = document.getElementById('status');
+const resultsEl = document.getElementById('results');
+
+let currentImageB64 = null;
+
+topkSlider.addEventListener('input', e => topkVal.textContent = e.target.value);
+
+// 文件选择
+drop.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+
+// 拖放
+drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('hover'); });
+drop.addEventListener('dragleave', () => drop.classList.remove('hover'));
+drop.addEventListener('drop', e => {
+  e.preventDefault(); drop.classList.remove('hover');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+
+// 粘贴剪贴板
+window.addEventListener('paste', e => {
+  const item = [...e.clipboardData.items].find(i => i.type.startsWith('image/'));
+  if (item) handleFile(item.getAsFile());
+});
+
+function handleFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentImageB64 = e.target.result.split(',')[1];  // 去掉 data:image/...;base64, 前缀
+    drop.classList.add('has-image');
+    drop.innerHTML = `<img src="${e.target.result}" alt="query">`;
+    goBtn.disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+// 触发检索
+goBtn.addEventListener('click', async () => {
+  if (!currentImageB64) return;
+  const topk = parseInt(topkSlider.value);
+  goBtn.disabled = true;
+  statusEl.innerHTML = '';
+  resultsEl.innerHTML = '<div class="loading"><span class="spinner"></span>正在检索 678 张底库...</div>';
+
+  try {
+    const t0 = performance.now();
+    // 后端 top_k 取多一些, 然后前端按 external_id 去重再取 top-K
+    const fetchK = Math.max(topk * 6, 30);
+    const resp = await fetch('/sample-search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        image_base64: currentImageB64,
+        description: '',
+        filters: {},
+        top_k: fetchK
+      })
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
+
+    // 同 external_id 去重: 同货号只留分数最高的
+    const seen = new Map();
+    for (const m of data.matches) {
+      const key = m.external_id || m.sample_no;
+      if (!seen.has(key) || m.score > seen.get(key).score) {
+        seen.set(key, m);
+      }
+    }
+    const top = [...seen.values()].sort((a, b) => b.score - a.score).slice(0, topk);
+
+    statusEl.innerHTML = `✅ 完成 — 用时 ${elapsed}s · 展示 ${top.length} 个独立货号`;
+    resultsEl.innerHTML = top.map((m, i) => `
+      <div class="card-wrap">
+        <div class="card">
+          <span class="rank">#${i + 1}</span>
+          <img src="${m.image_url}" alt="${m.external_id}" loading="lazy">
+          <div class="meta">
+            <div class="id">${m.external_id || m.sample_no}</div>
+            <div class="score">相似度 ${m.score.toFixed(3)}</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch (err) {
+    statusEl.innerHTML = `❌ 出错: ${err.message}`;
+    resultsEl.innerHTML = '';
+  } finally {
+    goBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
