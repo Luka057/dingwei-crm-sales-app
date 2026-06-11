@@ -18,6 +18,7 @@ from contextlib import asynccontextmanager
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Request, status
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import Settings, get_settings
@@ -152,6 +153,12 @@ async def _check_auth(request: Request, settings: Settings) -> None:
 # ─────────────────────────────────────────────────────────────────
 # 路由
 # ─────────────────────────────────────────────────────────────────
+
+@app.get("/", include_in_schema=False)
+async def demo_page():
+    """演示页 — 浏览器访问根路径直接拿到 demo.html"""
+    return FileResponse(os.path.join(os.path.dirname(os.path.dirname(__file__)), "demo.html"))
+
 
 @app.get(
     "/health",

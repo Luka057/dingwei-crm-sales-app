@@ -5,9 +5,10 @@ config.py — 环境驱动的服务配置。
 快速启动 (mock 模式，无需 torch/transformers):
   VISION_USE_MOCK=true uvicorn app.main:app ...
 
-真实模型模式:
-  pip install torch transformers
-  VISION_USE_MOCK=false VISION_MODEL_PATH=google/siglip-base-patch16-224 uvicorn app.main:app ...
+真实模型模式 (DINOv3，默认):
+  pip install -r requirements.txt
+  huggingface-cli login   # 粘贴 HF token（需先在网页点 Agree）
+  VISION_USE_MOCK=false uvicorn app.main:app ...
 """
 
 from __future__ import annotations
@@ -34,10 +35,12 @@ class Settings(BaseSettings):
 
     # --- 模型配置 (仅 use_mock=False 时生效) ---
     # HuggingFace 模型 ID 或本地目录路径
-    model_path: str = "google/siglip-base-patch16-224"
-    # "auto" → 自动选择 mps/cuda/cpu；也可显式指定 "cpu"/"cuda"/"mps"
+    # 默认 DINOv3 ViT-B/16 (86M 参数, 768 维, ~350MB)
+    # 路径包含 "siglip" 时自动切回 SiglipEmbedder（向后兼容）
+    model_path: str = "facebook/dinov3-vitb16-pretrain-lvd1689m"
+    # "auto" → 自动选择 cuda/mps/cpu；也可显式指定 "cpu"/"cuda"/"mps"
     device: str = "auto"
-    # 嵌入向量维度（SigLIP base: 768；large: 1152）
+    # 嵌入向量维度（DINOv3 ViT-B/16: 768；ViT-L: 1024；ViT-S: 384）
     embed_dim: int = 768
 
     # --- 向量数据库 ---
@@ -58,7 +61,8 @@ class Settings(BaseSettings):
     # 三路相似度的加权比例，总和不要求 =1（fuse() 内部直接加权求和后 clamp）
     # 可通过环境变量传入 JSON 字符串，例如:
     #   VISION_FUSION_WEIGHTS='{"image":0.6,"text":0.2,"process":0.2}'
-    fusion_weights: dict = {"image": 0.5, "text": 0.3, "process": 0.2}
+    # DINOv3 模式默认: 纯图像（DINOv3 无文字侧；工艺改硬过滤，详见 spec 2026-05-29）
+    fusion_weights: dict = {"image": 1.0, "text": 0.0, "process": 0.0}
 
     # --- 安全 ---
     # 若设置，则 POST /sample-search 需要 Authorization: Bearer <token>

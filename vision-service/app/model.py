@@ -4,17 +4,19 @@ model.py — 嵌入模型层。
 ═══════════════════════════════════════════════════════════════════
   算法工程师交接线 (ENGINEER SEAM)
 ═══════════════════════════════════════════════════════════════════
-本文件定义了三个对象:
+本文件定义四个对象:
   1. Embedder       —— Protocol（接口规范），其余代码只依赖这个接口
   2. MockEmbedder   —— 本地可立即运行的确定性占位实现（无 torch）
-  3. SiglipEmbedder —— 真实 SigLIP/SigLIP2 实现框架（需 torch + transformers）
-                        替换时只需修改带 "ENGINEER SEAM" 注释的代码块
+  3. DinoV3Embedder —— [默认真实模型] DINOv3 ViT-B/16 (Meta 2025)
+                        86M 参数 / 768 维 / 颜色无关 / 纹理优先 / 商用 license
+                        见 docs/superpowers/specs/2026-05-29-ai-zhaoban-algorithm-design.md
+  4. SiglipEmbedder —— [对比参考] 原 SigLIP2 实现（保留供未来对照）
 
-要接入你的 SigLIP2 权重:
-  1. pip install torch transformers
-  2. 将模型权重放到本地目录，或直接使用 HuggingFace ID
-  3. 设置 VISION_USE_MOCK=false  VISION_MODEL_PATH=<你的路径>
-  4. （可选）在 SiglipEmbedder._encode_image / _encode_text 里替换推理逻辑
+要启用 DINOv3 真实模型:
+  1. pip install -r requirements.txt   (会装 torch + transformers)
+  2. 去 https://huggingface.co/facebook/dinov3-vitb16-pretrain-lvd1689m 点 "Agree and access"
+  3. huggingface-cli login  (粘贴 HF token)
+  4. VISION_USE_MOCK=false uvicorn app.main:app --port 8077
 ═══════════════════════════════════════════════════════════════════
 """
 
@@ -117,7 +119,84 @@ class MockEmbedder:
 
 
 # ─────────────────────────────────────────────────────────────────
-# 真实 SigLIP 实现（算法工程师交接框架）
+# 真实 DINOv3 实现（当前默认 — 详见 spec 2026-05-29）
+# ─────────────────────────────────────────────────────────────────
+
+class DinoV3Embedder:
+    """
+    基于 HuggingFace transformers 的 DINOv3 嵌入器。
+    需要: pip install torch transformers>=4.45 accelerate
+
+    特点（对比 SigLIP2）:
+      - 纯视觉自监督，无文字侧 → embed_text 返回零向量（fusion 中 text 权重应为 0）
+      - 颜色无关 + 纹理优先 → 适合织带这种细粒度工业纹理产品
+      - 内置 register tokens → 对脏背景/手机现场拍鲁棒
+
+    >>> ENGINEER SEAM: 升级 DINOv3 微调权重 / 更换 ViT-L 时只改 __init__ 与 embed_image <<<
+    """
+
+    def __init__(self, model_path: str, device: str, embed_dim: int) -> None:
+        # 延迟导入：使本文件在无 torch 环境下仍可被解析（MockEmbedder 路径）
+        import torch
+        from transformers import AutoImageProcessor, AutoModel
+
+        # 自动设备选型：CUDA > MPS > CPU
+        if device == "auto":
+            if torch.cuda.is_available():
+                device = "cuda"
+            elif torch.backends.mps.is_available():
+                device = "mps"
+            else:
+                device = "cpu"
+
+        self.device = torch.device(device)
+        self.embed_dim = embed_dim
+
+        logger.info("[DinoV3Embedder] 加载模型 %s → device=%s", model_path, device)
+
+        # >>> ENGINEER SEAM: 替换为你的 DINOv3 微调 checkpoint 时改这里 <<<
+        # AutoImageProcessor 负责输入预处理（resize / 归一化）
+        # AutoModel 加载 DINOv3 backbone，输出 pooler_output (CLS token, shape [1, 768])
+        self.processor = AutoImageProcessor.from_pretrained(model_path)
+        self.model = AutoModel.from_pretrained(model_path).to(self.device).eval()
+        # >>> END ENGINEER SEAM <<<
+
+        logger.info("[DinoV3Embedder] 模型加载完成 — 参数量约 86M, 嵌入维度 %d", embed_dim)
+
+    def embed_image(self, img: Image.Image) -> np.ndarray:
+        """
+        图片 → L2 归一化的 768 维向量。
+
+        DINOv3 输出 outputs.pooler_output 即为 CLS token（整张图的全局表征），
+        直接拿来 L2 归一化就是可用的相似度嵌入。
+        """
+        import torch
+
+        # 预处理：DINOv3 自带的 processor 会把图片缩放到 224×224 + 归一化
+        inputs = self.processor(images=img, return_tensors="pt").to(self.device)
+        # inference_mode 比 no_grad 更省内存（PyTorch 1.9+）
+        with torch.inference_mode():
+            outputs = self.model(**inputs)
+        # pooler_output: shape (1, 768) — CLS token 经过 layer norm 后的输出
+        vec = outputs.pooler_output[0].cpu().float().numpy()
+
+        return _l2_normalize(vec)
+
+    def embed_text(self, text: str) -> np.ndarray:
+        """
+        DINOv3 没有文本编码器 → 返回零向量。
+
+        【设计意图】保持 Embedder Protocol 兼容（search.py 仍会调 embed_text），
+        但由于 fusion.py 中 text 权重应配为 0（见 spec 2026-05-29），
+        零向量在加权求和里自然贡献 0，不污染最终分数。
+
+        如果未来想要文字检索：可换成独立的 sentence-transformers 模型。
+        """
+        return np.zeros(self.embed_dim, dtype=np.float32)
+
+
+# ─────────────────────────────────────────────────────────────────
+# 原 SigLIP 实现（保留对照 — 当前不启用）
 # ─────────────────────────────────────────────────────────────────
 
 class SiglipEmbedder:
@@ -218,15 +297,25 @@ def build_embedder(settings: Settings) -> Embedder:
         logger.info("═" * 60)
         return MockEmbedder(embed_dim=settings.embed_dim)
 
-    # 尝试加载真实模型
+    # 尝试加载真实模型（默认 DINOv3；如果 model_path 含 "siglip" 字样则走 SiglipEmbedder）
     try:
-        embedder = SiglipEmbedder(
-            model_path=settings.model_path,
-            device=settings.device,
-            embed_dim=settings.embed_dim,
-        )
+        if "siglip" in settings.model_path.lower():
+            embedder = SiglipEmbedder(
+                model_path=settings.model_path,
+                device=settings.device,
+                embed_dim=settings.embed_dim,
+            )
+            mode_name = "SIGLIP"
+        else:
+            embedder = DinoV3Embedder(
+                model_path=settings.model_path,
+                device=settings.device,
+                embed_dim=settings.embed_dim,
+            )
+            mode_name = "DINOv3"
+
         logger.info("═" * 60)
-        logger.info("  [VISION MODE] SIGLIP（真实模型）")
+        logger.info("  [VISION MODE] %s（真实模型）", mode_name)
         logger.info("  model_path=%s  device=%s", settings.model_path, settings.device)
         logger.info("═" * 60)
         return embedder

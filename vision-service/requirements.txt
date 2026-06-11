@@ -31,9 +31,9 @@ pydantic-settings>=2.2.0
 httpx>=0.27.0
 
 # ─────────────────────────────────────────────────────────────────
-# 真实 SigLIP2（可选，重型依赖，约 3-6 GB 下载）
+# 真实视觉嵌入（DINOv3 ViT-B/16，86M 参数 / 768 维 / 权重 ~350MB）
 # 安装后设置 VISION_USE_MOCK=false 启用
 # ─────────────────────────────────────────────────────────────────
-# torch>=2.2.0          # PyTorch（Apple Silicon 建议: pip install torch torchvision)
-# transformers>=4.39.0  # HuggingFace Transformers（含 SigLIP2 支持）
-# accelerate>=0.27.0    # 可选：model.to(device) 加速
+torch>=2.4.0           # PyTorch — DINOv3 推理引擎
+transformers>=4.45.0   # HuggingFace Transformers — 4.45+ 原生支持 DINOv3
+accelerate>=0.30.0     # 可选：device_map="auto" + 多设备加速

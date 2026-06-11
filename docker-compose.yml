@@ -54,7 +54,7 @@ services:
       UPLOAD_DIR: "/app/uploads"
       VISION_SERVICE_URL: "http://vision:8000"   # AI 找板:调视觉服务(SigLIP2)
     ports:
-      - "3000:3000"
+      - "3001:3000"   # 主机 3001 避开 IoT 项目的 Vite (容器内仍 3000, nginx 反代不变)
     volumes:
       - uploads_data:/app/uploads
     depends_on:

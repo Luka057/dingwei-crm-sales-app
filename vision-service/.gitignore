@@ -10,10 +10,12 @@ env/
 
 # 向量索引（运行时生成，不提交）
 index/
+index_real/
 *.faiss
 
 # 图片语料库（运行时生成或从外部挂载，不提交）
 corpus/
+corpus_real/
 
 # 下载的模型权重（可能几个 GB）
 models/
@@ -23,6 +25,7 @@ models/
 
 # 演示用 CSV（运行时生成）
 samples.csv
+samples_real.csv
 
 # 环境变量配置文件
 .env
