@@ -55,7 +55,8 @@ export function PlanSheet() {
   // 打开 sheet 时按 payload 预填 / 重置
   useEffect(() => {
     if (isActive) {
-      setType(payload?.customer_name ? "visit" : "visit");
+      // 打开时默认"拜访"类型；要记个人提醒/自定义计划，点上面的「自定义」即可切换
+      setType("visit");
       setTitle(payload?.customer_name ?? "");
       setScheduledAt(nowLocalIso(payload?.date));
       setContent("");

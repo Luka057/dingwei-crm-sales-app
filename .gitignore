@@ -6,6 +6,7 @@ build/
 .env.*
 !.env.example
 coverage/
+.vite/
 *.log
 *.tsbuildinfo
 postgres_data/
